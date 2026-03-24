@@ -13,7 +13,7 @@ class EmailConfirmationNode(Component):
     inputs = [
         MessageTextInput(name="recipient_email", display_name="Recipient Email"),
         MessageTextInput(name="category", display_name="Document Category"),
-        MessageTextInput(name="minio_path", display_name="Minio Path"),
+        MessageTextInput(name="s3_path", display_name="S3 Path"),
         MessageTextInput(name="summary", display_name="Document Summary"),
         StrInput(name="smtp_server", display_name="SMTP Server", value="smtp.gmail.com"),
         StrInput(name="smtp_port", display_name="SMTP Port", value="587"),
@@ -33,9 +33,9 @@ class EmailConfirmationNode(Component):
         category = self.category
         if isinstance(category, Message):
             category = category.text
-        minio_path = self.minio_path
-        if isinstance(minio_path, Message):
-            minio_path = minio_path.text
+        s3_path = self.s3_path
+        if isinstance(s3_path, Message):
+            s3_path = s3_path.text
         summary = self.summary
         if isinstance(summary, Message):
             summary = summary.text
@@ -45,7 +45,7 @@ class EmailConfirmationNode(Component):
         body = (
             f"Dokument został automatycznie przetworzony.\n\n"
             f"Kategoria: {category}\n"
-            f"Lokalizacja: {minio_path}\n"
+            f"Lokalizacja: {s3_path}\n"
         )
         if summary:
             body += f"Podsumowanie: {summary}\n"
@@ -60,4 +60,4 @@ class EmailConfirmationNode(Component):
             server.login(self.smtp_username, self.smtp_password)
             server.send_message(msg)
 
-        return Message(text=f"Potwierdzenie wysłane do {recipient} — kategoria: {category}, ścieżka: {minio_path}")
+        return Message(text=f"Potwierdzenie wysłane do {recipient} — kategoria: {category}, ścieżka: {s3_path}")

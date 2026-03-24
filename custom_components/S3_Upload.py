@@ -3,29 +3,30 @@ from langflow.io import MessageTextInput, StrInput, SecretStrInput, BoolInput, O
 from langflow.schema.message import Message
 
 
-class MinioUploadNode(Component):
-    display_name = "Minio Upload"
-    description = "Uploads file(s) to a Minio bucket, into a folder based on document category. Supports multiple files (newline-separated paths)."
+class S3UploadNode(Component):
+    display_name = "S3 Upload"
+    description = "Uploads file(s) to an S3-compatible bucket (SeaweedFS, AWS S3, etc.), into a folder based on document category. Supports multiple files (newline-separated paths)."
     icon = "hard-drive"
 
     inputs = [
         MessageTextInput(name="file_paths", display_name="File Path(s)", info="Local path(s) to upload. Multiple paths separated by newline."),
         MessageTextInput(name="category", display_name="Category", info="Document category (used as folder name)."),
-        StrInput(name="endpoint", display_name="Minio Endpoint", value="minio:9000"),
-        StrInput(name="access_key", display_name="Access Key", value="minioadmin"),
-        SecretStrInput(name="secret_key", display_name="Secret Key", value="minioadmin123"),
+        StrInput(name="endpoint", display_name="S3 Endpoint", value="http://seaweedfs:8333"),
+        StrInput(name="access_key", display_name="Access Key", value="seaweed"),
+        SecretStrInput(name="secret_key", display_name="Secret Key", value="seaweedsecret"),
         StrInput(name="bucket_name", display_name="Bucket Name", value="qai-storage"),
-        BoolInput(name="secure", display_name="Use HTTPS", value=False, advanced=True),
+        StrInput(name="region", display_name="Region", value="auto", advanced=True),
     ]
 
     outputs = [
-        Output(name="minio_paths", display_name="Minio Path(s)", method="upload"),
+        Output(name="s3_paths", display_name="S3 Path(s)", method="upload"),
     ]
 
     def upload(self) -> Message:
         import os
+        import boto3
+        from botocore.exceptions import ClientError
         from datetime import datetime
-        from minio import Minio
 
         raw_paths = self.file_paths
         if isinstance(raw_paths, Message):
@@ -40,15 +41,18 @@ class MinioUploadNode(Component):
         if not file_paths:
             return Message(text="")
 
-        client = Minio(
-            self.endpoint,
-            access_key=self.access_key,
-            secret_key=self.secret_key,
-            secure=self.secure,
+        client = boto3.client(
+            "s3",
+            endpoint_url=self.endpoint,
+            aws_access_key_id=self.access_key,
+            aws_secret_access_key=self.secret_key,
+            region_name=self.region,
         )
 
-        if not client.bucket_exists(self.bucket_name):
-            client.make_bucket(self.bucket_name)
+        try:
+            client.head_bucket(Bucket=self.bucket_name)
+        except ClientError:
+            client.create_bucket(Bucket=self.bucket_name)
 
         category_folder = category.strip().lower().replace(" ", "_")
         uploaded = []
@@ -59,7 +63,7 @@ class MinioUploadNode(Component):
             filename = os.path.basename(file_path)
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             object_name = f"documents/{category_folder}/{timestamp}_{filename}"
-            client.fput_object(self.bucket_name, object_name, file_path)
+            client.upload_file(file_path, self.bucket_name, object_name)
             uploaded.append(f"{self.bucket_name}/{object_name}")
 
         return Message(text="\n".join(uploaded))

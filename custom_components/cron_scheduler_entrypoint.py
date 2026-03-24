@@ -28,7 +28,7 @@ import requests
 API_URL = os.environ.get("CRON_API_URL", "http://localhost:7860").rstrip("/")
 API_KEY = os.environ.get("CRON_API_KEY", "")
 SCAN_INTERVAL = int(os.environ.get("CRON_SCAN_INTERVAL", "30"))
-CRON_DIR = "/tmp/langflow_crons"
+CRON_DIR = "/app/langflow/cron_registrations"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -110,7 +110,8 @@ def _discover():
 # ---------------------------------------------------------------------------
 # Per-flow loop
 # ---------------------------------------------------------------------------
-_active = {}  # flow_id -> threading.Event
+_active = {}   # flow_id -> threading.Event
+_intervals = {}  # flow_id -> int
 
 
 def _flow_loop(flow_id, interval, stop_event):
@@ -121,6 +122,20 @@ def _flow_loop(flow_id, interval, stop_event):
             break
         _trigger_flow(flow_id)
     log.info("STOP  %s", flow_id[:12])
+
+
+def _start_flow(flow_id, interval):
+    stop_evt = threading.Event()
+    _active[flow_id] = stop_evt
+    _intervals[flow_id] = interval
+    t = threading.Thread(target=_flow_loop, args=(flow_id, interval, stop_evt), daemon=True)
+    t.start()
+
+
+def _stop_flow(flow_id):
+    _active[flow_id].set()
+    del _active[flow_id]
+    _intervals.pop(flow_id, None)
 
 
 # ---------------------------------------------------------------------------
@@ -139,24 +154,20 @@ def main():
     while not _shutdown.is_set():
         discovered = _discover()
 
-        # Start new
+        # Start new or restart if interval changed
         for flow_id, interval in discovered.items():
             if flow_id not in _active:
-                stop_evt = threading.Event()
-                _active[flow_id] = stop_evt
-                t = threading.Thread(
-                    target=_flow_loop,
-                    args=(flow_id, interval, stop_evt),
-                    daemon=True,
-                )
-                t.start()
+                _start_flow(flow_id, interval)
+            elif _intervals.get(flow_id) != interval:
+                log.info("Interval changed for %s: %ds -> %ds, restarting", flow_id[:12], _intervals.get(flow_id), interval)
+                _stop_flow(flow_id)
+                _start_flow(flow_id, interval)
 
         # Stop removed
         for flow_id in list(_active.keys()):
             if flow_id not in discovered:
                 log.info("Unregistered %s, stopping", flow_id[:12])
-                _active[flow_id].set()
-                del _active[flow_id]
+                _stop_flow(flow_id)
 
         _shutdown.wait(SCAN_INTERVAL)
 
