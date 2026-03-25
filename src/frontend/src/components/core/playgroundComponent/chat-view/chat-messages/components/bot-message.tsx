@@ -1,5 +1,5 @@
 import { memo, useState } from "react";
-import LangflowLogo from "@/assets/LangflowLogo.svg?react";
+import LangflowLogo from "@/components/common/QosmoLogo";
 import IconComponent, {
   ForwardedIconComponent,
 } from "@/components/common/genericIconComponent";

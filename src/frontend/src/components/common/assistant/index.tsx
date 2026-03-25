@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import langflowLogo from "@/assets/LangflowLogoColor.svg";
+import langflowLogo from "@/assets/qosmo_mini.svg";
 import { handleOnNewValueType } from "@/CustomNodes/hooks/use-handle-new-value";
 import { useGetSystemMessageGenQuery } from "@/controllers/API/queries/assistant";
 import { useGetFlowId } from "@/modals/IOModal/hooks/useGetFlowId";

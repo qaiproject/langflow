@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useContext, useState } from "react";
-import LangflowLogo from "@/assets/LangflowLogo.svg?react";
+import LangflowLogo from "@/components/common/QosmoLogo";
 import { useLoginUser } from "@/controllers/API/queries/auth";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";

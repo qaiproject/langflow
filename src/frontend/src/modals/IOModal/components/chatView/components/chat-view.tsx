@@ -1,6 +1,6 @@
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { StickToBottom } from "use-stick-to-bottom";
-import LangflowLogo from "@/assets/LangflowLogo.svg?react";
+import LangflowLogo from "@/components/common/QosmoLogo";
 import { SafariScrollFix } from "@/components/common/safari-scroll-fix";
 import { TextEffectPerChar } from "@/components/ui/textAnimation";
 import CustomChatInput from "@/customization/components/custom-chat-input";
