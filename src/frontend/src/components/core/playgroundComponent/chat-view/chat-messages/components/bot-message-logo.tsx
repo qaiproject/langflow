@@ -1,4 +1,4 @@
-import LangflowLogo from "@/assets/LangflowLogo.svg?react";
+import LangflowLogo from "@/components/common/QosmoLogo";
 
 export default function LogoIcon() {
   return (

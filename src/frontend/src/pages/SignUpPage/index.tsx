@@ -1,6 +1,6 @@
 import * as Form from "@radix-ui/react-form";
 import { type FormEvent, useEffect, useState } from "react";
-import LangflowLogo from "@/assets/LangflowLogo.svg?react";
+import LangflowLogo from "@/components/common/QosmoLogo";
 import InputComponent from "@/components/core/parameterRenderComponent/components/inputComponent";
 import { useAddUser } from "@/controllers/API/queries/auth";
 import { CustomLink } from "@/customization/components/custom-link";
