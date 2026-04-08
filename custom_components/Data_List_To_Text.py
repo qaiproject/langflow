@@ -29,14 +29,36 @@ class DataListToText(Component):
         ),
     ]
 
+    def _extract_filename(self, source: str) -> str:
+        """Extract just the filename from a full path or URL."""
+        if not source:
+            return ""
+        import os
+        import re
+        # Handle file:/// URLs
+        if source.startswith("file:///"):
+            source = source[8:]
+        # Get just the filename
+        name = os.path.basename(source)
+        # Remove timestamp prefix (e.g. "2026-04-02_12-07-38_")
+        name = re.sub(r"^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_", "", name)
+        # Change .txt back to .pdf (backend converts to .txt for ingest)
+        if name.endswith(".txt"):
+            name = name[:-4] + ".pdf"
+        return name
+
     def build_text(self) -> Message:
         parts = []
         for item in self.data_list or []:
+            # Debug: log what we receive
+            if isinstance(item, Data):
+                print(f"[DataListToText] keys={list((item.data or {}).keys())}")
             if isinstance(item, Data):
                 text = item.text or (item.data.get("text", "") if item.data else "")
-                source = (item.data or {}).get("source") or (item.data or {}).get("file_path") or (item.data or {}).get("metadata", {}).get("source", "")
+                source = (item.data or {}).get("source") or (item.data or {}).get("file_path") or (item.data or {}).get("filename") or (item.data or {}).get("metadata", {}).get("source", "")
+                filename = self._extract_filename(source)
                 if text:
-                    parts.append(f"{text}\nŹródło: {source}" if source else text)
+                    parts.append(f"{text}\nŹródło: {filename}" if filename else text)
             elif isinstance(item, str):
                 parts.append(item)
             else:

@@ -138,6 +138,82 @@ class OCRProcessorNode(Component):
 
         return "\n\n--- Page Break ---\n\n".join(results)
 
+    def _extract_text_file(self, file_path: str) -> str:
+        """Extract text from non-image files (DOCX, XLSX, CSV, TXT, etc.)."""
+        import os
+        ext = os.path.splitext(file_path)[1].lower()
+
+        if ext == ".txt":
+            with open(file_path, "r", encoding="utf-8", errors="replace") as f:
+                return f.read()
+
+        if ext == ".csv":
+            with open(file_path, "r", encoding="utf-8", errors="replace") as f:
+                return f.read()
+
+        if ext == ".docx":
+            try:
+                from docx import Document
+                doc = Document(file_path)
+                return "\n".join(p.text for p in doc.paragraphs if p.text.strip())
+            except ImportError:
+                print("[OCR] python-docx not installed, falling back to OCR for .docx")
+                return ""
+
+        if ext == ".xlsx":
+            try:
+                import openpyxl
+                wb = openpyxl.load_workbook(file_path, read_only=True, data_only=True)
+                parts = []
+                for sheet in wb.sheetnames:
+                    ws = wb[sheet]
+                    parts.append(f"[Arkusz: {sheet}]")
+                    for row in ws.iter_rows(values_only=True):
+                        cells = [str(c) if c is not None else "" for c in row]
+                        if any(cells):
+                            parts.append(" | ".join(cells))
+                wb.close()
+                return "\n".join(parts)
+            except ImportError:
+                print("[OCR] openpyxl not installed, falling back to OCR for .xlsx")
+                return ""
+
+        if ext == ".xls":
+            try:
+                import xlrd
+                wb = xlrd.open_workbook(file_path)
+                parts = []
+                for sheet in wb.sheet_names():
+                    ws = wb.sheet_by_name(sheet)
+                    parts.append(f"[Arkusz: {sheet}]")
+                    for row_idx in range(ws.nrows):
+                        cells = [str(ws.cell_value(row_idx, col)) for col in range(ws.ncols)]
+                        if any(cells):
+                            parts.append(" | ".join(cells))
+                return "\n".join(parts)
+            except ImportError:
+                print("[OCR] xlrd not installed, falling back to OCR for .xls")
+                return ""
+
+        if ext == ".pptx":
+            try:
+                from pptx import Presentation
+                prs = Presentation(file_path)
+                parts = []
+                for i, slide in enumerate(prs.slides, 1):
+                    parts.append(f"[Slajd {i}]")
+                    for shape in slide.shapes:
+                        if shape.has_text_frame:
+                            for para in shape.text_frame.paragraphs:
+                                if para.text.strip():
+                                    parts.append(para.text)
+                return "\n".join(parts)
+            except ImportError:
+                print("[OCR] python-pptx not installed, falling back to OCR for .pptx")
+                return ""
+
+        return ""
+
     def _ocr_single_file(self, file_path: str) -> str:
         import os
 
@@ -145,6 +221,13 @@ class OCRProcessorNode(Component):
             return ""
 
         ext = os.path.splitext(file_path)[1].lower()
+
+        # Try text extraction first for supported formats
+        text_formats = {".txt", ".csv", ".docx", ".xlsx", ".xls", ".pptx"}
+        if ext in text_formats:
+            text = self._extract_text_file(file_path)
+            if text:
+                return text
 
         if ext == ".pdf":
             image_paths = self._pdf_to_images(file_path)
