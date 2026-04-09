@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import i18n from "@/i18n";
 import NoInputView from "../no-input";
 
 // Mock dependencies
@@ -7,6 +8,7 @@ jest.mock("@/components/ui/button", () => ({
     children,
     onClick,
     className,
+    unstyled: _unstyled,
     ...props
   }: {
     children: React.ReactNode;
@@ -40,13 +42,13 @@ describe("NoInputView", () => {
   it("renders Run Flow button when not building", () => {
     render(<NoInputView {...defaultProps} />);
     expect(screen.getByTestId("button-send")).toBeInTheDocument();
-    expect(screen.getByText("Run Flow")).toBeInTheDocument();
+    expect(screen.getByText(i18n.t("playground.runFlow"))).toBeInTheDocument();
   });
 
   it("renders Stop button with loading when building", () => {
     render(<NoInputView {...defaultProps} isBuilding={true} />);
     expect(screen.getByTestId("button-stop")).toBeInTheDocument();
-    expect(screen.getByText("Stop")).toBeInTheDocument();
+    expect(screen.getByText(i18n.t("playground.stop"))).toBeInTheDocument();
     expect(screen.getByTestId("loading")).toBeInTheDocument();
   });
 
@@ -72,8 +74,23 @@ describe("NoInputView", () => {
 
   it("displays instruction text with link to documentation", () => {
     render(<NoInputView {...defaultProps} />);
-    expect(screen.getByText(/Add a/)).toBeInTheDocument();
-    const link = screen.getByRole("link", { name: "Chat Input" });
+    expect(
+      screen.getByText(
+        (_, element) =>
+          element?.tagName.toLowerCase() === "p" &&
+          (element.textContent?.includes(
+            i18n.t("playground.addChatInputPrefix"),
+          ) ??
+            false) &&
+          (element.textContent?.includes(
+            i18n.t("playground.addChatInputSuffix"),
+          ) ??
+            false),
+      ),
+    ).toBeInTheDocument();
+    const link = screen.getByRole("link", {
+      name: i18n.t("playground.chatInputComponent"),
+    });
     expect(link).toBeInTheDocument();
     expect(link).toHaveAttribute(
       "href",

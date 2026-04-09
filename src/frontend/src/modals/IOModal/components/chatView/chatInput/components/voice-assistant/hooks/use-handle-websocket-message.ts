@@ -1,3 +1,4 @@
+import i18n from "@/i18n";
 import { BuildStatus } from "@/constants/enums";
 import { base64ToFloat32Array } from "../helpers/utils";
 
@@ -35,9 +36,9 @@ export const useHandleWebsocketMessage = (
       if (data.response?.status_details?.error?.code) {
         const errorCode =
           data.response?.status_details?.error?.code?.replaceAll("_", " ");
-        setStatus(`API key error: ${errorCode}`);
-        showErrorAlert("API key error: " + errorCode, [
-          "Please check your API key and try again",
+        setStatus(i18n.t("voiceAssistant.apiKeyError", { errorCode }));
+        showErrorAlert(i18n.t("voiceAssistant.apiKeyError", { errorCode }), [
+          i18n.t("voiceAssistant.checkApiKey"),
         ]);
       }
       break;
@@ -121,16 +122,16 @@ export const useHandleWebsocketMessage = (
 
     case "error":
       if (data.code === "api_key_missing") {
-        setStatus("Error: " + "API key is missing");
-        showErrorAlert("API key not valid", [
-          "Please check your API key and try again",
+        setStatus(i18n.t("voiceAssistant.apiKeyMissing"));
+        showErrorAlert(i18n.t("voiceAssistant.apiKeyNotValid"), [
+          i18n.t("voiceAssistant.checkApiKey"),
         ]);
         return;
       }
       if (data.error.message.toLowerCase().includes("api key")) {
-        setStatus("Error: " + "API key is missing");
-        showErrorAlert("API key not valid", [
-          "Please check your API key and try again",
+        setStatus(i18n.t("voiceAssistant.apiKeyMissing"));
+        showErrorAlert(i18n.t("voiceAssistant.apiKeyNotValid"), [
+          i18n.t("voiceAssistant.checkApiKey"),
         ]);
         return;
       }

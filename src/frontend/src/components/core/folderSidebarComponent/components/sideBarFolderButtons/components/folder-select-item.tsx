@@ -1,10 +1,18 @@
 import IconComponent from "@/components/common/genericIconComponent";
 import { cn } from "@/utils/utils";
 
-export const FolderSelectItem = ({ name, iconName }) => (
+export const FolderSelectItem = ({
+  name,
+  iconName,
+  destructive = false,
+}: {
+  name: string;
+  iconName: string;
+  destructive?: boolean;
+}) => (
   <div
     className={cn(
-      name === "Delete" ? "text-destructive" : "",
+      destructive ? "text-destructive" : "",
       "flex items-center font-medium",
     )}
   >

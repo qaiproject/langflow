@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { nanoid } from "nanoid";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import IconComponent from "../../../../../components/common/genericIconComponent";
 import { Input } from "../../../../../components/ui/input";
 import { classNames } from "../../../../../utils/utils";
@@ -29,6 +30,7 @@ const IOKeyPairInput = ({
   isInputField,
   testId,
 }: IOKeyPairInputProps) => {
+  const { t } = useTranslation();
   const handleKeyChange = (id: string, newKey: string) => {
     const item = value.find((item) => item.id === id);
     if (item) {
@@ -82,7 +84,9 @@ const IOKeyPairInput = ({
               value={item.key.trim()}
               className={classNames(item.error ? "input-invalid" : "")}
               placeholder={
-                item.error ? "Duplicate or empty key" : "Type key..."
+                item.error
+                  ? t("ioKeyPair.duplicateOrEmptyKey")
+                  : t("parameterInput.typeKey")
               }
               onChange={(event) => handleKeyChange(item.id, event.target.value)}
               disabled={!isInputField}
@@ -92,7 +96,7 @@ const IOKeyPairInput = ({
             <Input
               type="text"
               value={item.value}
-              placeholder="Type a value..."
+              placeholder={t("parameterInput.typeValue")}
               onChange={(event) =>
                 handleValueChange(item.id, event.target.value)
               }

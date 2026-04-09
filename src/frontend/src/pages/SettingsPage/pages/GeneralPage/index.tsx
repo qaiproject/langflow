@@ -1,5 +1,6 @@
 import { cloneDeep } from "lodash";
 import { useContext, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import {
   EDIT_PASSWORD_ALERT_LIST,
@@ -30,7 +31,23 @@ import PasswordFormComponent from "./components/PasswordForm";
 import ProfilePictureFormComponent from "./components/ProfilePictureForm";
 
 export const GeneralPage = () => {
+  const { t } = useTranslation();
   const { scrollId } = useParams();
+  const getErrorDetail = (error: unknown) => {
+    if (!error || typeof error !== "object" || !("response" in error)) {
+      return undefined;
+    }
+
+    return (
+      error as {
+        response?: {
+          data?: {
+            detail?: string;
+          };
+        };
+      }
+    ).response?.data?.detail;
+  };
 
   const [inputState, setInputState] = useState<patchUserInputStateType>(
     CONTROL_PATCH_USER_STATE,
@@ -71,7 +88,7 @@ export const GeneralPage = () => {
           onError: (error) => {
             setErrorData({
               title: SAVE_ERROR_ALERT,
-              list: [(error as any)?.response?.data?.detail],
+              list: [getErrorDetail(error)],
             });
           },
         },
@@ -95,7 +112,7 @@ export const GeneralPage = () => {
           onError: (error) => {
             setErrorData({
               title: SAVE_ERROR_ALERT,
-              list: [(error as any)?.response?.data?.detail],
+              list: [getErrorDetail(error)],
             });
           },
         },
@@ -107,7 +124,7 @@ export const GeneralPage = () => {
 
   const { mutate } = usePostAddApiKey({
     onSuccess: () => {
-      setSuccessData({ title: "API key saved successfully" });
+      setSuccessData({ title: t("generalPage.apiKeySaved") });
       setHasApiKey(true);
       setValidApiKey(true);
       setLoadingApiKey(false);
@@ -115,8 +132,8 @@ export const GeneralPage = () => {
     },
     onError: (error) => {
       setErrorData({
-        title: "API key save error",
-        list: [(error as any)?.response?.data?.detail],
+        title: t("generalPage.apiKeySaveError"),
+        list: [getErrorDetail(error)],
       });
       setHasApiKey(false);
       setValidApiKey(false);

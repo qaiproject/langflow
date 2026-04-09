@@ -2,6 +2,7 @@ import type { ColDef } from "ag-grid-community";
 import type { AgGridReact } from "ag-grid-react";
 import { cloneDeep } from "lodash";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { handleOnNewValueType } from "@/CustomNodes/hooks/use-handle-new-value";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import ShadTooltip from "@/components/common/shadTooltipComponent";
@@ -37,6 +38,7 @@ export default function ToolsTable({
   isAction: boolean;
   placeholder: string;
 }) {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRows, setSelectedRows] = useState<any[] | null>(null);
   const agGrid = useRef<AgGridReact>(null);
@@ -183,7 +185,9 @@ export default function ToolsTable({
   const columnDefs: ColDef[] = [
     {
       field: isAction ? "display_name" : "name",
-      headerName: isAction ? "Flow Name" : "Name",
+      headerName: isAction
+        ? t("toolsModal.flowName")
+        : t("toolsModal.name"),
       flex: 1,
       valueGetter: (params) =>
         !isAction
@@ -197,13 +201,13 @@ export default function ToolsTable({
     },
     {
       field: "description",
-      headerName: "Description",
+      headerName: t("toolsModal.description"),
       flex: 2,
       cellClass: "text-muted-foreground",
     },
     {
       field: "name",
-      headerName: isAction ? "Tool" : "Slug",
+      headerName: isAction ? t("toolsModal.tool") : t("toolsModal.slug"),
       flex: 1,
       resizable: false,
       valueGetter: (params) =>
@@ -223,7 +227,7 @@ export default function ToolsTable({
     },
     {
       field: "tags",
-      headerName: "Tags",
+      headerName: t("toolsModal.tags"),
       flex: 1,
       hide: true,
     },
@@ -329,7 +333,7 @@ export default function ToolsTable({
         <div className="flex-none px-4">
           <Input
             icon="Search"
-            placeholder="Search tools..."
+            placeholder={t("toolsModal.searchTools")}
             inputClassName="h-8"
             value={searchQuery}
             onChange={handleSearchChange}
@@ -369,7 +373,7 @@ export default function ToolsTable({
                     className="text-mmd font-medium"
                     htmlFor="sidebar-name-input"
                   >
-                    {isAction ? "Tool name" : "Slug"}
+                    {isAction ? t("toolsModal.toolName") : t("toolsModal.slug")}
                   </label>
 
                   <Input
@@ -377,13 +381,13 @@ export default function ToolsTable({
                     value={sidebarName}
                     onChange={handleNameChange}
                     maxLength={46}
-                    placeholder="Edit name..."
+                    placeholder={t("toolsModal.editName")}
                     data-testid="input_update_name"
                   />
                   <div className="text-xs text-muted-foreground">
                     {isAction
-                      ? "Used as the function name when this flow is exposed to clients."
-                      : "Used as the function name when this tool is exposed to the agent."}
+                      ? t("toolsModal.flowFunctionNameHelp")
+                      : t("toolsModal.toolFunctionNameHelp")}
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">
@@ -391,21 +395,23 @@ export default function ToolsTable({
                     className="text-mmd font-medium"
                     htmlFor="sidebar-desc-input"
                   >
-                    {isAction ? "Tool description" : "Description"}
+                    {isAction
+                      ? t("toolsModal.toolDescription")
+                      : t("toolsModal.description")}
                   </label>
 
                   <Textarea
                     id="sidebar-desc-input"
                     value={sidebarDescription}
                     onChange={handleDescriptionChange}
-                    placeholder="Edit description..."
+                    placeholder={t("toolsModal.editDescription")}
                     className="h-24"
                     data-testid="input_update_description"
                   />
                   <div className="text-xs text-muted-foreground">
                     {isAction
-                      ? "This is the description for the tool exposed to a client."
-                      : "This is the description for the tool exposed to the agents."}
+                      ? t("toolsModal.clientToolDescriptionHelp")
+                      : t("toolsModal.agentToolDescriptionHelp")}
                   </div>
                 </div>
               </div>
@@ -436,9 +442,11 @@ export default function ToolsTable({
                   <div className="flex h-full flex-col gap-4">
                     {actionArgs.length > 0 && (
                       <div className="flex flex-col gap-1.5">
-                        <h3 className="text-base font-medium">Parameters</h3>
+                        <h3 className="text-base font-medium">
+                          {t("toolsModal.parameters")}
+                        </h3>
                         <p className="text-mmd text-muted-foreground">
-                          Manage inputs for this tool
+                          {t("toolsModal.manageInputs")}
                         </p>
                       </div>
                     )}
@@ -461,7 +469,7 @@ export default function ToolsTable({
                         <Input
                           id="sidebar-desc-input"
                           disabled
-                          placeholder="Input controlled by the agent"
+                          placeholder={t("toolsModal.agentControlledInput")}
                           onChange={(e) => {}}
                         />
                       </div>
@@ -480,7 +488,7 @@ export default function ToolsTable({
               onClick={handleClose}
               data-testid="btn_close_tools_modal"
             >
-              Close
+              {t("common.close")}
             </Button>
           </div>
         </SidebarFooter>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { usePostLikeComponent } from "@/controllers/API/queries/store";
 import { getComponent } from "../../../controllers/API";
 import useAlertStore from "../../../stores/alertStore";
@@ -32,6 +33,7 @@ export default function StoreCardComponent({
   authorized?: boolean;
   disabled?: boolean;
 }) {
+  const { t } = useTranslation();
   const setSuccessData = useAlertStore((state) => state.setSuccessData);
   const setErrorData = useAlertStore((state) => state.setErrorData);
   const setValidApiKey = useStoreStore((state) => state.updateValidApiKey);
@@ -42,7 +44,9 @@ export default function StoreCardComponent({
     data?.downloads_count ?? 0,
   );
 
-  const name = data.is_component ? "Component" : "Flow";
+  const name = data.is_component
+    ? t("storeCard.component")
+    : t("storeCard.flow");
 
   async function _getFlowData() {
     const res = await getComponent(data.id);
@@ -93,7 +97,7 @@ export default function StoreCardComponent({
             }
             console.error(error);
             setErrorData({
-              title: `Error liking ${name}.`,
+              title: t("storeCard.errorLiking", { itemType: name }),
               list: [error.response.data.detail],
             });
           },
@@ -133,14 +137,14 @@ export default function StoreCardComponent({
                 </ShadTooltip>
                 <div className="flex items-center gap-3">
                   {data.private && (
-                    <ShadTooltip content="Private">
+                    <ShadTooltip content={t("storeCard.private")}>
                       <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                         <IconComponent name="Lock" className="h-4 w-4" />
                       </span>
                     </ShadTooltip>
                   )}
                   {!data.is_component && (
-                    <ShadTooltip content="Components">
+                    <ShadTooltip content={t("storeCard.components")}>
                       <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                         <IconComponent name="ToyBrick" className="h-4 w-4" />
                         <span data-testid={`total-${data.name}`}>
@@ -149,7 +153,7 @@ export default function StoreCardComponent({
                       </span>
                     </ShadTooltip>
                   )}
-                  <ShadTooltip content="Likes">
+                  <ShadTooltip content={t("storeCard.likes")}>
                     <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                       <IconComponent name="Heart" className={cn("h-4 w-4")} />
                       <span data-testid={`likes-${data.name}`}>
@@ -157,7 +161,7 @@ export default function StoreCardComponent({
                       </span>
                     </span>
                   </ShadTooltip>
-                  <ShadTooltip content="Downloads">
+                  <ShadTooltip content={t("storeCard.downloads")}>
                     <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                       <IconComponent name="DownloadCloud" className="h-4 w-4" />
                       <span data-testid={`downloads-${data.name}`}>
@@ -171,14 +175,14 @@ export default function StoreCardComponent({
             <div className="flex gap-2">
               {data.user_created && data.user_created.username && (
                 <span className="text-sm text-primary">
-                  by <b>{data.user_created.username}</b>
+                  {t("storeCard.by")} <b>{data.user_created.username}</b>
                   {data.last_tested_version && (
                     <>
                       {" "}
                       |{" "}
                       <span className="text-xs">
                         {" "}
-                        ⛓︎ v{data.last_tested_version}
+                        ⛓︎ {t("menu.version")} v{data.last_tested_version}
                       </span>
                     </>
                   )}
@@ -198,7 +202,11 @@ export default function StoreCardComponent({
             <div className="flex w-full flex-wrap items-end justify-end gap-2">
               <div className="flex gap-0.5">
                 <ShadTooltip
-                  content={authorized ? "Like" : "Please review your API key."}
+                  content={
+                    authorized
+                      ? t("storeCard.like")
+                      : t("storeCard.reviewApiKey")
+                  }
                 >
                   <Button
                     disabled={isPending}
@@ -231,8 +239,8 @@ export default function StoreCardComponent({
                 <ShadTooltip
                   content={
                     authorized
-                      ? "Install Locally"
-                      : "Please review your API key."
+                      ? t("storeCard.installLocally")
+                      : t("storeCard.reviewApiKey")
                   }
                 >
                   <Button

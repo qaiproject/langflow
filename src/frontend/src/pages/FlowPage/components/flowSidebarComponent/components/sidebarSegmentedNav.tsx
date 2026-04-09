@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import ShadTooltip from "@/components/common/shadTooltipComponent";
 import { Separator } from "@/components/ui/separator";
@@ -68,6 +69,7 @@ export const NAV_ITEMS: NavItem[] = [
 ];
 
 const SidebarSegmentedNav = () => {
+  const { t } = useTranslation();
   const { activeSection, setActiveSection, toggleSidebar, open } = useSidebar();
   const { focusSearch, setSearch } = useSearchContext();
   const setPlaygroundOpen = usePlaygroundStore((state) => state.setIsOpen);
@@ -75,6 +77,38 @@ const SidebarSegmentedNav = () => {
     (state) => state.setIsFullscreen,
   );
   const [isAddNoteActive, setIsAddNoteActive] = useState(false);
+
+  const navItems: NavItem[] = NAV_ITEMS.map((item) => ({
+    ...item,
+    label:
+      item.id === "search"
+        ? t("flowSidebar.search")
+        : item.id === "components"
+          ? t("flowSidebar.components")
+          : item.id === "mcp"
+            ? t("flowSidebar.mcp")
+            : item.id === "bundles"
+              ? t("flowSidebar.bundles")
+              : item.id === "add_note"
+                ? t("flowSidebar.stickyNotes")
+                : item.id === "versions"
+                  ? t("flowSidebar.versions")
+                  : t("flowSidebar.traces"),
+    tooltip:
+      item.id === "search"
+        ? t("flowSidebar.search")
+        : item.id === "components"
+          ? t("flowSidebar.components")
+          : item.id === "mcp"
+            ? t("flowSidebar.mcp")
+            : item.id === "bundles"
+              ? t("flowSidebar.bundles")
+              : item.id === "add_note"
+                ? t("flowSidebar.addStickyNotes")
+                : item.id === "versions"
+                  ? t("flowSidebar.versionHistory")
+                  : t("flowSidebar.traces"),
+  }));
   const handleAddNote = () => {
     if (activeSection === "traces") {
       setActiveSection("components");
@@ -92,7 +126,7 @@ const SidebarSegmentedNav = () => {
   return (
     <div className="flex h-full flex-col border-r border-border bg-background">
       <SidebarMenu className="gap-2 py-1">
-        {NAV_ITEMS.map((item) => (
+        {navItems.map((item) => (
           <div key={item.id}>
             {item.id === "add_note" && <Separator className="w-full" />}
             <SidebarMenuItem className="px-1 pt-1">

@@ -11,6 +11,7 @@ import { cloneDeep } from "lodash";
 import { useEffect, useRef, useState } from "react";
 import AceEditor from "react-ace";
 import type ReactAce from "react-ace/lib/ace";
+import { useTranslation } from "react-i18next";
 import IconComponent from "../../components/common/genericIconComponent";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -44,6 +45,7 @@ export default function CodeAreaModal({
   setOpen: mySetOpen,
   componentId,
 }: codeAreaModalPropsType): JSX.Element {
+  const { t } = useTranslation();
   const [code, setCode] = useState(value);
   const [open, setOpen] =
     mySetOpen !== undefined && myOpen !== undefined
@@ -136,7 +138,7 @@ export default function CodeAreaModal({
 
               clearHandlesFromAdvancedFields(componentId!, merged);
               setNodeClass(merged, type);
-            } catch (e) {
+            } catch (_e) {
               clearHandlesFromAdvancedFields(componentId!, data);
               setNodeClass(data, type);
             }
@@ -275,7 +277,7 @@ export default function CodeAreaModal({
               disabled={readonly}
               data-testid="checkAndSaveBtn"
             >
-              Check & Save
+              {t("codeEditor.checkAndSave")}
             </Button>
           </div>
         </div>
@@ -289,18 +291,18 @@ export default function CodeAreaModal({
           }}
           size="x-small"
           icon="AlertTriangle"
-          confirmationText="Check & Save"
-          cancelText="Discard Changes"
+          confirmationText={t("codeEditor.checkAndSave")}
+          cancelText={t("codeEditor.discardChanges")}
           open={openConfirmation}
           onCancel={() => setOpen(false)}
           onConfirm={() => {
             processCode();
             setOpenConfirmation(false);
           }}
-          title="Caution"
+          title={t("codeEditor.caution")}
         >
           <ConfirmationModal.Content>
-            <p>Are you sure you want to exit without saving your changes?</p>
+            <p>{t("codeEditor.exitWithoutSaving")}</p>
           </ConfirmationModal.Content>
         </ConfirmationModal>
       </BaseModal.Content>

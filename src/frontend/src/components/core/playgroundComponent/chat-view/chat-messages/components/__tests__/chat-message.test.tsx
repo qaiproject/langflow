@@ -1,9 +1,9 @@
 import { render, screen } from "@testing-library/react";
+import i18n from "@/i18n";
 import ChatMessage from "../chat-message";
 import ThinkingMessage from "../thinking-message";
 
-// Mock SVG imports
-jest.mock("@/assets/LangflowLogo.svg?react", () => ({
+jest.mock("@/components/common/QosmoLogo", () => ({
   __esModule: true,
   default: () => <div data-testid="langflow-logo" />,
 }));
@@ -210,14 +210,16 @@ describe("ThinkingMessage Component", () => {
     render(<ThinkingMessage isThinking={true} duration={null} />);
 
     expect(screen.queryByTestId("icon-Check")).not.toBeInTheDocument();
-    expect(screen.getByText(/Running\.\.\./)).toBeInTheDocument();
+    expect(screen.getByText(i18n.t("playground.running"))).toBeInTheDocument();
   });
 
   it("renders thought state with duration", () => {
     render(<ThinkingMessage isThinking={false} duration={5000} />);
 
     expect(screen.getByTestId("icon-Check")).toBeInTheDocument();
-    expect(screen.getByText(/Finished in/)).toBeInTheDocument();
+    expect(
+      screen.getByText(i18n.t("playground.finishedInLabel")),
+    ).toBeInTheDocument();
     expect(screen.getByText(/5.0s/)).toBeInTheDocument();
   });
 
@@ -243,7 +245,9 @@ describe("ThinkingMessage Component", () => {
   it("shows 0s when duration is null and not thinking", () => {
     render(<ThinkingMessage isThinking={false} duration={null} />);
 
-    expect(screen.getByText(/Finished in/)).toBeInTheDocument();
+    expect(
+      screen.getByText(i18n.t("playground.finishedInLabel")),
+    ).toBeInTheDocument();
     expect(screen.getByText(/0.0s/)).toBeInTheDocument();
   });
 });

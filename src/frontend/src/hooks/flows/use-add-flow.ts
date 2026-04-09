@@ -1,4 +1,5 @@
 import { cloneDeep } from "lodash";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { UUID_PARSING_ERROR } from "@/constants/constants";
 import { usePostAddFlow } from "@/controllers/API/queries/flows/use-post-add-flow";
@@ -27,6 +28,7 @@ const FLOW_CREATION_ERROR_MESSAGE =
   "An unexpected error occurred, please try again";
 const REDIRECT_DELAY = 3000;
 const useAddFlow = () => {
+  const { t } = useTranslation();
   const flows = useFlowsManagerStore((state) => state.flows);
   const setFlows = useFlowsManagerStore((state) => state.setFlows);
   const { deleteFlow } = useDeleteFlow();
@@ -85,7 +87,9 @@ const useAddFlow = () => {
     // If no folder exists, create one with the appropriate name based on onboarding state
     if (!folder_id && (!folders || folders.length === 0)) {
       try {
-        const projectName = isOnboarding ? "Starter Project" : "New Project";
+        const projectName = isOnboarding
+          ? t("sidebar.starterProject")
+          : t("sidebar.newProject");
         const newFolder = await postAddFolder({
           data: {
             name: projectName,

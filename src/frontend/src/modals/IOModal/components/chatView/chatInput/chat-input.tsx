@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import ShortUniqueId from "short-unique-id";
 import { useStickToBottomContext } from "use-stick-to-bottom";
 import { usePostUploadFile } from "@/controllers/API/queries/files/use-post-upload-file";
@@ -34,6 +35,7 @@ export default function ChatInput({
   isDragging,
   playgroundPage,
 }: ChatInputType): JSX.Element {
+  const { t } = useTranslation();
   const currentFlowId = useFlowsManagerStore((state) => state.currentFlowId);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const setErrorData = useAlertStore((state) => state.setErrorData);
@@ -108,7 +110,7 @@ export default function ChatInput({
         !ALLOWED_IMAGE_INPUT_EXTENSIONS.includes(fileExtension)
       ) {
         setErrorData({
-          title: "Error uploading file",
+          title: t("filesPage.errorUploadingFile"),
           list: [FS_ERROR_TEXT, SN_ERROR_TEXT],
         });
         return;
@@ -145,7 +147,7 @@ export default function ChatInput({
               return newFiles;
             });
             setErrorData({
-              title: "Error uploading file",
+              title: t("filesPage.errorUploadingFile"),
               list: [error.response?.data?.detail],
             });
           },

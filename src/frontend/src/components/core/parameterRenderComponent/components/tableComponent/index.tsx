@@ -1,8 +1,6 @@
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
-  DEFAULT_TABLE_ALERT_MSG,
-  DEFAULT_TABLE_ALERT_TITLE,
   NO_COLUMN_DEFINITION_ALERT_DESCRIPTION,
   NO_COLUMN_DEFINITION_ALERT_TITLE,
 } from "@/constants/constants";
@@ -16,6 +14,7 @@ import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied
 import { AgGridReact, type AgGridReactProps } from "ag-grid-react";
 import cloneDeep from "lodash";
 import { type ElementRef, forwardRef, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import TableOptions from "./components/TableOptions";
 import resetGrid from "./utils/reset-grid-columns";
 
@@ -47,13 +46,19 @@ const TableComponent = forwardRef<
 >(
   (
     {
-      alertTitle = DEFAULT_TABLE_ALERT_TITLE,
-      alertDescription = DEFAULT_TABLE_ALERT_MSG,
+      alertTitle,
+      alertDescription,
       displayEmptyAlert = true,
       ...props
     },
     ref,
   ) => {
+    const { t } = useTranslation();
+
+    const resolvedAlertTitle = alertTitle ?? t("table.emptyTitle");
+    const resolvedAlertDescription =
+      alertDescription ?? t("table.emptyDescription");
+
     const isSingleToggleRowEditable = (
       colField: string,
       rowData: any,
@@ -340,8 +345,8 @@ const TableComponent = forwardRef<
               name="AlertCircle"
               className="h-5 w-5 text-primary"
             />
-            <AlertTitle>{alertTitle}</AlertTitle>
-            <AlertDescription>{alertDescription}</AlertDescription>
+            <AlertTitle>{resolvedAlertTitle}</AlertTitle>
+            <AlertDescription>{resolvedAlertDescription}</AlertDescription>
           </Alert>
         </div>
       );

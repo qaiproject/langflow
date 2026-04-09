@@ -1,23 +1,25 @@
+import i18n from "@/i18n";
+
 export const getModalPropsApiKey = () => {
   const modalProps = {
-    title: "Create API Key",
-    description: "Create a secret API Key to use Langflow API.",
-    inputPlaceholder: "My API Key",
-    buttonText: "Generate API Key",
+    title: i18n.t("apiKeys.createTitle"),
+    description: i18n.t("apiKeys.createDescription"),
+    inputPlaceholder: i18n.t("apiKeys.inputPlaceholder"),
+    buttonText: i18n.t("apiKeys.generateButton"),
     generatedKeyMessage: (
       <>
-        {" "}
-        Please save this secret key somewhere safe and accessible. For security
-        reasons, <strong>you won't be able to view it again</strong> through
-        your account. If you lose this secret key, you'll need to generate a new
-        one.
+        {i18n.t("apiKeys.generatedMessagePrefix")}{" "}
+        <strong>{i18n.t("apiKeys.generatedMessageStrong")}</strong>{" "}
+        {i18n.t("apiKeys.generatedMessageSuffix")}
       </>
     ),
     showIcon: true,
     inputLabel: (
       <>
-        <span className="text-sm">Description</span>{" "}
-        <span className="text-xs text-muted-foreground">(optional)</span>
+        <span className="text-sm">{i18n.t("apiKeys.descriptionLabel")}</span>{" "}
+        <span className="text-xs text-muted-foreground">
+          {i18n.t("apiKeys.optional")}
+        </span>
       </>
     ),
   };

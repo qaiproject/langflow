@@ -1,5 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   useGetFlowsMCP,
   usePatchFlowsMCP,
@@ -50,6 +51,7 @@ export const useMcpServer = ({
   selectedPlatform?: string;
   selectedTransport?: MCPTransport;
 }) => {
+  const { t } = useTranslation();
   const setSuccessData = useAlertStore((s) => s.setSuccessData);
   const setErrorData = useAlertStore((s) => s.setErrorData);
   const queryClient = useQueryClient();
@@ -136,20 +138,20 @@ export const useMcpServer = ({
     try {
       setS((prev) => ({ ...prev, isGeneratingApiKey: true }));
       const { createApiKey } = await import("@/controllers/API");
-      const res = await createApiKey(`MCP Server ${folderName ?? ""}`);
+      const res = await createApiKey(`${t("mcp.server")} ${folderName ?? ""}`);
       if (res?.api_key) {
         setS((prev) => ({ ...prev, apiKey: res.api_key }));
       }
     } catch (e) {
       console.error("Error generating API key:", e);
       setErrorData({
-        title: "Error generating API key",
+        title: t("mcp.apiKeyErrorTitle"),
         list: [(e as Error).message],
       });
     } finally {
       setS((prev) => ({ ...prev, isGeneratingApiKey: false }));
     }
-  }, [folderName, setErrorData]);
+  }, [folderName, setErrorData, t]);
 
   const copyToClipboard = useCallback((payload: string) => {
     navigator.clipboard?.writeText(payload).then(
@@ -169,9 +171,10 @@ export const useMcpServer = ({
         {
           onSuccess: () => {
             setSuccessData({
-              title: `MCP Server installed successfully on ${
-                clientTitle ?? clientName
-              }. You may need to restart your client to see the changes.`,
+              title: t("mcp.installedSuccessfully", {
+                client: clientTitle ?? clientName,
+              }),
+              list: [t("mcp.installRestartClient")],
             });
             setS((p) => ({
               ...p,
@@ -181,9 +184,9 @@ export const useMcpServer = ({
           onError: (e) => {
             const message = (e as { message?: string })?.message ?? String(e);
             setErrorData({
-              title: `Failed to install MCP Server on ${
-                clientTitle ?? clientName
-              }`,
+              title: t("mcp.installFailedTitle", {
+                client: clientTitle ?? clientName,
+              }),
               list: [message],
             });
             setS((p) => ({
@@ -194,7 +197,7 @@ export const useMcpServer = ({
         },
       );
     },
-    [patchInstallMCP, setSuccessData, setErrorData],
+    [patchInstallMCP, setSuccessData, setErrorData, t],
   );
 
   const handleOnNewValue = useCallback(

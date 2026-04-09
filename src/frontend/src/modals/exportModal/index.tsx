@@ -1,4 +1,5 @@
 import { forwardRef, type ReactNode, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { track } from "@/customization/utils/analytics";
 import useFlowStore from "@/stores/flowStore";
 import type { FlowType } from "@/types/flow";
@@ -6,11 +7,7 @@ import IconComponent from "../../components/common/genericIconComponent";
 import EditFlowSettings from "../../components/core/editFlowSettingsComponent";
 import { Checkbox } from "../../components/ui/checkbox";
 import { API_WARNING_NOTICE_ALERT } from "../../constants/alerts_constants";
-import {
-  ALERT_SAVE_WITH_API,
-  EXPORT_DIALOG_SUBTITLE,
-  SAVE_WITH_API_CHECKBOX,
-} from "../../constants/constants";
+
 import useAlertStore from "../../stores/alertStore";
 import { useDarkStore } from "../../stores/darkStore";
 import { downloadFlow, removeApiKeys } from "../../utils/reactflowUtils";
@@ -26,6 +23,7 @@ const ExportModal = forwardRef(
     },
     ref,
   ): JSX.Element => {
+    const { t } = useTranslation();
     const version = useDarkStore((state) => state.version);
     const setSuccessData = useAlertStore((state) => state.setSuccessData);
     const setErrorData = useAlertStore((state) => state.setErrorData);
@@ -86,7 +84,7 @@ const ExportModal = forwardRef(
               );
 
               setSuccessData({
-                title: "Flow exported successfully",
+                title: t("export.success"),
               });
               setOpen(false);
               track("Flow Exported", { flowId: currentFlow!.id });
@@ -94,15 +92,15 @@ const ExportModal = forwardRef(
           } catch (error: any) {
             const detail = error?.response?.data?.detail;
             setErrorData({
-              title: "Failed to export flow",
+              title: t("export.failed"),
               ...(detail ? { list: [detail] } : {}),
             });
           }
         }}
       >
         <BaseModal.Trigger asChild>{props.children ?? <></>}</BaseModal.Trigger>
-        <BaseModal.Header description={EXPORT_DIALOG_SUBTITLE}>
-          <span className="pr-2">Export</span>
+        <BaseModal.Header description={t("export.subtitle")}>
+          <span className="pr-2">{t("export.title")}</span>
           <IconComponent
             name="Download"
             className="h-6 w-6 pl-1 text-foreground"
@@ -127,17 +125,17 @@ const ExportModal = forwardRef(
               }}
             />
             <label htmlFor="terms" className="export-modal-save-api text-sm">
-              {SAVE_WITH_API_CHECKBOX}
+              {t("export.saveWithApiKeys")}
             </label>
           </div>
           <span className="mt-1 text-xs text-destructive">
-            {ALERT_SAVE_WITH_API}
+            {t("export.apiWarning")}
           </span>
         </BaseModal.Content>
 
         <BaseModal.Footer
           submit={{
-            label: "Export",
+            label: t("export.title"),
             loading: isBuilding,
             dataTestId: "modal-export-button",
           }}

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { mutateTemplate } from "@/CustomNodes/helpers/mutate-template";
 import type { handleOnNewValueType } from "@/CustomNodes/hooks/use-handle-new-value";
 import { ParameterRenderComponent } from "@/components/core/parameterRenderComponent";
@@ -40,6 +41,7 @@ export const NodeDialog: React.FC<NodeDialogProps> = ({
   name,
   nodeClass,
 }) => {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [fieldValues, setFieldValues] = useState<Record<string, string>>({});
 
@@ -153,10 +155,12 @@ export const NodeDialog: React.FC<NodeDialogProps> = ({
       const knowledgeBaseName =
         fieldValues["01_new_kb_name"] ||
         fieldValues["new_kb_name"] ||
-        "Knowledge Base";
+        t("nodeDialog.defaultKnowledgeBaseName");
 
       setSuccessData({
-        title: `Knowledge Base "${knowledgeBaseName}" created successfully!`,
+        title: t("nodeDialog.knowledgeCreatedSuccess", {
+          name: knowledgeBaseName,
+        }),
       });
 
       onCreated?.(knowledgeBaseName);
@@ -201,7 +205,7 @@ export const NodeDialog: React.FC<NodeDialogProps> = ({
 
     if (missingRequiredFields.length > 0) {
       handleErrorData({
-        title: "Missing required fields",
+        title: t("nodeDialog.missingRequiredFields"),
         list: missingRequiredFields,
       });
       return;
@@ -278,7 +282,7 @@ export const NodeDialog: React.FC<NodeDialogProps> = ({
 
         <DialogFooter className="px-5 pt-3">
           <Button variant="secondary" onClick={handleCloseDialog}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button
             variant="default"

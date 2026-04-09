@@ -1,6 +1,22 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
+
+jest.mock("react-i18next", () => ({
+  initReactI18next: { type: "3rdParty", init: jest.fn() },
+  useTranslation: () => ({
+    t: (key: string, options?: Record<string, unknown>) => {
+      const map: Record<string, string> = {
+        "sourceChunks.chunkLabel": "Chunk {{index}}",
+        "sourceChunks.chars": "{{count}} chars",
+      };
+      return (map[key] ?? key).replace(/\{\{(\w+)\}\}/g, (_, token: string) =>
+        String(options?.[token] ?? ""),
+      );
+    },
+    i18n: { changeLanguage: jest.fn() },
+  }),
+}));
 
 jest.mock("@/components/common/genericIconComponent", () => ({
   __esModule: true,
@@ -60,7 +76,7 @@ describe("ChunkCard", () => {
           onCopy={onCopy}
         />,
       );
-      await user.click(screen.getByRole("button"));
+      await user.click(screen.getByRole("button", { name: "Copy" }));
       expect(onCopy).toHaveBeenCalledWith("Copy this text");
     });
 
@@ -70,13 +86,15 @@ describe("ChunkCard", () => {
       const onCopy = jest.fn();
       render(<ChunkCard chunk={makeChunk()} index={1} onCopy={onCopy} />);
 
-      await user.click(screen.getByRole("button"));
+      await user.click(screen.getByRole("button", { name: "Copy" }));
 
       // Check icon should appear immediately after click
       expect(screen.getByTestId("icon-Check")).toBeInTheDocument();
 
       // After 2 seconds the copy icon should be restored
-      jest.advanceTimersByTime(2100);
+      act(() => {
+        jest.advanceTimersByTime(2100);
+      });
       await waitFor(() =>
         expect(screen.queryByTestId("icon-Check")).not.toBeInTheDocument(),
       );

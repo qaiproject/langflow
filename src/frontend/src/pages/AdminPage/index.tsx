@@ -1,5 +1,6 @@
 import { cloneDeep } from "lodash";
 import { useContext, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import PaginatorComponent from "@/components/common/paginatorComponent";
 import {
   useAddUser,
@@ -31,8 +32,6 @@ import {
   USER_EDIT_SUCCESS_ALERT,
 } from "../../constants/alerts_constants";
 import {
-  ADMIN_HEADER_DESCRIPTION,
-  ADMIN_HEADER_TITLE,
   PAGINATION_PAGE,
   PAGINATION_ROWS_COUNT,
   PAGINATION_SIZE,
@@ -45,6 +44,7 @@ import type { Users } from "../../types/api";
 import type { UserInputType } from "../../types/components";
 
 export default function AdminPage() {
+  const { t } = useTranslation();
   const [inputValue, setInputValue] = useState("");
 
   const [size, setPageSize] = useState(PAGINATION_SIZE);
@@ -258,29 +258,31 @@ export default function AdminPage() {
                 <IconComponent name="ChevronLeft" className="w-5" />
               </Button>
               <IconComponent name="Shield" className="w-6" />
-              {ADMIN_HEADER_TITLE}
+              {t("admin.title")}
             </span>
           </div>
           <span className="admin-page-description-text">
-            {ADMIN_HEADER_DESCRIPTION}
+            {t("admin.description")}
           </span>
           <div className="flex w-full justify-between">
             <div className="flex w-96 items-center gap-4">
               <Input
-                placeholder="Search Username"
+                placeholder={t("admin.searchUsername")}
                 value={inputValue}
                 onChange={(e) => handleFilterUsers(e.target.value)}
               />
               {inputValue.length > 0 ? (
-                <div
+                <button
+                  type="button"
                   className="cursor-pointer"
                   onClick={() => {
                     setInputValue("");
                     setFilterUserList(userList.current);
                   }}
+                  aria-label={t("admin.clearSearch")}
                 >
                   <IconComponent name="X" className="w-6 text-foreground" />
-                </div>
+                </button>
               ) : (
                 <div>
                   <IconComponent
@@ -292,17 +294,17 @@ export default function AdminPage() {
             </div>
             <div>
               <UserManagementModal
-                title="New User"
-                titleHeader={"Add a new user"}
-                cancelText="Cancel"
-                confirmationText="Save"
+                title={t("admin.newUser")}
+                titleHeader={t("admin.addNewUser")}
+                cancelText={t("common.cancel")}
+                confirmationText={t("common.save")}
                 icon={"UserPlus2"}
                 onConfirm={(index, user) => {
                   handleNewUser(user);
                 }}
                 asChild
               >
-                <Button variant="primary">New User</Button>
+                <Button variant="primary">{t("admin.newUser")}</Button>
               </UserManagementModal>
             </div>
           </div>
@@ -313,7 +315,7 @@ export default function AdminPage() {
           ) : userList.current.length === 0 && !isIdle ? (
             <>
               <div className="m-4 flex items-center justify-between text-sm">
-                No users registered.
+                {t("admin.noUsersRegistered")}
               </div>
             </>
           ) : (
@@ -331,12 +333,22 @@ export default function AdminPage() {
                     }
                   >
                     <TableRow>
-                      <TableHead className="h-10">Id</TableHead>
-                      <TableHead className="h-10">Username</TableHead>
-                      <TableHead className="h-10">Active</TableHead>
-                      <TableHead className="h-10">Superuser</TableHead>
-                      <TableHead className="h-10">Created At</TableHead>
-                      <TableHead className="h-10">Updated At</TableHead>
+                      <TableHead className="h-10">{t("admin.table.id")}</TableHead>
+                      <TableHead className="h-10">
+                        {t("admin.table.username")}
+                      </TableHead>
+                      <TableHead className="h-10">
+                        {t("admin.table.active")}
+                      </TableHead>
+                      <TableHead className="h-10">
+                        {t("admin.table.superuser")}
+                      </TableHead>
+                      <TableHead className="h-10">
+                        {t("admin.table.createdAt")}
+                      </TableHead>
+                      <TableHead className="h-10">
+                        {t("admin.table.updatedAt")}
+                      </TableHead>
                       <TableHead className="h-10 w-[100px] text-right"></TableHead>
                     </TableRow>
                   </TableHeader>
@@ -358,7 +370,7 @@ export default function AdminPage() {
                           </TableCell>
                           <TableCell className="relative left-1 truncate py-2 text-align-last-left">
                             {user.id === userData?.id ? (
-                              <ShadTooltip content="You cannot deactivate your own account">
+                              <ShadTooltip content={t("auth.deactivateOwnAccount")}>
                                 <div className="flex w-fit cursor-not-allowed opacity-50">
                                   <CheckBoxDiv checked={user.is_active} />
                                 </div>
@@ -366,11 +378,11 @@ export default function AdminPage() {
                             ) : (
                               <ConfirmationModal
                                 size="x-small"
-                                title="Edit"
+                                title={t("common.edit")}
                                 titleHeader={`${user.username}`}
-                                modalContentTitle="Attention!"
-                                cancelText="Cancel"
-                                confirmationText="Confirm"
+                                modalContentTitle={t("admin.attention")}
+                                cancelText={t("common.cancel")}
+                                confirmationText={t("common.confirm")}
                                 icon={"UserCog2"}
                                 data={user}
                                 index={index}
@@ -384,8 +396,7 @@ export default function AdminPage() {
                               >
                                 <ConfirmationModal.Content>
                                   <span>
-                                    Are you completely confident about the
-                                    changes you are making to this user?
+                                    {t("admin.editChangesConfirmation")}
                                   </span>
                                 </ConfirmationModal.Content>
                                 <ConfirmationModal.Trigger>
@@ -399,11 +410,11 @@ export default function AdminPage() {
                           <TableCell className="relative left-1 truncate py-2 text-align-last-left">
                             <ConfirmationModal
                               size="x-small"
-                              title="Edit"
+                              title={t("common.edit")}
                               titleHeader={`${user.username}`}
-                              modalContentTitle="Attention!"
-                              cancelText="Cancel"
-                              confirmationText="Confirm"
+                              modalContentTitle={t("admin.attention")}
+                              cancelText={t("common.cancel")}
+                              confirmationText={t("common.confirm")}
                               icon={"UserCog2"}
                               data={user}
                               index={index}
@@ -417,8 +428,7 @@ export default function AdminPage() {
                             >
                               <ConfirmationModal.Content>
                                 <span>
-                                  Are you completely confident about the changes
-                                  you are making to this user?
+                                  {t("admin.editChangesConfirmation")}
                                 </span>
                               </ConfirmationModal.Content>
                               <ConfirmationModal.Trigger>
@@ -445,10 +455,10 @@ export default function AdminPage() {
                           <TableCell className="flex w-[100px] py-2 text-right">
                             <div className="flex">
                               <UserManagementModal
-                                title="Edit"
+                                title={t("common.edit")}
                                 titleHeader={`${user.id}`}
-                                cancelText="Cancel"
-                                confirmationText="Save"
+                                cancelText={t("common.cancel")}
+                                confirmationText={t("common.save")}
                                 icon={"UserPlus2"}
                                 data={user}
                                 index={index}
@@ -456,7 +466,7 @@ export default function AdminPage() {
                                   handleEditUser(user.id, editUser);
                                 }}
                               >
-                                <ShadTooltip content="Edit" side="top">
+                                <ShadTooltip content={t("admin.editTooltip")} side="top">
                                   <IconComponent
                                     name="Pencil"
                                     className="h-4 w-4 cursor-pointer"
@@ -466,11 +476,11 @@ export default function AdminPage() {
 
                               <ConfirmationModal
                                 size="x-small"
-                                title="Delete"
-                                titleHeader="Delete User"
-                                modalContentTitle="Attention!"
-                                cancelText="Cancel"
-                                confirmationText="Delete"
+                                title={t("admin.deleteUserTitle")}
+                                titleHeader={t("admin.deleteUserHeader")}
+                                modalContentTitle={t("admin.attention")}
+                                cancelText={t("common.cancel")}
+                                confirmationText={t("common.delete")}
                                 icon={"UserMinus2"}
                                 data={user}
                                 index={index}
@@ -480,8 +490,7 @@ export default function AdminPage() {
                               >
                                 <ConfirmationModal.Content>
                                   <span>
-                                    Are you sure you want to delete this user?
-                                    This action cannot be undone.
+                                    {t("admin.deleteUserConfirmation")}
                                   </span>
                                 </ConfirmationModal.Content>
                                 <ConfirmationModal.Trigger>

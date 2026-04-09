@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import ShadTooltip from "@/components/common/shadTooltipComponent";
 import ForwardedIconComponent from "../../../../../../components/common/genericIconComponent";
 import { Button } from "../../../../../../components/ui/button";
@@ -8,6 +9,7 @@ const UploadFileButton = ({
   handleButtonClick,
   isBuilding,
 }) => {
+  const { t } = useTranslation();
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     handleButtonClick();
@@ -17,7 +19,7 @@ const UploadFileButton = ({
     <ShadTooltip
       styleClasses="z-50"
       side="right"
-      content="Attach image (png, jpg, jpeg)"
+      content={t("playground.attachImage")}
     >
       <div>
         <input

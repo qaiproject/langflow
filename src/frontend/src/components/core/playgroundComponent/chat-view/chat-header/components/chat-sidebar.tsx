@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import ShadTooltip from "@/components/common/shadTooltipComponent";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ export function ChatSidebar({
   onOpenLogs,
   onRenameSession,
 }: ChatSidebarProps) {
+  const { t } = useTranslation();
   const [openMenuSession, setOpenMenuSession] = useState<string | null>(null);
   const currentFlowId = useGetFlowId();
   const isShareablePlayground = useFlowStore((state) => state.playgroundPage);
@@ -48,11 +50,11 @@ export function ChatSidebar({
       <div className="flex flex-col">
         <div className="flex h-4 items-center justify-between">
           <div className="px-2 text-xs font-semibold leading-4 text-muted-foreground">
-            Sessions
+            {t("playground.sessions")}
           </div>
           <ShadTooltip
             styleClasses="z-50"
-            content="New Chat"
+            content={t("playground.newChat")}
             side={isShareablePlayground ? "bottom" : "top"}
           >
             <Button
@@ -71,7 +73,7 @@ export function ChatSidebar({
       </div>
       {sessions.length === 0 ? (
         <div className="p-4 text-sm text-muted-foreground">
-          No sessions yet.
+          {t("playground.noSessionsYet")}
         </div>
       ) : (
         <div className="flex flex-col gap-1">

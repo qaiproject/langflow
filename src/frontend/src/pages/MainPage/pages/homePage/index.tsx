@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import PaginatorComponent from "@/components/common/paginatorComponent";
 import CardsWrapComponent from "@/components/core/cardsWrapComponent";
@@ -22,6 +23,7 @@ import useFileDrop from "../../hooks/use-on-file-drop";
 import EmptyFolder from "../emptyFolder";
 
 const HomePage = ({ type }: { type: "flows" | "components" | "mcp" }) => {
+  const { t } = useTranslation();
   const [view, setView] = useState<"grid" | "list">(() => {
     const savedView = localStorage.getItem("view");
     return savedView === "grid" || savedView === "list" ? savedView : "list";
@@ -43,6 +45,12 @@ const HomePage = ({ type }: { type: "flows" | "components" | "mcp" }) => {
     folders.find((folder) => folder.id === folderId)?.name ??
     folders[0]?.name ??
     "";
+  const displayFolderName =
+    folderName === "Starter Project"
+      ? t("sidebar.starterProject")
+      : folderName === "New Project"
+        ? t("sidebar.newProject")
+        : folderName;
   const flows = useFlowsManagerStore((state) => state.flows);
 
   useEffect(() => {
@@ -248,7 +256,11 @@ const HomePage = ({ type }: { type: "flows" | "components" | "mcp" }) => {
   return (
     <CardsWrapComponent
       onFileDrop={flowType === "mcp" ? undefined : handleFileDrop}
-      dragMessage={`Drop your ${isEmptyFolder ? "flows or components" : flowType} here`}
+      dragMessage={
+        isEmptyFolder
+          ? t("mainPage.dropFlowsOrComponents")
+          : t("mainPage.dropTypeHere", { type: t(`mainPage.${flowType}`) })
+      }
     >
       <div
         className="flex h-full w-full flex-col overflow-y-auto"
@@ -259,7 +271,7 @@ const HomePage = ({ type }: { type: "flows" | "components" | "mcp" }) => {
           <div className="flex flex-1 flex-col justify-start p-4">
             <div className="flex h-full flex-col justify-start">
               <HeaderComponent
-                folderName={folderName}
+                folderName={displayFolderName}
                 flowType={flowType}
                 setFlowType={setFlowType}
                 view={view}
@@ -321,7 +333,9 @@ const HomePage = ({ type }: { type: "flows" | "components" | "mcp" }) => {
                     )
                   ) : (
                     <div className="pt-24 text-center text-sm text-secondary-foreground">
-                      {flowType} not supported
+                      {t("mainPage.notSupported", {
+                        type: t(`mainPage.${flowType}`),
+                      })}
                     </div>
                   )}
                 </div>

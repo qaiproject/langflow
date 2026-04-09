@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { ENABLE_KNOWLEDGE_BASES } from "@/customization/feature-flags";
 import BaseModal from "@/modals/baseModal";
 import useFlowsManagerStore from "@/stores/flowsManagerStore";
@@ -20,6 +21,7 @@ export default function GetStartedComponent({
   loading,
   onFlowCreating,
 }: GetStartedComponentProps) {
+  const { t } = useTranslation();
   const examples = useFlowsManagerStore((state) => state.examples);
 
   const filteredExamples = examples.filter((example) => {
@@ -57,8 +59,10 @@ export default function GetStartedComponent({
 
   return (
     <div className="flex flex-1 flex-col gap-4 md:gap-8">
-      <BaseModal.Header description="Start with templates showcasing Langflow's Prompting, RAG, and Agent use cases.">
-        Get started
+      <BaseModal.Header
+        description={t("templatesModal.getStartedDescription")}
+      >
+        {t("templatesModal.getStarted")}
       </BaseModal.Header>
       <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 lg:grid-cols-3">
         {cardData.map((card, index) => (

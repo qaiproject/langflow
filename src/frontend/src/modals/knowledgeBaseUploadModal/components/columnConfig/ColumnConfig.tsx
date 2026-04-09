@@ -1,5 +1,6 @@
 import type { AgGridReact } from "ag-grid-react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import { Button } from "@/components/ui/button";
 import TableModal from "@/modals/tableModal";
@@ -8,33 +9,33 @@ import { FormatterType } from "@/types/utils/functions";
 import { FormatColumns } from "@/utils/utils";
 import type { ColumnConfigRow } from "../../types";
 
-const COLUMN_CONFIG_COLUMNS: ColumnField[] = [
+const buildColumnConfigColumns = (t: (key: string) => string): ColumnField[] => [
   {
     name: "column_name",
-    display_name: "Column Name",
+    display_name: t("knowledgeUpload.columnName"),
     sortable: true,
     filterable: true,
     formatter: FormatterType.text,
-    description: "Name of the column in the source DataFrame",
+    description: t("knowledgeUpload.columnNameDescription"),
     edit_mode: "inline",
   },
   {
     name: "vectorize",
-    display_name: "Vectorize",
+    display_name: t("knowledgeUpload.vectorize"),
     sortable: false,
     filterable: false,
     formatter: FormatterType.boolean,
-    description: "Create embeddings for this column",
+    description: t("knowledgeUpload.vectorizeDescription"),
     default: false,
     edit_mode: "inline",
   },
   {
     name: "identifier",
-    display_name: "Identifier",
+    display_name: t("knowledgeUpload.identifier"),
     sortable: false,
     filterable: false,
     formatter: FormatterType.boolean,
-    description: "Use this column as unique identifier",
+    description: t("knowledgeUpload.identifierDescription"),
     default: false,
     edit_mode: "inline",
   },
@@ -49,7 +50,12 @@ export function ColumnConfig({
   columnConfig,
   onColumnConfigChange,
 }: ColumnConfigProps) {
-  const AgColumns = FormatColumns(COLUMN_CONFIG_COLUMNS);
+  const { t } = useTranslation();
+  const columnConfigColumns = useMemo(() => buildColumnConfigColumns(t), [t]);
+  const AgColumns = useMemo(
+    () => FormatColumns(columnConfigColumns),
+    [columnConfigColumns],
+  );
   const agGrid = useRef<AgGridReact>(null);
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
   const nextRowId = useRef(0);
@@ -135,7 +141,7 @@ export function ColumnConfig({
     setIsTableModalOpen(false);
   }
 
-  const editable = COLUMN_CONFIG_COLUMNS.map((column) => ({
+  const editable = columnConfigColumns.map((column) => ({
     field: column.name,
     onUpdate: () => syncFromGrid(),
     editableCell: true,
@@ -150,8 +156,8 @@ export function ColumnConfig({
         }
         setIsTableModalOpen(open);
       }}
-      tableTitle="Column Configuration"
-      description="Configure column behavior for the knowledge base."
+      tableTitle={t("knowledgeUpload.columnConfiguration")}
+      description={t("knowledgeUpload.columnConfigurationDescription")}
       ref={agGrid}
       onSelectionChanged={() => {}}
       rowSelection="multiple"
@@ -177,7 +183,7 @@ export function ColumnConfig({
       <Button variant="outline" className="w-full justify-center">
         <span className="flex items-center gap-2">
           <ForwardedIconComponent name="Columns" className="h-4 w-4" />
-          Open Table
+          {t("knowledgeUpload.openTable")}
         </span>
       </Button>
     </TableModal>

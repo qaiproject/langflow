@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { ICON_STROKE_WIDTH } from "@/constants/constants";
 import { useGetFilesV2 } from "@/controllers/API/queries/file-management";
 import { usePostUploadFile } from "@/controllers/API/queries/files/use-post-upload-file";
@@ -35,6 +36,7 @@ export default function InputFileComponent({
 }: InputProps<string, FileComponentType> & {
   allowFolderSelection?: boolean;
 }): JSX.Element {
+  const { t } = useTranslation();
   const currentFlowId = useFlowsManagerStore((state) => state.currentFlowId);
   const setErrorData = useAlertStore((state) => state.setErrorData);
   const { validateFileSize } = useFileSizeValidator();
@@ -102,7 +104,7 @@ export default function InputFileComponent({
                       onError: (error) => {
                         console.error(CONSOLE_ERROR_MSG);
                         setErrorData({
-                          title: "Error uploading file",
+                          title: t("filesPage.errorUploadingFile"),
                           list: [error.response?.data?.detail],
                         });
                       },
@@ -291,7 +293,11 @@ export default function InputFileComponent({
                             strokeWidth={ICON_STROKE_WIDTH}
                           />
                         ) : (
-                          <div>Select file{isList ? "s" : ""}</div>
+                          <div>
+                            {isList
+                              ? t("fileManager.selectFiles")
+                              : t("fileManager.selectFile")}
+                          </div>
                         )}
                       </Button>
                     </div>
@@ -310,7 +316,7 @@ export default function InputFileComponent({
                     !value && "text-placeholder-foreground",
                     editNode && "h-6",
                   )}
-                  value={value || "Upload a file..."}
+                  value={value || placeholder || t("chatComponent.uploadFile")}
                   readOnly
                   disabled={isDisabled}
                   onClick={handleButtonClick}

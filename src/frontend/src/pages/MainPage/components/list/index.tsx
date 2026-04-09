@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import useDragStart from "@/components/core/cardComponent/hooks/use-on-drag-start";
@@ -36,6 +37,7 @@ const ListComponent = ({
   setSelected: (selected: boolean) => void;
   shiftPressed: boolean;
 }) => {
+  const { t } = useTranslation();
   const navigate = useCustomNavigate();
   const [openDelete, setOpenDelete] = useState(false);
   const setSuccessData = useAlertStore((state) => state.setSuccessData);
@@ -64,13 +66,13 @@ const ListComponent = ({
     deleteFlow({ id: [flowData.id] })
       .then(() => {
         setSuccessData({
-          title: "Selected items deleted successfully",
+          title: t("mainPage.selectedItemsDeleted"),
         });
       })
       .catch(() => {
         setErrorData({
-          title: "Error deleting items",
-          list: ["Please try again"],
+          title: t("mainPage.errorDeletingItems"),
+          list: [t("common.retry")],
         });
       });
   };
@@ -91,7 +93,11 @@ const ListComponent = ({
   const handleExport = () => {
     if (flowData.is_component) {
       downloadFlow(flowData, flowData.name, flowData.description);
-      setSuccessData({ title: `${flowData.name} exported successfully` });
+      setSuccessData({
+        title: t("mainPage.itemExportedSuccessfully", {
+          name: flowData.name,
+        }),
+      });
     } else {
       setOpenExportModal(true);
     }
@@ -170,7 +176,9 @@ const ListComponent = ({
               </div>
               <div className="flex min-w-0 flex-shrink text-xs text-muted-foreground">
                 <span className="truncate">
-                  Edited {timeElapsed(flowData.updated_at)} ago
+                  {t("mainPage.editedAgo", {
+                    time: timeElapsed(flowData.updated_at),
+                  })}
                 </span>
               </div>
             </div>
@@ -216,7 +224,11 @@ const ListComponent = ({
           setOpen={setOpenDelete}
           onConfirm={handleDelete}
           description={descriptionModal}
-          note={!flowData.is_component ? "and its message history" : ""}
+          note={
+            !flowData.is_component
+              ? t("mainPage.deleteNote", { count: 1 })
+              : ""
+          }
         />
       )}
       <ExportModal

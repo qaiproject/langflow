@@ -1,6 +1,6 @@
 import { memo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ForwardedIconComponent } from "@/components/common/genericIconComponent";
-import { EMPTY_INPUT_SEND_MESSAGE } from "@/constants/constants";
 import { useUpdateMessage } from "@/controllers/API/queries/messages";
 import { CustomProfileIcon } from "@/customization/components/custom-profile-icon";
 import useAlertStore from "@/stores/alertStore";
@@ -14,6 +14,7 @@ import { EditMessageButton } from "./message-options";
 
 export const UserMessage = memo(
   ({ chat, lastMessage, updateChat, playgroundPage }: chatMessagePropsType) => {
+    const { t } = useTranslation();
     const setErrorData = useAlertStore((state) => state.setErrorData);
     const [editMessage, setEditMessage] = useState(false);
     const flow_id = useFlowsManagerStore((state) => state.currentFlowId);
@@ -53,7 +54,7 @@ export const UserMessage = memo(
           },
           onError: () => {
             setErrorData({
-              title: "Error updating messages.",
+              title: t("playground.messagesUpdateError"),
             });
           },
         },
@@ -87,7 +88,7 @@ export const UserMessage = memo(
         {
           onError: () => {
             setErrorData({
-              title: "Error updating messages.",
+              title: t("playground.messagesUpdateError"),
             });
           },
         },
@@ -96,7 +97,7 @@ export const UserMessage = memo(
 
     const editedFlag = chat.edit ? (
       <div className="mt-2 text-xs text-muted-foreground text-right">
-        (Edited)
+        ({t("messageOptions.edited")})
       </div>
     ) : null;
 
@@ -156,10 +157,12 @@ export const UserMessage = memo(
                           className={cn(
                             "w-full items-baseline whitespace-pre-wrap break-words text-sm font-normal",
                             isEmpty ? "text-muted-foreground" : "text-primary",
-                          )}
-                          data-testid={`chat-message-${chat.sender_name}-${chatMessage}`}
-                        >
-                          {isEmpty ? EMPTY_INPUT_SEND_MESSAGE : decodedMessage}
+                        )}
+                        data-testid={`chat-message-${chat.sender_name}-${chatMessage}`}
+                      >
+                          {isEmpty
+                            ? t("playground.emptyInputMessage")
+                            : decodedMessage}
                           {editedFlag}
                         </div>
                       )}

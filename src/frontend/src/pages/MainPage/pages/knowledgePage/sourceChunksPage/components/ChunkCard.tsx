@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ interface ChunkCardProps {
 }
 
 const ChunkCard = ({ chunk, index, onCopy }: ChunkCardProps) => {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
@@ -31,23 +33,41 @@ const ChunkCard = ({ chunk, index, onCopy }: ChunkCardProps) => {
     setTimeout(() => setIsCopied(false), 2000);
   };
 
+  const handleToggleExpanded = () => {
+    if (isOverflowing) {
+      setIsExpanded(!isExpanded);
+    }
+  };
+
   return (
     <div
       className={cn(
         "rounded-lg border border-muted bg-muted p-3 transition-all duration-200",
         isOverflowing && "cursor-pointer",
       )}
-      onClick={() => isOverflowing && setIsExpanded(!isExpanded)}
+      onClick={handleToggleExpanded}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleToggleExpanded();
+        }
+      }}
+      role="button"
+      tabIndex={0}
+      aria-disabled={!isOverflowing}
+      aria-expanded={isOverflowing ? isExpanded : undefined}
     >
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-sm font-medium">Chunk {index}</span>
+          <span className="text-sm font-medium">
+            {t("sourceChunks.chunkLabel", { index })}
+          </span>
           <Badge
             variant="secondary"
             size="sq"
             className="text-xs text-muted-foreground"
           >
-            {chunk.char_count} chars
+            {t("sourceChunks.chars", { count: chunk.char_count })}
           </Badge>
           <Button
             variant="ghost"

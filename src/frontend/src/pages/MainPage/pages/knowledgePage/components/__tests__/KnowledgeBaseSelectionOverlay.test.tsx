@@ -16,7 +16,10 @@ jest.mock("../KnowledgeBaseSelectionOverlay", () => {
     onDelete?: () => void;
   }) => {
     const isVisible = selectedFiles.length > 0;
-    const pluralSuffix = quantitySelected > 1 ? "s" : "";
+    const deleteDescription =
+      quantitySelected === 1
+        ? "1 knowledge base"
+        : `${quantitySelected} knowledge bases`;
 
     const handleDelete = () => {
       if (onDelete) {
@@ -36,9 +39,7 @@ jest.mock("../KnowledgeBaseSelectionOverlay", () => {
         <button data-testid="clear-selection-btn" onClick={onClearSelection}>
           Clear
         </button>
-        <span data-testid="delete-description">
-          knowledge base{pluralSuffix}
-        </span>
+        <span data-testid="delete-description">{deleteDescription}</span>
       </div>
     );
   };
@@ -121,7 +122,7 @@ describe("KnowledgeBaseSelectionOverlay", () => {
       "1 selected",
     );
     expect(screen.getByTestId("delete-description")).toHaveTextContent(
-      "knowledge base",
+      "1 knowledge base",
     );
   });
 
@@ -139,7 +140,7 @@ describe("KnowledgeBaseSelectionOverlay", () => {
       "2 selected",
     );
     expect(screen.getByTestId("delete-description")).toHaveTextContent(
-      "knowledge bases",
+      "2 knowledge bases",
     );
   });
 

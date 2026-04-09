@@ -1,6 +1,7 @@
 //import LangflowLogoColor from "@/assets/LangflowLogocolor.svg?react";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import ThemeButtons from "@/components/core/appHeaderComponent/components/ThemeButtons";
 import { useGetMessagesQuery } from "@/controllers/API/queries/messages";
@@ -38,6 +39,7 @@ export default function IOModal({
   canvasOpen,
   playgroundPage,
 }: IOModalPropsType): JSX.Element {
+  const { t } = useTranslation();
   const setIOModalOpen = useFlowsManagerStore((state) => state.setIOModalOpen);
   const inputs = useFlowStore((state) => state.inputs);
   const outputs = useFlowStore((state) => state.outputs);
@@ -83,7 +85,8 @@ export default function IOModal({
   const [visibleSession, setvisibleSession] = useState<string | undefined>(
     currentFlowId,
   );
-  const PlaygroundTitle = playgroundPage && flowName ? flowName : "Playground";
+  const PlaygroundTitle =
+    playgroundPage && flowName ? flowName : t("playground.title");
 
   const {
     data: sessionsFromDb,
@@ -143,7 +146,7 @@ export default function IOModal({
           }
 
           setSuccessData({
-            title: "Session deleted successfully.",
+            title: t("playground.sessionDeletedSuccess"),
           });
         },
         onError: () => {
@@ -153,7 +156,7 @@ export default function IOModal({
           }
 
           setErrorData({
-            title: "Error deleting session.",
+            title: t("playground.sessionDeleteError"),
           });
         },
       },
@@ -391,7 +394,7 @@ export default function IOModal({
                   <ShadTooltip
                     styleClasses="z-50"
                     side="right"
-                    content="Hide sidebar"
+                    content={t("playground.hideSidebar")}
                   >
                     <Button
                       variant="ghost"
@@ -420,7 +423,7 @@ export default function IOModal({
                 {sidebarOpen && showPublishOptions && (
                   <div className="absolute bottom-2 left-0 flex w-full flex-col gap-8 border-t border-border px-2 py-4 transition-all">
                     <div className="flex items-center justify-between px-2">
-                      <div className="text-sm">Theme</div>
+                      <div className="text-sm">{t("menu.theme")}</div>
                       <ThemeButtons />
                     </div>
                     <Button
@@ -429,7 +432,9 @@ export default function IOModal({
                       className="w-full !rounded-xl shadow-lg"
                     >
                       <LangflowLogoColor />
-                      <div className="text-sm">Built with Langflow</div>
+                      <div className="text-sm">
+                        {t("playground.builtWithLangflow")}
+                      </div>
                     </Button>
                   </div>
                 )}
@@ -440,7 +445,7 @@ export default function IOModal({
                 <ShadTooltip
                   styleClasses="z-50"
                   side="right"
-                  content="Built with Langflow"
+                  content={t("playground.builtWithLangflow")}
                 >
                   <Button
                     variant="primary"

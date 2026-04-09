@@ -3,6 +3,24 @@ import { act, fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
 import KnowledgeBaseEmptyState from "../KnowledgeBaseEmptyState";
 
+jest.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key: string, options?: Record<string, unknown>) => {
+      const map: Record<string, string> = {
+        "knowledge.emptyTitle": "No knowledge bases",
+        "knowledge.emptyDescription":
+          "Create powerful AI experiences by connecting your documents to intelligent workflows.",
+        "knowledge.addKnowledge": "Add Knowledge",
+        "knowledge.created": 'Knowledge base "{{name}}" created',
+      };
+      return (map[key] ?? key).replace(/\{\{(\w+)\}\}/g, (_, token: string) =>
+        String(options?.[token] ?? ""),
+      );
+    },
+    i18n: { changeLanguage: jest.fn() },
+  }),
+}));
+
 // Mock dependencies
 jest.mock("@/stores/alertStore", () => ({
   __esModule: true,

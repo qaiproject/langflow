@@ -4,6 +4,40 @@ import userEvent from "@testing-library/user-event";
 import React from "react";
 import type { KnowledgeBaseInfo } from "@/controllers/API/queries/knowledge-bases/use-get-knowledge-bases";
 
+jest.mock("react-i18next", () => ({
+  initReactI18next: { type: "3rdParty", init: jest.fn() },
+  useTranslation: () => ({
+    t: (key: string, options?: Record<string, unknown>) => {
+      const map: Record<string, string> = {
+        "common.delete": "Delete",
+        "knowledge.loading": "Loading Knowledge Bases...",
+        "knowledge.loadError": "Failed to load knowledge bases",
+        "knowledge.unknownError": "An unknown error occurred",
+        "knowledge.addKnowledge": "Add Knowledge",
+        "knowledge.searchPlaceholder": "Search knowledge bases...",
+        "knowledge.deleteSingleDescription": 'knowledge base "{{name}}"',
+        "knowledge.deleteBulkDescription_one": "{{count}} knowledge base",
+        "knowledge.deleteBulkDescription_other": "{{count}} knowledge bases",
+        "knowledge.skipIngestingNote_one":
+          "{{count}} ingesting knowledge base will be skipped",
+        "knowledge.skipIngestingNote_other":
+          "{{count}} ingesting knowledge bases will be skipped",
+      };
+      const pluralKey =
+        options?.count === 1 && map[`${key}_one`]
+          ? `${key}_one`
+          : map[`${key}_other`]
+            ? `${key}_other`
+            : key;
+      return (map[pluralKey] ?? map[key] ?? key).replace(
+        /\{\{(\w+)\}\}/g,
+        (_, token: string) => String(options?.[token] ?? ""),
+      );
+    },
+    i18n: { changeLanguage: jest.fn() },
+  }),
+}));
+
 // ── Heavy / external dependency mocks ────────────────────────────────────────
 
 jest.mock(

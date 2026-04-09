@@ -1,5 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
+import i18n from "@/i18n";
 import type { KnowledgeBaseInfo } from "@/controllers/API/queries/knowledge-bases/use-get-knowledge-bases";
 import type { KnowledgeBaseFormData } from "@/modals/knowledgeBaseUploadModal/KnowledgeBaseUploadModal";
 
@@ -46,8 +47,10 @@ export const useOptimisticKnowledgeBase = () => {
             dir_name: dirName,
             name: submitted.sourceName,
             embedding_provider:
-              submitted.embeddingModel?.[0]?.provider || "Unknown",
-            embedding_model: submitted.embeddingModel?.[0]?.id || "Unknown",
+              submitted.embeddingModel?.[0]?.provider ||
+              i18n.t("knowledge.unknown"),
+            embedding_model:
+              submitted.embeddingModel?.[0]?.id || i18n.t("knowledge.unknown"),
             size: 0,
             words: 0,
             characters: 0,

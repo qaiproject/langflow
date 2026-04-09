@@ -1,4 +1,4 @@
-import { ENABLE_VOICE_ASSISTANT } from "@/customization/feature-flags";
+import { useTranslation } from "react-i18next";
 import type { FilePreviewType } from "@/types/components";
 import FilePreviewDisplay from "../../utils/file-preview-display";
 import type { AudioRecordingState } from "../hooks/use-audio-recording";
@@ -44,6 +44,7 @@ const InputWrapper = ({
   onStopRecording,
   isAudioSupported,
 }: InputWrapperProps) => {
+  const { t } = useTranslation();
   const classNameFilePreview = `flex w-full items-center gap-2 py-2 overflow-auto`;
 
   const onClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -78,7 +79,7 @@ const InputWrapper = ({
         {/* Text input area */}
         <div className="w-full">
           <TextAreaWrapper
-            CHAT_INPUT_PLACEHOLDER={"Send a message"}
+            CHAT_INPUT_PLACEHOLDER={t("playground.sendMessagePlaceholder")}
             isBuilding={isBuilding}
             checkSendingOk={checkSendingOk}
             send={send}

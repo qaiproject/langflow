@@ -1,5 +1,6 @@
 import { useIsFetching, useIsMutating } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useLocation, useParams } from "react-router-dom";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import {
@@ -60,6 +61,7 @@ const SideBarFoldersButtonsComponent = ({
   handleDeleteFolder,
   handleFilesClick,
 }: SideBarFoldersButtonsComponentProps) => {
+  const { t } = useTranslation();
   const location = useLocation();
   const pathname = location.pathname;
   const folders = useFolderStore((state) => state.folders);
@@ -140,7 +142,7 @@ const SideBarFoldersButtonsComponent = ({
             uploadFlow({ files })
               .then(() => {
                 setSuccessData({
-                  title: "Uploaded successfully",
+                  title: t("sidebar.uploadedSuccessfully"),
                 });
               })
               .catch((error) => {
@@ -160,13 +162,13 @@ const SideBarFoldersButtonsComponent = ({
                 {
                   onSuccess: () => {
                     setSuccessData({
-                      title: "Project uploaded successfully.",
+                      title: t("sidebar.projectUploadedSuccessfully"),
                     });
                   },
                   onError: (err) => {
                     console.error(err);
                     setErrorData({
-                      title: `Error on uploading your project, try dragging it into an existing project.`,
+                      title: t("sidebar.projectUploadError"),
                       list: [err["response"]["data"]["message"]],
                     });
                   },
@@ -195,7 +197,7 @@ const SideBarFoldersButtonsComponent = ({
         },
         onError: (e) => {
           setErrorData({
-            title: `An error occurred while downloading your project.`,
+            title: t("sidebar.downloadProjectError"),
           });
         },
       },
@@ -206,7 +208,7 @@ const SideBarFoldersButtonsComponent = ({
     mutateAddFolder(
       {
         data: {
-          name: "New Project",
+          name: t("sidebar.newProject"),
           parent_id: null,
           description: "",
         },
@@ -371,6 +373,16 @@ const SideBarFoldersButtonsComponent = ({
     _navigate("/assets/files");
   };
 
+  const getDisplayFolderName = (name: string) => {
+    if (name === "Starter Project") {
+      return t("sidebar.starterProject");
+    }
+    if (name === "New Project") {
+      return t("sidebar.newProject");
+    }
+    return name;
+  };
+
   const handleKnowledgeNavigation = () => {
     _navigate("/assets/knowledge-bases");
   };
@@ -395,7 +407,7 @@ const SideBarFoldersButtonsComponent = ({
               {!loading ? (
                 folders.length === 0 ? (
                   <div className="px-2 py-5 text-center text-sm text-muted-foreground">
-                    Start creating a project or flow
+                    {t("sidebar.startCreatingProjectOrFlow")}
                   </div>
                 ) : (
                   folders.map((item, index) => {
@@ -447,7 +459,7 @@ const SideBarFoldersButtonsComponent = ({
                                   />
                                 ) : (
                                   <span className="block w-0 grow truncate text-sm opacity-100">
-                                    {item.name}
+                                    {getDisplayFolderName(item.name)}
                                   </span>
                                 )}
                               </div>
@@ -503,7 +515,7 @@ const SideBarFoldersButtonsComponent = ({
                 className="text-sm"
               >
                 <ForwardedIconComponent name="Library" className="h-4 w-4" />
-                Knowledge
+                {t("sidebar.knowledge")}
               </SidebarMenuButton>
             )}
             <SidebarMenuButton
@@ -512,7 +524,7 @@ const SideBarFoldersButtonsComponent = ({
               className="text-sm"
             >
               <ForwardedIconComponent name="File" className="h-4 w-4" />
-              My Files
+              {t("sidebar.myFiles")}
             </SidebarMenuButton>
           </div>
         </SidebarFooter>

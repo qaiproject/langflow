@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import ShortUniqueId from "short-unique-id";
 import {
   ALLOWED_IMAGE_INPUT_EXTENSIONS,
@@ -33,6 +34,7 @@ export default function ChatInput({
   isDragging,
   sendMessage,
 }: ChatInputProps): JSX.Element {
+  const { t } = useTranslation();
   const currentFlowId = useFlowsManagerStore((state) => state.currentFlowId);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const setErrorData = useAlertStore((state) => state.setErrorData);
@@ -66,11 +68,11 @@ export default function ChatInput({
   const handleAudioError = useCallback(
     (error: string) => {
       setErrorData({
-        title: "Voice Input Error",
+        title: t("playground.voiceInputError"),
         list: [error],
       });
     },
-    [setErrorData],
+    [setErrorData, t],
   );
 
   const {
@@ -123,7 +125,7 @@ export default function ChatInput({
         !ALLOWED_IMAGE_INPUT_EXTENSIONS.includes(fileExtension)
       ) {
         setErrorData({
-          title: "Error uploading file",
+          title: t("filesPage.errorUploadingFile"),
           list: [FS_ERROR_TEXT, SN_ERROR_TEXT],
         });
         return;
@@ -160,7 +162,7 @@ export default function ChatInput({
               return newFiles;
             });
             setErrorData({
-              title: "Error uploading file",
+              title: t("filesPage.errorUploadingFile"),
               list: [error.response?.data?.detail],
             });
           },

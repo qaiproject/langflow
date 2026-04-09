@@ -1,6 +1,7 @@
 import IconComponent, {
   ForwardedIconComponent,
 } from "../../../../../../components/common/genericIconComponent";
+import { useTranslation } from "react-i18next";
 import { Skeleton } from "../../../../../../components/ui/skeleton";
 import formatFileName from "../utils/format-file-name";
 
@@ -17,6 +18,7 @@ export default function FilePreview({
   error: boolean;
   onDelete: () => void;
 }) {
+  const { t } = useTranslation();
   const fileType = file.type.toLowerCase();
   const isImage = supImgFiles.some((type) => fileType.includes(type));
 
@@ -58,7 +60,7 @@ export default function FilePreview({
           </div>
         )
       ) : error ? (
-        <div>Error...</div>
+        <div>{t("filePreview.error")}</div>
       ) : (
         <div
           className={`relative mt-2 ${
@@ -68,7 +70,7 @@ export default function FilePreview({
           {isImage ? (
             <img
               src={URL.createObjectURL(file)}
-              alt="file"
+              alt={t("filePreview.fileAlt")}
               className="block h-full w-full rounded-md border border-border"
             />
           ) : (
@@ -76,7 +78,7 @@ export default function FilePreview({
               <ForwardedIconComponent name="File" className="h-8 w-8" />
               <div className="flex flex-col">
                 <span className="font-bold">{formatFileName(file.name)}</span>
-                <span>File</span>
+                <span>{t("filePreview.file")}</span>
               </div>
             </div>
           )}

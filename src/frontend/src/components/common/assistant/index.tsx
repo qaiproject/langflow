@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import langflowLogo from "@/assets/qosmo_mini.svg";
 import { handleOnNewValueType } from "@/CustomNodes/hooks/use-handle-new-value";
 import { useGetSystemMessageGenQuery } from "@/controllers/API/queries/assistant";
 import { useGetFlowId } from "@/modals/IOModal/hooks/useGetFlowId";
 import useAssistantManagerStore from "@/stores/assistantManagerStore";
-import { useFolderStore } from "@/stores/foldersStore";
 import { targetHandleType } from "@/types/flow";
 import ForwardedIconComponent from "../genericIconComponent";
 
@@ -22,12 +21,10 @@ export const AssistantButton: React.FC<AssistantButtonProps> = ({
   inputValue,
   handleOnNewValue,
 }) => {
+  const { t } = useTranslation();
   const { assistantSidebarOpen, setAssistantSidebarOpen, setSelectedCompData } =
     useAssistantManagerStore();
   const flowId = useGetFlowId();
-  const { folderId } = useParams();
-  const myCollectionId = useFolderStore((state) => state.myCollectionId);
-  const projectId = folderId ?? myCollectionId ?? "";
 
   // timer
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -140,7 +137,7 @@ export const AssistantButton: React.FC<AssistantButtonProps> = ({
     <div className="relative flex items-center">
       <button
         onClick={onButtonClick}
-        title="Langflow assistant"
+        title={t("assistant.title")}
         className={getButtonClassName()}
       >
         {isFetching ? (
@@ -153,7 +150,7 @@ export const AssistantButton: React.FC<AssistantButtonProps> = ({
         ) : (
           <img
             src={langflowLogo}
-            alt="Langflow logo"
+            alt={t("auth.langflowLogo")}
             className={getIconClassName()}
           />
         )}
