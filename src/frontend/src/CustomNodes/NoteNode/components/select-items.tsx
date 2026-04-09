@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { useTranslation } from "react-i18next";
 import { ForwardedIconComponent } from "@/components/common/genericIconComponent";
 import {
   SelectContentWithoutPortal,
@@ -8,14 +9,17 @@ import ToolbarSelectItem from "@/pages/FlowPage/components/nodeToolbarComponent/
 import type { NoteDataType } from "@/types/flow";
 
 export const SelectItems = memo(
-  ({ shortcuts, data }: { shortcuts: any[]; data: NoteDataType }) => (
-    <SelectContentWithoutPortal>
+  ({ shortcuts, data }: { shortcuts: any[]; data: NoteDataType }) => {
+    const { t } = useTranslation();
+
+    return (
+      <SelectContentWithoutPortal>
       <SelectItem value="duplicate">
         <ToolbarSelectItem
           shortcut={
             shortcuts.find((obj) => obj.name === "Duplicate")?.shortcut!
           }
-          value="Duplicate"
+          value={t("shortcuts.items.duplicate")}
           icon="Copy"
           dataTestId="copy-button-modal"
         />
@@ -23,7 +27,7 @@ export const SelectItems = memo(
       <SelectItem value="copy">
         <ToolbarSelectItem
           shortcut={shortcuts.find((obj) => obj.name === "Copy")?.shortcut!}
-          value="Copy"
+          value={t("shortcuts.items.copy")}
           icon="Clipboard"
           dataTestId="copy-button-modal"
         />
@@ -34,7 +38,7 @@ export const SelectItems = memo(
       >
         <ToolbarSelectItem
           shortcut={shortcuts.find((obj) => obj.name === "Docs")?.shortcut!}
-          value="Docs"
+          value={t("shortcuts.items.docs")}
           icon="FileText"
           dataTestId="docs-button-modal"
         />
@@ -45,7 +49,7 @@ export const SelectItems = memo(
             name="Trash2"
             className="relative top-0.5 mr-2 h-4 w-4"
           />
-          <span>Delete</span>
+          <span>{t("common.delete")}</span>
           <span className="absolute right-2 top-2 flex items-center justify-center rounded-sm px-1 py-[0.2]">
             <ForwardedIconComponent
               name="Delete"
@@ -54,8 +58,9 @@ export const SelectItems = memo(
           </span>
         </div>
       </SelectItem>
-    </SelectContentWithoutPortal>
-  ),
+      </SelectContentWithoutPortal>
+    );
+  },
 );
 
 SelectItems.displayName = "SelectItems";

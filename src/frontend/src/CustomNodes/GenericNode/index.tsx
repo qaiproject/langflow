@@ -6,6 +6,7 @@ import { useShallow } from "zustand/react/shallow";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import { usePostValidateComponentCode } from "@/controllers/API/queries/nodes/use-post-validate-component-code";
 import { CustomNodeStatus } from "@/customization/components/custom-NodeStatus";
+import i18n from "@/i18n";
 import UpdateComponentModal from "@/modals/updateComponentModal";
 import { useAlternate } from "@/shared/hooks/use-alternate";
 import type { FlowStoreType } from "@/types/zustand/flow";
@@ -111,6 +112,14 @@ function GenericNode({
   );
 
   const showNode = data.showNode ?? true;
+  const isChatInputNode =
+    data.type === "ChatInput" || data.node?.display_name === "Chat Input";
+  const translatedDisplayName = isChatInputNode
+    ? i18n.t("chatComponent.title")
+    : data.node?.display_name;
+  const translatedDescription = isChatInputNode
+    ? i18n.t("chatComponent.description")
+    : data.node?.description;
 
   const getValidationStatus = useCallback((data) => {
     setValidationStatus(data);
@@ -151,9 +160,9 @@ function GenericNode({
 
   if (!data.node!.template) {
     setErrorData({
-      title: `Error in component ${data.node!.display_name}`,
+      title: `Error in component ${translatedDisplayName ?? data.node!.display_name}`,
       list: [
-        `The component ${data.node!.display_name} has no template.`,
+        `The component ${translatedDisplayName ?? data.node!.display_name} has no template.`,
         `Please contact the developer of the component to fix this issue.`,
       ],
     });
@@ -352,8 +361,8 @@ function GenericNode({
     editNameDescription && hasChangedNodeDescription;
 
   const hasDescription = useMemo(() => {
-    return data.node?.description && data.node?.description !== "";
-  }, [data.node?.description]);
+    return translatedDescription && translatedDescription !== "";
+  }, [translatedDescription]);
 
   const selectedNodesCount = useMemo(() => {
     return useFlowStore.getState().nodes.filter((node) => node.selected).length;
@@ -544,7 +553,7 @@ function GenericNode({
               />
               <div className="ml-3 flex flex-1 overflow-hidden">
                 <MemoizedNodeName
-                  display_name={data.node?.display_name}
+                  display_name={translatedDisplayName}
                   nodeId={data.id}
                   selected={selected}
                   showNode={showNode}
@@ -589,7 +598,7 @@ function GenericNode({
               data={data}
               frozen={data.node?.frozen}
               showNode={showNode}
-              display_name={data.node?.display_name!}
+              display_name={translatedDisplayName ?? data.node?.display_name!}
               nodeId={data.id}
               selected={selected}
               setBorderColor={setBorderColor}
@@ -604,7 +613,7 @@ function GenericNode({
           {showNode && (hasDescription || editNameDescription) && (
             <div className="px-4 pb-3">
               <MemoizedNodeDescription
-                description={data.node?.description}
+                description={translatedDescription}
                 charLimit={1000}
                 mdClassName={"dark:prose-invert"}
                 nodeId={data.id}

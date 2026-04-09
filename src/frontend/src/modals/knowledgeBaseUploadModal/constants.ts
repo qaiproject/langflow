@@ -1,14 +1,21 @@
+import type { TFunction } from "i18next";
 import type { WizardStep } from "./types";
 
-export const STEP_TITLES: Record<WizardStep, string> = {
-  1: "Create Knowledge Base",
-  2: "Review & Build",
+export const STEP_TITLE_KEYS: Record<WizardStep, string> = {
+  1: "knowledgeUpload.stepTitleCreate",
+  2: "knowledgeUpload.stepTitleReview",
 };
 
-export const STEP_DESCRIPTIONS: Record<WizardStep, string> = {
-  1: "Name your knowledge base, upload sources, and select an embedding model",
-  2: "Preview how your files will be chunked and confirm your settings",
+export const STEP_DESCRIPTION_KEYS: Record<WizardStep, string> = {
+  1: "knowledgeUpload.stepDescriptionCreate",
+  2: "knowledgeUpload.stepDescriptionReview",
 };
+
+export const getStepTitle = (t: TFunction, step: WizardStep): string =>
+  t(STEP_TITLE_KEYS[step]);
+
+export const getStepDescription = (t: TFunction, step: WizardStep): string =>
+  t(STEP_DESCRIPTION_KEYS[step]);
 
 export const DEFAULT_CHUNK_SIZE = 100;
 export const DEFAULT_CHUNK_OVERLAP = 0;

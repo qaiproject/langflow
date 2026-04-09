@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import i18n from "@/i18n";
 import AudioButton from "../audio-button";
 
 // Mock dependencies
@@ -32,6 +33,7 @@ jest.mock("@/components/ui/button", () => ({
     onClick,
     disabled,
     className,
+    unstyled: _unstyled,
     ...props
   }: {
     children: React.ReactNode;
@@ -77,7 +79,7 @@ describe("AudioButton", () => {
     render(<AudioButton {...defaultProps} />);
     expect(screen.getByTestId("tooltip")).toHaveAttribute(
       "data-content",
-      "Voice input",
+      i18n.t("playground.voiceInput"),
     );
   });
 
@@ -85,7 +87,7 @@ describe("AudioButton", () => {
     render(<AudioButton {...defaultProps} recordingState="recording" />);
     expect(screen.getByTestId("tooltip")).toHaveAttribute(
       "data-content",
-      "Stop recording",
+      i18n.t("playground.stopRecording"),
     );
   });
 
@@ -93,7 +95,7 @@ describe("AudioButton", () => {
     render(<AudioButton {...defaultProps} recordingState="processing" />);
     expect(screen.getByTestId("tooltip")).toHaveAttribute(
       "data-content",
-      "Processing...",
+      i18n.t("playground.processing"),
     );
   });
 
@@ -101,7 +103,7 @@ describe("AudioButton", () => {
     render(<AudioButton {...defaultProps} isSupported={false} />);
     expect(screen.getByTestId("tooltip")).toHaveAttribute(
       "data-content",
-      "Voice input not supported in this browser",
+      i18n.t("playground.voiceInputUnsupported"),
     );
   });
 

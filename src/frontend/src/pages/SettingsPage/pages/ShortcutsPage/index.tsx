@@ -1,5 +1,6 @@
 import type { ColDef } from "ag-grid-community";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toCamelCase } from "@/utils/utils";
 import ForwardedIconComponent from "../../../../components/common/genericIconComponent";
 import TableComponent from "../../../../components/core/parameterRenderComponent/components/tableComponent";
@@ -8,8 +9,10 @@ import { defaultShortcuts } from "../../../../constants/constants";
 import { useShortcutsStore } from "../../../../stores/shortcuts";
 import CellRenderShortcuts from "./CellRenderWrapper";
 import EditShortcutButton from "./EditShortcutButton";
+import { translateShortcutName } from "./translate-shortcut-name";
 
 export default function ShortcutsPage() {
+  const { t } = useTranslation();
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const shortcuts = useShortcutsStore((state) => state.shortcuts);
   const setShortcuts = useShortcutsStore((state) => state.setShortcuts);
@@ -17,14 +20,14 @@ export default function ShortcutsPage() {
   // Column Definitions: Defines the columns to be displayed.
   const colDefs: ColDef[] = [
     {
-      headerName: "Functionality",
+      headerName: t("shortcuts.functionality"),
       field: "display_name",
       flex: 1,
       editable: false,
       resizable: false,
     }, //This column will be twice as wide as the others
     {
-      headerName: "Keyboard Shortcut",
+      headerName: t("shortcuts.keyboardShortcut"),
       field: "shortcut",
       flex: 2,
       editable: false,
@@ -34,12 +37,17 @@ export default function ShortcutsPage() {
   ];
 
   const [nodesRowData, setNodesRowData] = useState<
-    Array<{ name: string; shortcut: string }>
+    Array<{ name: string; display_name: string; shortcut: string }>
   >([]);
 
   useEffect(() => {
-    setNodesRowData(shortcuts);
-  }, [shortcuts]);
+    setNodesRowData(
+      shortcuts.map((shortcut) => ({
+        ...shortcut,
+        display_name: translateShortcutName(shortcut.name, t),
+      })),
+    );
+  }, [shortcuts, t]);
 
   const [open, setOpen] = useState(false);
   const updateUniqueShortcut = useShortcutsStore(
@@ -63,14 +71,14 @@ export default function ShortcutsPage() {
             className="flex items-center text-lg font-semibold tracking-tight"
             data-testid="settings_menu_header"
           >
-            Shortcuts
+            {t("settings.shortcuts")}
             <ForwardedIconComponent
               name="Keyboard"
               className="ml-2 h-5 w-5 text-primary"
             />
           </h2>
           <p className="text-sm text-muted-foreground">
-            Manage Shortcuts for quick access to frequently used actions.
+            {t("shortcuts.description")}
           </p>
         </div>
         <div>
@@ -95,7 +103,7 @@ export default function ShortcutsPage() {
                 onClick={handleRestore}
               >
                 <ForwardedIconComponent name="RotateCcw" className="w-4" />
-                Restore
+                {t("shortcuts.restore")}
               </Button>
             </div>
           </div>

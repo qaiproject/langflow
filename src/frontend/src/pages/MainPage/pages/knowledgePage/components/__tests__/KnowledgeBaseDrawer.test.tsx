@@ -31,7 +31,11 @@ jest.mock("../KnowledgeBaseDrawer", () => {
           <div data-testid="description">No description available.</div>
           <div data-testid="embedding-provider">
             <label>Embedding Provider</label>
-            <div>{knowledgeBase.embedding_model || "Unknown"}</div>
+            <div>
+              {knowledgeBase.embedding_provider ||
+                knowledgeBase.embedding_model ||
+                "Unknown"}
+            </div>
           </div>
           <div data-testid="source-files">
             <h4>Source Files</h4>
@@ -135,10 +139,10 @@ describe("KnowledgeBaseDrawer", () => {
     );
 
     expect(screen.getByText("Embedding Provider")).toBeInTheDocument();
-    expect(screen.getByText("text-embedding-ada-002")).toBeInTheDocument();
+    expect(screen.getByText("OpenAI")).toBeInTheDocument();
   });
 
-  it("displays Unknown for missing embedding model", () => {
+  it("falls back to the provider when the embedding model is missing", () => {
     const kbWithoutModel = {
       ...mockKnowledgeBase,
       embedding_model: undefined,
@@ -152,7 +156,7 @@ describe("KnowledgeBaseDrawer", () => {
       />,
     );
 
-    expect(screen.getByText("Unknown")).toBeInTheDocument();
+    expect(screen.getByText("OpenAI")).toBeInTheDocument();
   });
 
   it("displays content sections", () => {

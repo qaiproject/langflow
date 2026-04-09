@@ -1,4 +1,5 @@
 import type { To } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { CustomBanner } from "@/customization/components/custom-banner";
 import { useCustomNavigate } from "@/customization/hooks/use-custom-navigate";
 import { Button } from "../../ui/button";
@@ -20,6 +21,7 @@ export default function PageLayout({
   betaIcon?: boolean;
   backTo?: To;
 }) {
+  const { t } = useTranslation();
   const navigate = useCustomNavigate();
 
   return (
@@ -49,7 +51,9 @@ export default function PageLayout({
                   data-testid="mainpage_title"
                 >
                   {title}
-                  {betaIcon && <span className="store-beta-icon">Beta</span>}
+                  {betaIcon && (
+                    <span className="store-beta-icon">{t("common.beta")}</span>
+                  )}
                 </h2>
               </div>
               <p className="text-muted-foreground">{description}</p>

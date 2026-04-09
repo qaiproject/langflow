@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useStickToBottomContext } from "use-stick-to-bottom";
 import ShadTooltip from "@/components/common/shadTooltipComponent";
 import { Button } from "@/components/ui/button";
-import { ICON_STROKE_WIDTH, SAVE_API_KEY_ALERT } from "@/constants/constants";
+import { ICON_STROKE_WIDTH } from "@/constants/constants";
 import { useGetMessagesPollingMutation } from "@/controllers/API/queries/messages/use-get-messages-polling";
 import {
   useGetGlobalVariables,
@@ -39,11 +40,12 @@ export function VoiceAssistant({
   flowId,
   setShowAudioInput,
 }: VoiceAssistantProps) {
+  const { t } = useTranslation();
   const [recordingTime, setRecordingTime] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [_status, setStatus] = useState("");
   const [_message, setMessage] = useState("");
-  const [showSettingsModal, _setShowSettingsModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModalState] = useState(false);
   const [addKey, setAddKey] = useState(false);
   const [barHeights, setBarHeights] = useState<number[]>(Array(30).fill(20));
   const [preferredLanguage, setPreferredLanguage] = useState(
@@ -97,7 +99,7 @@ export function VoiceAssistant({
     return (
       variables?.find((variable) => variable === "OPENAI_API_KEY")?.length! > 0
     );
-  }, [variables, open, addKey]);
+  }, [variables, addKey]);
 
   const openaiApiKey = useMemo(() => {
     return variables?.find((variable) => variable === "OPENAI_API_KEY");
@@ -251,7 +253,7 @@ export function VoiceAssistant({
         {
           onSuccess: () => {
             setSuccessData({
-              title: SAVE_API_KEY_ALERT,
+              title: t("voiceAssistant.apiKeySaved"),
             });
             setAddKey(!addKey);
             setIsEditingOpenAIKey(false);
@@ -269,12 +271,12 @@ export function VoiceAssistant({
         default_fields: ["voice_mode"],
       },
       {
-        onSuccess: () => {
-          setSuccessData({
-            title: SAVE_API_KEY_ALERT,
-          });
-          setAddKey(!addKey);
-        },
+          onSuccess: () => {
+            setSuccessData({
+              title: t("voiceAssistant.apiKeySaved"),
+            });
+            setAddKey(!addKey);
+          },
       },
     );
   };
@@ -309,6 +311,7 @@ export function VoiceAssistant({
     openaiApiKey: string,
     elevenLabsApiKey: string,
   ) => {
+    setShowSettingsModalState(open);
     const saveApiKey = openaiApiKey && openaiApiKey !== "OPENAI_API_KEY";
     const saveElevenLabsApiKey =
       elevenLabsApiKey && elevenLabsApiKey !== "ELEVENLABS_API_KEY";
@@ -392,7 +395,11 @@ export function VoiceAssistant({
           )}
         >
           <ShadTooltip
-            content={isRecording ? "Mute" : "Unmute"}
+            content={
+              isRecording
+                ? t("voiceAssistant.mute")
+                : t("voiceAssistant.unmute")
+            }
             delayDuration={500}
           >
             <Button unstyled onClick={handleToggleRecording}>

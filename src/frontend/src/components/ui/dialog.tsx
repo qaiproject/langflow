@@ -1,6 +1,7 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import * as React from "react";
+import i18n from "@/i18n";
 import DialogContentWithouFixed from "@/customization/components/custom-dialog-content-without-fixed";
 import { dialogClass } from "@/customization/utils/dialog-class";
 import { cn } from "../../utils/utils";
@@ -97,7 +98,7 @@ const DialogContent = React.forwardRef<
         >
           {!hasDialogTitle && (
             <VisuallyHidden>
-              <DialogTitle>Dialog</DialogTitle>
+              <DialogTitle>{i18n.t("dialog.title")}</DialogTitle>
             </VisuallyHidden>
           )}
           {!hasDialogDescription && (
@@ -108,7 +109,7 @@ const DialogContent = React.forwardRef<
           {children}
           <ShadTooltip
             styleClasses="z-50"
-            content="Close"
+            content={i18n.t("dialog.close")}
             side="bottom"
             avoidCollisions
           >
@@ -117,9 +118,9 @@ const DialogContent = React.forwardRef<
                 "absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-sm ring-offset-background transition-opacity hover:bg-secondary-hover hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground",
                 closeButtonClassName,
               )}
-            >
-              <Cross2Icon className="h-[18px] w-[18px]" />
-              <span className="sr-only">Close</span>
+              >
+                <Cross2Icon className="h-[18px] w-[18px]" />
+              <span className="sr-only">{i18n.t("dialog.close")}</span>
             </DialogPrimitive.Close>
           </ShadTooltip>
         </DialogPrimitive.Content>

@@ -1,4 +1,5 @@
 import type { ColDef } from "ag-grid-community";
+import type { TFunction } from "i18next";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import LoadingTextComponent from "@/components/common/loadingTextComponent";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,7 @@ import {
   formatAverageChunkSize,
   formatNumber,
 } from "../utils/knowledgeBaseUtils";
-import { isBusyStatus, STATUS_CONFIG } from "./statusConfig";
+import { getStatusConfig, isBusyStatus } from "./statusConfig";
 
 export interface KnowledgeBaseColumnsCallbacks {
   onViewChunks?: (knowledgeBase: KnowledgeBaseInfo) => void;
@@ -27,7 +28,24 @@ export interface KnowledgeBaseColumnsCallbacks {
 
 export const createKnowledgeBaseColumns = (
   callbacks?: KnowledgeBaseColumnsCallbacks,
+  t?: TFunction,
 ): ColDef[] => {
+  const translate = t ?? ((key: string) => key);
+  const statusConfig = t
+    ? getStatusConfig(t)
+    : {
+        ready: { label: "Ready", textClass: "text-accent-emerald-foreground" },
+        ingesting: {
+          label: "Ingesting",
+          textClass: "text-accent-amber-foreground",
+        },
+        failed: { label: "Failed", textClass: "text-destructive" },
+        cancelling: {
+          label: "Cancelling",
+          textClass: "text-accent-amber-foreground",
+        },
+        empty: { label: "Empty", textClass: "text-muted-foreground" },
+      };
   const baseCellClass =
     "text-muted-foreground cursor-pointer select-text group-[.no-select-cells]:cursor-default group-[.no-select-cells]:select-none";
 
@@ -35,7 +53,7 @@ export const createKnowledgeBaseColumns = (
 
   return [
     {
-      headerName: "Name",
+      headerName: translate("knowledge.columns.name"),
       field: "name",
       flex: 2,
       sortable: true,
@@ -77,7 +95,7 @@ export const createKnowledgeBaseColumns = (
       },
     },
     {
-      headerName: "Size",
+      headerName: translate("knowledge.columns.size"),
       field: "size",
       flex: 1,
       sortable: false,
@@ -86,15 +104,17 @@ export const createKnowledgeBaseColumns = (
       cellClass: baseCellClass,
     },
     {
-      headerName: "Embedding Model",
+      headerName: translate("knowledge.columns.embeddingModel"),
       field: "embedding_model",
       flex: 1.5,
       sortable: false,
       editable: false,
       cellClass: baseCellClass,
       cellRenderer: (params: { data: KnowledgeBaseInfo }) => {
-        const model = params.data.embedding_model || "Unknown";
-        const provider = params.data.embedding_provider || "Unknown";
+        const model =
+          params.data.embedding_model || translate("knowledge.unknown");
+        const provider =
+          params.data.embedding_provider || translate("knowledge.unknown");
 
         const providerIconMap: Record<string, string> = {
           OpenAI: "OpenAI",
@@ -119,7 +139,7 @@ export const createKnowledgeBaseColumns = (
       },
     },
     {
-      headerName: "Chunks",
+      headerName: translate("knowledge.columns.chunks"),
       field: "chunks",
       flex: 1,
       sortable: false,
@@ -128,7 +148,7 @@ export const createKnowledgeBaseColumns = (
       valueFormatter: (params) => formatNumber(params.value),
     },
     {
-      headerName: "Avg Chunk Size",
+      headerName: translate("knowledge.columns.avgChunkSize"),
       field: "avg_chunk_size",
       flex: 1,
       sortable: false,
@@ -137,7 +157,7 @@ export const createKnowledgeBaseColumns = (
       valueFormatter: (params) => formatAverageChunkSize(params.value),
     },
     {
-      headerName: "Status",
+      headerName: translate("knowledge.columns.status"),
       field: "status",
       flex: 1,
       sortable: false,
@@ -146,7 +166,7 @@ export const createKnowledgeBaseColumns = (
       cellClass: baseCellClass,
       cellRenderer: (params: { data: KnowledgeBaseInfo }) => {
         const status = params.data?.status || "empty";
-        const c = STATUS_CONFIG[status] || STATUS_CONFIG.empty;
+        const c = statusConfig[status] || statusConfig.empty;
 
         return (
           <div className="flex items-center h-full">
@@ -201,7 +221,7 @@ export const createKnowledgeBaseColumns = (
                   name="RefreshCw"
                   className="mr-2 h-4 w-4"
                 />
-                Update Knowledge
+                {translate("knowledge.updateKnowledge")}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={(e) => {
@@ -213,7 +233,7 @@ export const createKnowledgeBaseColumns = (
                   name="Layers"
                   className="mr-2 h-4 w-4"
                 />
-                View Chunks
+                {translate("knowledge.viewChunks")}
               </DropdownMenuItem>
               {isBusy ? (
                 <DropdownMenuItem
@@ -228,7 +248,7 @@ export const createKnowledgeBaseColumns = (
                     name="Square"
                     className="mr-2 h-4 w-4"
                   />
-                  Stop Ingestion
+                  {translate("knowledge.stopIngestion")}
                 </DropdownMenuItem>
               ) : (
                 <DropdownMenuItem
@@ -242,7 +262,7 @@ export const createKnowledgeBaseColumns = (
                     name="Trash2"
                     className="mr-2 h-4 w-4"
                   />
-                  Delete
+                  {translate("common.delete")}
                 </DropdownMenuItem>
               )}
             </DropdownMenuContent>

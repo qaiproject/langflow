@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useBlocker, useParams } from "react-router-dom";
 import { FlowPageSlidingContainerContent } from "@/components/core/playgroundComponent/sliding-container/components/flow-page-sliding-container";
 import { SidebarProvider, useSidebar } from "@/components/ui/sidebar";
@@ -58,6 +59,7 @@ function FlowPageMainContent({
 }
 
 export default function FlowPage({ view }: { view?: boolean }): JSX.Element {
+  const { t, i18n } = useTranslation();
   const types = useTypesStore((state) => state.types);
 
   useGetTypes({
@@ -103,7 +105,7 @@ export default function FlowPage({ view }: { view?: boolean }): JSX.Element {
       if (proceed) {
         blocker.proceed && blocker.proceed();
         setSuccessData({
-          title: "Flow saved successfully!",
+          title: t("flow.savedSuccessfully"),
         });
       }
     }, 1200);
@@ -111,7 +113,7 @@ export default function FlowPage({ view }: { view?: boolean }): JSX.Element {
       if (!autoSaving || saving === false) {
         blocker.proceed && blocker.proceed();
         setSuccessData({
-          title: "Flow saved successfully!",
+          title: t("flow.savedSuccessfully"),
         });
       }
       proceed = true;
@@ -320,13 +322,16 @@ export default function FlowPage({ view }: { view?: boolean }): JSX.Element {
               flowName={currentSavedFlow.name}
               lastSaved={
                 updatedAt
-                  ? new Date(updatedAt).toLocaleString("en-US", {
-                      hour: "numeric",
-                      minute: "numeric",
-                      second: "numeric",
-                      month: "numeric",
-                      day: "numeric",
-                    })
+                  ? new Date(updatedAt).toLocaleString(
+                      i18n.language === "pl" ? "pl-PL" : "en-US",
+                      {
+                        hour: "numeric",
+                        minute: "numeric",
+                        second: "numeric",
+                        month: "numeric",
+                        day: "numeric",
+                      },
+                    )
                   : undefined
               }
               autoSave={autoSaving}

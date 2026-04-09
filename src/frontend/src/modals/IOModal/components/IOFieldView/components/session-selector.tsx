@@ -1,5 +1,6 @@
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import IconComponent from "@/components/common/genericIconComponent";
 import ShadTooltip from "@/components/common/shadTooltipComponent";
 import { Input } from "@/components/ui/input";
@@ -11,7 +12,6 @@ import {
 } from "@/components/ui/select-custom";
 import { useUpdateSessionName } from "@/controllers/API/queries/messages/use-rename-session";
 import { useGetFlowId } from "@/modals/IOModal/hooks/useGetFlowId";
-import useFlowStore from "@/stores/flowStore";
 import { useVoiceStore } from "@/stores/voiceStore";
 import { cn } from "@/utils/utils";
 
@@ -24,8 +24,8 @@ export default function SessionSelector({
   updateVisibleSession,
   selectedView,
   setSelectedView,
-  playgroundPage,
-  setActiveSession,
+  playgroundPage: _playgroundPage,
+  setActiveSession: _setActiveSession,
   menuOpen,
   onMenuOpenChange,
 }: {
@@ -42,14 +42,12 @@ export default function SessionSelector({
   menuOpen?: boolean;
   onMenuOpenChange?: (open: boolean) => void;
 }) {
+  const { t } = useTranslation();
   const currentFlowId = useGetFlowId();
   const [isEditing, setIsEditing] = useState(false);
   const [editedSession, setEditedSession] = useState(session);
   const { mutate: updateSessionName } = useUpdateSessionName();
   const inputRef = useRef<HTMLInputElement>(null);
-  const _setNewChatOnPlayground = useFlowStore(
-    (state) => state.setNewChatOnPlayground,
-  );
 
   useEffect(() => {
     setEditedSession(session);
@@ -167,10 +165,19 @@ export default function SessionSelector({
               </button>
             </div>
           ) : (
-            <ShadTooltip styleClasses="z-50" content={session}>
+            <ShadTooltip
+              styleClasses="z-50"
+              content={
+                session === currentFlowId
+                  ? t("playground.defaultSession")
+                  : session
+              }
+            >
               <div className="relative w-full overflow-hidden">
                 <span className="w-full truncate">
-                  {session === currentFlowId ? "Default Session" : session}
+                  {session === currentFlowId
+                    ? t("playground.defaultSession")
+                    : session}
                 </span>
                 <div
                   className={cn(
@@ -196,7 +203,11 @@ export default function SessionSelector({
           open={menuOpen}
           onOpenChange={onMenuOpenChange}
         >
-          <ShadTooltip styleClasses="z-50" side="right" content="Options">
+          <ShadTooltip
+            styleClasses="z-50"
+            side="right"
+            content={t("playground.options")}
+          >
             <SelectTrigger
               onClick={(e) => {
                 e.stopPropagation();
@@ -220,7 +231,7 @@ export default function SessionSelector({
             >
               <div className="flex items-center">
                 <IconComponent name="SquarePen" className="mr-2 h-4 w-4" />
-                Rename
+                {t("playground.rename")}
               </div>
             </SelectItem>
             <SelectItem
@@ -230,7 +241,7 @@ export default function SessionSelector({
               <div className="flex w-full items-center justify-between">
                 <div className="flex items-center">
                   <IconComponent name="Scroll" className="mr-2 h-4 w-4" />
-                  Message logs
+                  {t("playground.messageLogs")}
                 </div>
               </div>
             </SelectItem>
@@ -240,7 +251,7 @@ export default function SessionSelector({
             >
               <div className="flex items-center text-status-red hover:text-status-red">
                 <IconComponent name="Trash2" className="mr-2 h-4 w-4" />
-                Delete
+                {t("common.delete")}
               </div>
             </SelectItem>
           </SelectContent>

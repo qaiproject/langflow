@@ -1,5 +1,6 @@
 import { useReactFlow, useStore } from "@xyflow/react";
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { shallow } from "zustand/shallow";
 import IconComponent from "@/components/common/genericIconComponent";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,7 @@ const CanvasControlsDropdown = ({
 }: {
   selectedNode: AllNodeType | null;
 }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const { fitView, zoomIn, zoomOut, zoomTo } = useReactFlow();
 
@@ -102,7 +104,7 @@ const CanvasControlsDropdown = ({
           data-testid="canvas_controls_dropdown"
           className="group rounded-none px-2 py-2 hover:bg-muted"
           unstyled
-          title="Canvas Controls"
+          title={t("canvasControls.title")}
         >
           <div className="flex items-center justify-center ">
             <div className="text-sm pr-1 text-muted-foreground">
@@ -122,34 +124,34 @@ const CanvasControlsDropdown = ({
         className="flex flex-col w-full"
       >
         <DropdownControlButton
-          tooltipText="Zoom In"
+          tooltipText={t("canvasControls.zoomIn")}
           onClick={handleZoomIn}
           disabled={maxZoomReached}
           testId="zoom_in"
-          label="Zoom In"
+          label={t("canvasControls.zoomIn")}
           shortcut={KEYBOARD_SHORTCUTS.ZOOM_IN.key}
         />
         <DropdownControlButton
-          tooltipText="Zoom Out"
+          tooltipText={t("canvasControls.zoomOut")}
           onClick={handleZoomOut}
           disabled={minZoomReached}
           testId="zoom_out"
-          label="Zoom Out"
+          label={t("canvasControls.zoomOut")}
           shortcut={KEYBOARD_SHORTCUTS.ZOOM_OUT.key}
         />
         <Separator />
         <DropdownControlButton
-          tooltipText="Reset zoom to 100%"
+          tooltipText={t("canvasControls.resetZoom")}
           onClick={handleResetZoom}
           testId="reset_zoom"
-          label="Zoom To 100%"
+          label={t("canvasControls.zoomTo100")}
           shortcut={KEYBOARD_SHORTCUTS.RESET_ZOOM.key}
         />
         <DropdownControlButton
-          tooltipText="Fit view to show all nodes"
+          tooltipText={t("canvasControls.fitView")}
           onClick={handleFitView}
           testId="fit_view"
-          label="Zoom To Fit"
+          label={t("canvasControls.zoomToFit")}
           shortcut={KEYBOARD_SHORTCUTS.FIT_VIEW.key}
         />
       </DropdownMenuContent>

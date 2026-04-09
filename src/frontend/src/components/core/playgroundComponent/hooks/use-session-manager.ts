@@ -1,4 +1,5 @@
 import { useCallback, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { NEW_SESSION_NAME } from "@/constants/constants";
 import { useDeleteSession } from "@/controllers/API/queries/messages/use-delete-sessions";
 import { useGetSessionsFromFlowQuery } from "@/controllers/API/queries/messages/use-get-sessions-from-flow";
@@ -13,6 +14,7 @@ interface UseSessionManagerProps {
 }
 
 export function useSessionManager({ flowId }: UseSessionManagerProps) {
+  const { t } = useTranslation();
   // Select individual actions (stable references) and state slices to avoid
   // re-rendering on every store change.
   const initialize = useSessionManagerStore((s) => s.initialize);
@@ -44,8 +46,8 @@ export function useSessionManager({ flowId }: UseSessionManagerProps) {
   const { mutateAsync: updateSessionName } = useUpdateSessionName();
 
   const notifyDeleteSessionError = useCallback(() => {
-    setErrorData({ title: "Error deleting session." });
-  }, [setErrorData]);
+    setErrorData({ title: t("playground.sessionDeleteError") });
+  }, [setErrorData, t]);
 
   // Initialize store when flowId changes
   useEffect(() => {
@@ -117,10 +119,10 @@ export function useSessionManager({ flowId }: UseSessionManagerProps) {
         });
         renameSessionInStore(oldId, newId);
       } catch {
-        setErrorData({ title: "Error renaming session." });
+        setErrorData({ title: t("playground.sessionRenameError") });
       }
     },
-    [updateSessionName, renameSessionInStore, setErrorData],
+    [updateSessionName, renameSessionInStore, setErrorData, t],
   );
 
   const selectSession = useCallback(

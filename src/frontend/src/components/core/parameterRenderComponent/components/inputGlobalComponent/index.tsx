@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useGetGlobalVariables } from "@/controllers/API/queries/variables";
 import GeneralDeleteConfirmationModal from "@/shared/components/delete-confirmation-modal";
 import { cn } from "../../../../../utils/utils";
@@ -30,6 +31,7 @@ export default function InputGlobalComponent({
   hasRefreshButton = false,
   showParameter = true,
 }: InputProps<string, InputGlobalComponentType>): JSX.Element | null {
+  const { t } = useTranslation();
   const { data: globalVariables } = useGetGlobalVariables();
 
   // // Safely cast the data to our typed interface
@@ -102,7 +104,7 @@ export default function InputGlobalComponent({
           className={cn("mr-2 h-4 w-4 text-primary")}
           aria-hidden="true"
         />
-        <span>Add New Variable</span>
+        <span>{t("common.addNewVariable")}</span>
       </CommandItem>
     </GlobalVariableModal>
   );
@@ -146,7 +148,7 @@ export default function InputGlobalComponent({
       password={password ?? false}
       value={currentValue}
       options={variableOptions}
-      optionsPlaceholder="Global Variables"
+      optionsPlaceholder={t("settings.globalVariables")}
       optionsIcon="Globe"
       optionsButton={renderAddVariableButton()}
       optionButton={renderDeleteButton}

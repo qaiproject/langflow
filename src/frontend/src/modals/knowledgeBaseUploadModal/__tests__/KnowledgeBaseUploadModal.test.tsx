@@ -6,6 +6,91 @@ import { BrowserRouter } from "react-router-dom";
 
 // ── Mocks (must precede component imports) ──────────────────────────────────
 
+const translationMap: Record<string, string> = {
+  "knowledge.columns.embeddingModel": "Embedding Model",
+  "knowledge.unknown": "Unknown",
+  "knowledgeUpload.stepTitleCreate": "Create Knowledge Base",
+  "knowledgeUpload.stepTitleReview": "Review & Build",
+  "knowledgeUpload.stepDescriptionCreate":
+    "Name your knowledge base, upload sources, and select an embedding model",
+  "knowledgeUpload.stepDescriptionReview":
+    "Preview how your files will be chunked and confirm your settings",
+  "knowledgeUpload.addSourcesTitle": "Add Sources",
+  "knowledgeUpload.modalDescription":
+    "Upload files and configure chunking settings",
+  "knowledgeUpload.addSourcesButton": "Add Sources",
+  "knowledgeUpload.createButton": "Create",
+  "knowledgeUpload.hideConfiguration": "Hide Configuration",
+  "knowledgeUpload.configureSources": "Configure Sources",
+  "knowledgeUpload.sourcesSection": "Sources",
+  "knowledgeUpload.sourcesLabel": "Sources",
+  "knowledgeUpload.maxUpload": "1 GB max upload",
+  "knowledgeUpload.nameLabel": "Name",
+  "knowledgeUpload.namePlaceholder": "Enter a name for this knowledge base",
+  "knowledgeUpload.unknownModel": "Unknown",
+  "knowledgeUpload.selectEmbeddingModel": "Select embedding model",
+  "knowledgeUpload.uploadFiles": "Upload Files",
+  "knowledgeUpload.uploadFolder": "Upload Folder",
+  "knowledgeUpload.chunkingSettings": "Chunking Settings",
+  "knowledgeUpload.chunkSizeLabel": "Chunk Size",
+  "knowledgeUpload.chunkSizeTooltip":
+    "The maximum length of each chunk. Text is first split by separator, then chunks are merged up to this size.",
+  "knowledgeUpload.chunkOverlapLabel": "Chunk Overlap",
+  "knowledgeUpload.chunkOverlapTooltip":
+    "Number of characters to overlap between chunks.",
+  "knowledgeUpload.separatorLabel": "Separator",
+  "knowledgeUpload.separatorTooltip":
+    "The character to split on. Use \\n for newline. Examples: \\n\\n for paragraphs, \\n for lines, . for sentences. Leave blank for no separator.",
+  "knowledgeUpload.chunkPreview": "Chunk Preview",
+  "knowledgeUpload.noFilesSelected": "No files selected. Go back to add files.",
+  "knowledgeUpload.generatingPreview": "Generating preview...",
+  "knowledgeUpload.previewFailed":
+    "Could not generate preview. Try adjusting your settings.",
+  "knowledgeUpload.summary": "Summary",
+  "knowledgeUpload.filesLabel": "Files",
+  "knowledgeUpload.none": "None",
+  "knowledgeUpload.notSelected": "Not selected",
+  "knowledgeUpload.previewGenerationFailed": "Failed to generate chunk preview",
+  "knowledgeUpload.validationNameRequired": "Name is required",
+  "knowledgeUpload.validationNameLength":
+    "Name must be between 3 and 512 characters",
+  "knowledgeUpload.validationNamePattern":
+    "Name must only contain [a-zA-Z0-9._-] and start/end with [a-zA-Z0-9]",
+  "knowledgeUpload.validationNameExists":
+    "A knowledge base with this name already exists",
+  "knowledgeUpload.validationEmbeddingRequired":
+    "Embedding model is required",
+  "knowledgeUpload.validationFileSize":
+    "Total file size exceeds the 1 GB limit",
+  "knowledgeUpload.createdSuccess": 'Knowledge base "{{name}}" created',
+  "knowledgeUpload.startIngestionFailed":
+    'Failed to start ingestion for "{{name}}"',
+  "knowledgeUpload.sourcesAddedSuccess": 'Sources added to "{{name}}"',
+  "knowledgeUpload.failedToCreate": "Failed to create knowledge base",
+  "knowledgeUpload.skippedFilesTitle":
+    "Some files were skipped. Only supported file types were uploaded. Excluded files:",
+  "filesPage.fileLabel": "file",
+  "filesPage.filesLabel": "files",
+  "sourceChunks.chars": "{{count}} chars",
+  "knowledgeUpload.chunkLabel": "Chunk {{index}}",
+  "dialog.close": "Close",
+};
+
+const translate = (key: string, options?: Record<string, unknown>) => {
+  const template = translationMap[key] ?? key;
+  return template.replace(/\{\{(\w+)\}\}/g, (_, token: string) =>
+    String(options?.[token] ?? ""),
+  );
+};
+
+jest.mock("react-i18next", () => ({
+  initReactI18next: { type: "3rdParty", init: jest.fn() },
+  useTranslation: () => ({
+    t: translate,
+    i18n: { changeLanguage: jest.fn() },
+  }),
+}));
+
 const mockMutateAsync = jest.fn();
 jest.mock(
   "@/controllers/API/queries/knowledge-bases/use-create-knowledge-base",
@@ -831,7 +916,7 @@ describe("KnowledgeBaseUploadModal", () => {
       );
 
       // Closing the dialog triggers onOpenChange → resetForm()
-      await user.click(screen.getByRole("button", { name: /close/i }));
+      await user.click(screen.getByRole("button", { name: /close|zamknij/i }));
 
       await waitFor(() =>
         expect(screen.getByTestId("kb-source-name-input")).toHaveValue(""),

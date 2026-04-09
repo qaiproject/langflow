@@ -1,6 +1,7 @@
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { getMinOrMaxValue } from "@/components/core/parameterRenderComponent/components/sliderComponent/helpers/get-min-max-value";
 import type { InputProps } from "@/components/core/parameterRenderComponent/types";
 import { Case } from "@/shared/components/caseComponent";
@@ -20,15 +21,6 @@ const DARK_COLOR_TEXT = "#52525b";
 const LIGHT_COLOR_BACKGROUND = "#e4e4e7";
 const LIGHT_COLOR_TEXT = "#52525b";
 
-const DEFAULT_SLIDER_BUTTONS_OPTIONS = [
-  { id: 0, label: "Precise" },
-  { id: 1, label: "Balanced" },
-  { id: 2, label: "Creative" },
-  { id: 3, label: "Wild" },
-];
-
-const MIN_LABEL = "Precise";
-const MAX_LABEL = "Creative";
 const MIN_LABEL_ICON = "pencil-ruler";
 const MAX_LABEL_ICON = "palette";
 
@@ -51,18 +43,25 @@ export default function SliderComponent({
   handleOnNewValue,
   showParameter = true,
 }: InputProps<string[] | number[], SliderComponentType>): JSX.Element | null {
+  const { t } = useTranslation();
   const min = rangeSpec?.min ?? -2;
   const max = rangeSpec?.max ?? 2;
+  const defaultSliderButtonsOptions = [
+    { id: 0, label: t("slider.precise") },
+    { id: 1, label: t("slider.balanced") },
+    { id: 2, label: t("slider.creative") },
+    { id: 3, label: t("slider.wild") },
+  ];
 
   sliderButtonsOptions =
     sliderButtons && sliderButtonsOptions && sliderButtonsOptions.length > 0
       ? sliderButtonsOptions
-      : DEFAULT_SLIDER_BUTTONS_OPTIONS;
+      : defaultSliderButtonsOptions;
 
   minLabelIcon = minLabelIcon || MIN_LABEL_ICON;
   maxLabelIcon = maxLabelIcon || MAX_LABEL_ICON;
-  minLabel = minLabel || MIN_LABEL;
-  maxLabel = maxLabel || MAX_LABEL;
+  minLabel = minLabel || t("slider.precise");
+  maxLabel = maxLabel || t("slider.creative");
 
   const valueAsNumber = getMinOrMaxValue(Number(value), min, max);
   const step = rangeSpec?.step ?? 0.01;
@@ -226,7 +225,8 @@ export default function SliderComponent({
                 data-testid="slider_input"
               />
             ) : (
-              <span
+              <button
+                type="button"
                 onClick={() => {
                   setIsEditing(true);
                   setInputValue(valueAsNumber.toFixed(2));
@@ -235,7 +235,7 @@ export default function SliderComponent({
                 className="relative bottom-[1px] font-mono text-sm hover:cursor-text"
               >
                 {valueAsNumber.toFixed(2)}
-              </span>
+              </button>
             )}
           </div>
         </div>

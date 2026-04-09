@@ -10,6 +10,29 @@ import React from "react";
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
+jest.mock("react-i18next", () => ({
+  initReactI18next: { type: "3rdParty", init: jest.fn() },
+  useTranslation: () => ({
+    t: (key: string, options?: Record<string, unknown>) => {
+      const map: Record<string, string> = {
+        "sourceChunks.searchPlaceholder": "Search chunks...",
+        "sourceChunks.loading": "Loading Chunks...",
+        "sourceChunks.failedToLoad": "Failed to load chunks",
+        "sourceChunks.noChunksFound": "No chunks found",
+        "sourceChunks.perPage": "Per page:",
+        "sourceChunks.showing":
+          "Showing {{start}}-{{end}} of {{total}} chunks",
+        "sourceChunks.page": "Page",
+        "pagination.of": "of",
+      };
+      return (map[key] ?? key).replace(/\{\{(\w+)\}\}/g, (_, token: string) =>
+        String(options?.[token] ?? ""),
+      );
+    },
+    i18n: { changeLanguage: jest.fn() },
+  }),
+}));
+
 jest.mock("react-router-dom", () => ({
   useParams: () => ({ sourceId: "my_knowledge_base" }),
 }));

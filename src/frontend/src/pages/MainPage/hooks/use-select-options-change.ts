@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import i18n from "@/i18n";
 
 const useSelectOptionsChange = (
   selectedFlowsComponentsCards: string[] | undefined,
@@ -13,8 +14,8 @@ const useSelectOptionsChange = (
       const hasSelected = selectedFlowsComponentsCards?.length! > 0;
       if (!hasSelected) {
         setErrorData({
-          title: "No items selected",
-          list: ["Please select items to delete"],
+          title: i18n.t("mainPage.noItemsSelected"),
+          list: [i18n.t("mainPage.selectItemsToDelete")],
         });
         return;
       }

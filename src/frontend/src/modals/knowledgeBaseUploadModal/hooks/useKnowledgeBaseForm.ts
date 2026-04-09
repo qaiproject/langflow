@@ -1,5 +1,6 @@
 import { type AxiosError } from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { ModelOption } from "@/components/core/parameterRenderComponent/components/modelInputComponent";
 import { api } from "@/controllers/API/api";
 import { getURL } from "@/controllers/API/helpers/constants";
@@ -39,6 +40,7 @@ export function useKnowledgeBaseForm({
     | "hideAdvanced"
     | "existingKnowledgeBaseNames"
   >) {
+  const { t } = useTranslation();
   const isAddSourcesMode = !!existingKnowledgeBase;
 
   // Wizard state
@@ -255,8 +257,10 @@ export function useKnowledgeBaseForm({
     } catch (error: unknown) {
       const err = error as AxiosError<{ detail?: string }>;
       setErrorData({
-        title: "Failed to generate chunk preview",
-        list: [err?.response?.data?.detail || err?.message || "Unknown error"],
+        title: t("knowledgeUpload.previewGenerationFailed"),
+        list: [
+          err?.response?.data?.detail || err?.message || t("knowledge.unknown"),
+        ],
       });
       setChunkPreviews([]);
     } finally {
@@ -275,26 +279,25 @@ export function useKnowledgeBaseForm({
     const errors: Record<string, string> = {};
     const trimmedName = sourceName.trim().replace(/\s+/g, "_");
     if (!trimmedName) {
-      errors.sourceName = "Name is required";
+      errors.sourceName = t("knowledgeUpload.validationNameRequired");
     } else if (trimmedName.length < 3 || trimmedName.length > 512) {
-      errors.sourceName = "Name must be between 3 and 512 characters";
+      errors.sourceName = t("knowledgeUpload.validationNameLength");
     } else if (!KB_NAME_REGEX.test(trimmedName)) {
-      errors.sourceName =
-        "Name must only contain [a-zA-Z0-9._-] and start/end with [a-zA-Z0-9]";
+      errors.sourceName = t("knowledgeUpload.validationNamePattern");
     } else if (
       !isAddSourcesMode &&
       existingKnowledgeBaseNames?.some(
         (name) => name.toLowerCase() === trimmedName.toLowerCase(),
       )
     ) {
-      errors.sourceName = "A knowledge base with this name already exists";
+      errors.sourceName = t("knowledgeUpload.validationNameExists");
     }
     if (!isAddSourcesMode && selectedEmbeddingModel.length === 0) {
-      errors.embeddingModel = "Embedding model is required";
+      errors.embeddingModel = t("knowledgeUpload.validationEmbeddingRequired");
     }
     const totalBytes = files.reduce((acc, file) => acc + file.size, 0);
     if (totalBytes > MAX_TOTAL_FILE_SIZE) {
-      errors.files = "Total file size exceeds the 1 GB limit";
+      errors.files = t("knowledgeUpload.validationFileSize");
     }
     return errors;
   }, [
@@ -341,7 +344,7 @@ export function useKnowledgeBaseForm({
         };
 
         setSuccessData({
-          title: `Knowledge base "${sourceName}" created`,
+          title: t("knowledgeUpload.createdSuccess", { name: sourceName }),
         });
 
         onSubmit?.(callbackData);
@@ -370,9 +373,13 @@ export function useKnowledgeBaseForm({
           .catch((ingestError: unknown) => {
             const err = ingestError as AxiosError<{ detail?: string }>;
             setErrorData({
-              title: `Failed to start ingestion for "${sourceName}"`,
+              title: t("knowledgeUpload.startIngestionFailed", {
+                name: sourceName,
+              }),
               list: [
-                err?.response?.data?.detail || err?.message || "Unknown error",
+                err?.response?.data?.detail ||
+                  err?.message ||
+                  t("knowledge.unknown"),
               ],
             });
           });
@@ -390,11 +397,13 @@ export function useKnowledgeBaseForm({
 
       if (isAddSourcesMode) {
         setSuccessData({
-          title: `Sources added to "${sourceName}"`,
+          title: t("knowledgeUpload.sourcesAddedSuccess", {
+            name: sourceName,
+          }),
         });
       } else {
         setSuccessData({
-          title: `Knowledge base "${sourceName}" created`,
+          title: t("knowledgeUpload.createdSuccess", { name: sourceName }),
         });
       }
 
@@ -406,7 +415,7 @@ export function useKnowledgeBaseForm({
       const errorMessage =
         err?.response?.data?.detail ||
         err?.message ||
-        "Failed to create knowledge base";
+        t("knowledgeUpload.failedToCreate");
       setErrorData({ title: errorMessage });
     } finally {
       setIsSubmitting(false);
@@ -435,8 +444,7 @@ export function useKnowledgeBaseForm({
 
       if (excludedFiles.length > 0) {
         setErrorData({
-          title:
-            "Some files were skipped. Only supported file types were uploaded. Excluded files:",
+          title: t("knowledgeUpload.skippedFilesTitle"),
           list: excludedFiles,
         });
       }

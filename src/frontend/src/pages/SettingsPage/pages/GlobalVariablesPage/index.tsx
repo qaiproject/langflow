@@ -5,6 +5,7 @@ import type {
   ValueFormatterParams,
 } from "ag-grid-community";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import Dropdown from "@/components/core/dropdownComponent";
 import GlobalVariableModal from "@/components/core/GlobalVariableModal/GlobalVariableModal";
@@ -23,14 +24,21 @@ import { Button } from "../../../../components/ui/button";
 import useAlertStore from "../../../../stores/alertStore";
 
 export default function GlobalVariablesPage() {
+  const { t } = useTranslation();
   const setErrorData = useAlertStore((state) => state.setErrorData);
   const [openModal, setOpenModal] = useState(false);
   const initialData = useRef<GlobalVariable | undefined>(undefined);
   const BadgeRenderer = (props) => {
+    const badgeLabel =
+      props.value === "Credential"
+        ? t("globalVariable.credential")
+        : props.value === "Generic"
+          ? t("globalVariable.generic")
+          : props.value;
     return props.value !== "" ? (
       <div>
         <Badge variant="outline" size="md" className="font-normal">
-          {props.value}
+          {badgeLabel}
         </Badge>
       </div>
     ) : (
@@ -48,12 +56,12 @@ export default function GlobalVariablesPage() {
   // Column Definitions: Defines the columns to be displayed.
   const colDefs: ColDef[] = [
     {
-      headerName: "Variable Name",
+      headerName: t("globalVariablesPage.variableName"),
       field: "name",
       flex: 2,
     }, //This column will be twice as wide as the others
     {
-      headerName: "Type",
+      headerName: t("globalVariablesPage.type"),
       field: "type",
       cellRenderer: BadgeRenderer,
       cellEditor: DropdownEditor,
@@ -74,7 +82,7 @@ export default function GlobalVariablesPage() {
       },
     },
     {
-      headerName: "Apply To Fields",
+      headerName: t("globalVariable.applyToFields"),
       field: "default_fields",
       valueFormatter: (params) => {
         return params.value?.join(", ") ?? "";
@@ -102,8 +110,7 @@ export default function GlobalVariablesPage() {
     return globalVariables.filter((variable) => {
       // Check if this is a provider credential variable
       const isProviderCredential =
-        variable.type === "Credential" &&
-        providerVariableNames.has(variable.name);
+        variable.type === "Credential" && providerVariableNames.has(variable.name);
 
       if (isProviderCredential) {
         // If validation failed (is_valid === false), filter it out
@@ -130,12 +137,16 @@ export default function GlobalVariablesPage() {
     if (invalidProviderVars.length > 0) {
       const errorMessages = invalidProviderVars.map(
         (variable) =>
-          `${variable.name}: ${variable.validation_error || "Invalid API key"}`,
+          `${variable.name}: ${
+            variable.validation_error || t("globalVariable.invalidApiKey")
+          }`,
       );
       setErrorData({
-        title: "Invalid Provider Credentials Detected",
+        title: t("globalVariablesPage.invalidCredentialsTitle"),
         list: [
-          `${invalidProviderVars.length} provider credential(s) with invalid keys have been hidden from the list.`,
+          t("globalVariablesPage.invalidCredentialsHidden", {
+            count: invalidProviderVars.length,
+          }),
           ...errorMessages,
         ],
       });
@@ -150,8 +161,8 @@ export default function GlobalVariablesPage() {
         {
           onError: () => {
             setErrorData({
-              title: `Error deleting variable`,
-              list: [`ID not found for variable: ${row}`],
+              title: t("globalVariablesPage.errorDeletingVariable"),
+              list: [t("globalVariablesPage.variableIdNotFound", { name: row })],
             });
           },
         },
@@ -172,21 +183,21 @@ export default function GlobalVariablesPage() {
             className="flex items-center text-lg font-semibold tracking-tight"
             data-testid="settings_menu_header"
           >
-            Global Variables
+            {t("settings.globalVariables")}
             <ForwardedIconComponent
               name="Globe"
               className="ml-2 h-5 w-5 text-primary"
             />
           </h2>
           <p className="text-sm text-muted-foreground">
-            Manage global variables and assign them to fields.
+            {t("globalVariablesPage.description")}
           </p>
         </div>
         <div className="flex flex-shrink-0 items-center gap-2">
           <GlobalVariableModal asChild>
             <Button data-testid="api-key-button-store" variant="primary">
               <IconComponent name="Plus" className="w-4" />
-              Add New
+              {t("globalVariablesPage.addNew")}
             </Button>
           </GlobalVariableModal>
         </div>
@@ -195,7 +206,7 @@ export default function GlobalVariablesPage() {
       <div className="flex h-full w-full flex-col justify-between">
         <TableComponent
           key={"globalVariables"}
-          overlayNoRowsTemplate="No data available"
+          overlayNoRowsTemplate={t("globalVariablesPage.noData")}
           onSelectionChanged={(event: SelectionChangedEvent) => {
             setSelectedRows(event.api.getSelectedRows().map((row) => row.name));
           }}

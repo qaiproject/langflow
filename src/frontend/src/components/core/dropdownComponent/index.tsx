@@ -1,16 +1,13 @@
 import { PopoverAnchor } from "@radix-ui/react-popover";
 import Fuse from "fuse.js";
 import { type ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import NodeDialog from "@/CustomNodes/GenericNode/components/NodeDialogComponent";
 import { mutateTemplate } from "@/CustomNodes/helpers/mutate-template";
 import LoadingTextComponent from "@/components/common/loadingTextComponent";
-import { RECEIVING_INPUT_VALUE, SELECT_AN_OPTION } from "@/constants/constants";
 import { usePostTemplateValue } from "@/controllers/API/queries/nodes/use-post-template-value";
 import KnowledgeBaseUploadModal from "@/modals/knowledgeBaseUploadModal/KnowledgeBaseUploadModal";
 import useAlertStore from "@/stores/alertStore";
-import useFlowStore from "@/stores/flowStore";
-import { useTypesStore } from "@/stores/typesStore";
-import { scapedJSONStringfy } from "@/utils/reactflowUtils";
 import {
   convertStringToHTML,
   getStatusColor,
@@ -20,7 +17,6 @@ import {
   cn,
   filterNullOptions,
   formatName,
-  groupByFamily,
 } from "../../../utils/utils";
 import { default as ForwardedIconComponent } from "../../common/genericIconComponent";
 import ShadTooltip from "../../common/shadTooltipComponent";
@@ -63,6 +59,15 @@ export default function Dropdown({
   inspectionPanel,
   ...baseInputProps
 }: BaseInputProps & DropDownComponent): JSX.Element {
+  const { t } = useTranslation();
+  const translateOptionLabel = (label: string) => {
+    const translatedOptionLabels: Record<string, string> = {
+      User: t("chatComponent.optionUser"),
+      AI: t("chatComponent.optionAI"),
+    };
+
+    return translatedOptionLabels[label] ?? label;
+  };
   const validOptions = useMemo(
     () => filterNullOptions(options),
     [options, value],
@@ -71,9 +76,8 @@ export default function Dropdown({
   // Initialize state and refs
   const [open, setOpen] = useState(children ? true : false);
   const [openDialog, setOpenDialog] = useState(false);
-  const [waitingForResponse, setWaitingForResponse] = useState(false);
+  const [, setWaitingForResponse] = useState(false);
   const [customValue, setCustomValue] = useState("");
-  const nodes = useFlowStore((state) => state.nodes);
 
   const [filteredOptions, setFilteredOptions] = useState(() => {
     // Include the current value in filteredOptions if it's a custom value not in validOptions
@@ -118,7 +122,7 @@ export default function Dropdown({
 
   // Utility functions
   const filterMetadataKeys = (
-    metadata: Record<string, any> = {},
+    metadata: Record<string, unknown> = {},
     excludeKeys: string[] = [
       "api_endpoint",
       "icon",
@@ -178,7 +182,7 @@ export default function Dropdown({
     // Create a new metadata array that directly maps to filtered options
     if (optionsMetaData) {
       // Create a map of option -> metadata for quick lookup
-      const metadataMap: Record<string, any> = {};
+      const metadataMap: Record<string, unknown> = {};
       validOptions.forEach((option, index) => {
         if (optionsMetaData[index]) {
           metadataMap[option] = optionsMetaData[index];
@@ -285,7 +289,7 @@ export default function Dropdown({
 
         // Reset filteredMetadata to match the new filteredOptions
         if (optionsMetaData) {
-          const metadataMap: Record<string, any> = {};
+          const metadataMap: Record<string, unknown> = {};
           validOptions.forEach((option, index) => {
             if (optionsMetaData[index]) {
               metadataMap[option] = optionsMetaData[index];
@@ -330,7 +334,7 @@ export default function Dropdown({
       variant="primary"
       size="xs"
     >
-      <LoadingTextComponent text="Loading options" />
+      <LoadingTextComponent text={t("dropdown.loadingOptions")} />
     </Button>
   );
 
@@ -381,22 +385,22 @@ export default function Dropdown({
             {value && <>{renderSelectedIcon()}</>}
             <span className="truncate">
               {disabled ? (
-                RECEIVING_INPUT_VALUE
+                t("dropdown.receivingInput")
               ) : (
                 <>
                   {
                     options?.includes(value) ? (
-                      value
+                      translateOptionLabel(value)
                     ) : // this logic is used for the agents component, if you update make sure to test the agent component
                     sourceOptions?.fields?.data?.node?.name ===
                       "connect_other_models" ? (
                       <span className="text-muted-foreground">
                         <LoadingTextComponent
-                          text={placeholder || SELECT_AN_OPTION}
+                          text={placeholder || t("dropdown.selectAnOption")}
                         />
                       </span>
                     ) : (
-                      placeholder || SELECT_AN_OPTION
+                      placeholder || t("dropdown.selectAnOption")
                     )
                     // ) : (
                     //   <span className="text-muted-foreground">
@@ -439,7 +443,7 @@ export default function Dropdown({
       <input
         onChange={searchRoleByTerm}
         onKeyDown={handleInputKeyDown}
-        placeholder="Search options..."
+        placeholder={t("common.searchOptions")}
         className="flex h-9 w-full rounded-md bg-transparent py-3 text-[13px] outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
         autoComplete="off"
         data-testid="dropdown_search_input"
@@ -490,7 +494,7 @@ export default function Dropdown({
                       })}
                     >
                       <div className="text-[13px] mr-2 whitespace-nowrap flex-shrink-0">
-                        {option}
+                        {translateOptionLabel(option)}
                       </div>
                       {filteredMetadata?.[index]?.status && (
                         <span
@@ -561,7 +565,7 @@ export default function Dropdown({
             disabled
             className="w-full text-center text-sm text-muted-foreground px-2.5 py-1.5"
           >
-            No options found
+            {t("dropdown.noOptionsFound")}
           </CommandItem>
         )}
       </CommandGroup>
@@ -607,7 +611,7 @@ export default function Dropdown({
                   name="RefreshCcw"
                   className={cn("h-3 w-3")}
                 />
-                Refresh list
+                {t("dropdown.refreshList")}
               </div>
             </CommandItem>
           )}
@@ -677,7 +681,7 @@ export default function Dropdown({
                     name="RefreshCcw"
                     className={cn("refresh-icon h-3 w-3 text-primary")}
                   />
-                  Refresh list
+                  {t("dropdown.refreshList")}
                 </div>
               </Button>
             </CommandItem>
@@ -691,7 +695,7 @@ export default function Dropdown({
   if (Object.keys(validOptions).length === 0 && !combobox && isLoading) {
     return (
       <div>
-        <span className="text-sm italic">Loading...</span>
+        <span className="text-sm italic">{t("common.loading")}</span>
       </div>
     );
   }

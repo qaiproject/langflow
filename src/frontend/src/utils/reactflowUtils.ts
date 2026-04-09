@@ -30,6 +30,7 @@ import {
 import { INCOMPLETE_LOOP_ERROR_ALERT } from "@/constants/alerts_constants";
 import { customDownloadNodeJson } from "@/customization/utils/custom-download-json";
 import { customDownloadFlow } from "@/customization/utils/custom-reactFlowUtils";
+import i18n from "@/i18n";
 import useFlowStore from "@/stores/flowStore";
 import getFieldTitle from "../CustomNodes/utils/get-field-title";
 import {
@@ -2284,7 +2285,7 @@ export const createNewFlow = (
 ) => {
   return {
     description: flow?.description ?? getRandomDescription(),
-    name: flow?.name ? flow.name : "New Flow",
+    name: flow?.name ? flow.name : i18n.t("mainPage.newFlow"),
     data: flowData,
     id: "",
     icon: flow?.icon ?? undefined,

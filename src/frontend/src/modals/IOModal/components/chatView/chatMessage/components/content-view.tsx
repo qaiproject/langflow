@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ForwardedIconComponent } from "@/components/common/genericIconComponent";
@@ -23,6 +24,7 @@ export const ErrorView = ({
   fitViewNode: (id: string) => void;
   chat: any;
 }) => {
+  const { t } = useTranslation();
   return (
     <>
       <div className="w-5/6 max-w-[768px] py-4 word-break-break-word">
@@ -37,7 +39,7 @@ export const ErrorView = ({
               <LogoIcon />
               <div className="flex items-center">
                 <TextShimmer className="" duration={1}>
-                  Flow running...
+                  {t("playground.flowRunning")}
                 </TextShimmer>
               </div>
             </motion.div>
@@ -67,7 +69,7 @@ export const ErrorView = ({
                             {content.component && (
                               <>
                                 <span>
-                                  An error occured in the{" "}
+                                  {t("playground.errorOccurredInPrefix")}{" "}
                                   <span
                                     className={cn(
                                       closeChat ?? "cursor-pointer underline",
@@ -81,18 +83,19 @@ export const ErrorView = ({
                                   >
                                     <strong>{content.component}</strong>
                                   </span>{" "}
-                                  Component, stopping your flow. See below for
-                                  more details.
+                                  {t("playground.errorOccurredInSuffix")}
                                 </span>
                               </>
                             )}
                           </div>
                           <div>
                             <h3 className="pb-3 font-semibold">
-                              Error details:
+                              {t("playground.errorDetails")}:
                             </h3>
                             {content.field && (
-                              <p className="pb-1">Field: {content.field}</p>
+                              <p className="pb-1">
+                                {t("playground.field")}: {content.field}
+                              </p>
                             )}
                             {content.reason && (
                               <span className="">
@@ -174,12 +177,12 @@ export const ErrorView = ({
                             {content.solution && (
                               <div className="mt-4">
                                 <h3 className="pb-3 font-semibold">
-                                  Steps to fix:
+                                  {t("playground.stepsToFix")}:
                                 </h3>
                                 <ol className="list-decimal pl-5">
-                                  <li>Check the component settings</li>
-                                  <li>Ensure all required fields are filled</li>
-                                  <li>Re-run your flow</li>
+                                  <li>{t("playground.checkComponentSettings")}</li>
+                                  <li>{t("playground.ensureRequiredFields")}</li>
+                                  <li>{t("playground.rerunFlow")}</li>
                                 </ol>
                               </div>
                             )}

@@ -1,5 +1,5 @@
+import { useTranslation } from "react-i18next";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
-import { convertTestName } from "@/components/common/storeCardComponent/utils/convert-test-name";
 import {
   Sidebar,
   SidebarContent,
@@ -16,6 +16,7 @@ import { useIsMobile } from "../../../../hooks/use-mobile";
 import type { NavProps } from "../../../../types/templates/types";
 
 export function Nav({ categories, currentTab, setCurrentTab }: NavProps) {
+  const { t } = useTranslation();
   const isMobile = useIsMobile();
 
   return (
@@ -36,7 +37,7 @@ export function Nav({ categories, currentTab, setCurrentTab }: NavProps) {
               "group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0",
             )}
           >
-            Templates
+            {t("templatesModal.templates")}
           </div>
         </div>
 
@@ -58,7 +59,7 @@ export function Nav({ categories, currentTab, setCurrentTab }: NavProps) {
                     <SidebarMenuButton
                       onClick={() => setCurrentTab(link.id)}
                       isActive={currentTab === link.id}
-                      data-testid={`side_nav_options_${link.title.toLowerCase().replace(/\s+/g, "-")}`}
+                      data-testid={`side_nav_options_${link.id}`}
                       tooltip={link.title}
                     >
                       <ForwardedIconComponent
@@ -70,7 +71,7 @@ export function Nav({ categories, currentTab, setCurrentTab }: NavProps) {
                         }`}
                       />
                       <span
-                        data-testid={`category_title_${convertTestName(link.title)}`}
+                        data-testid={`category_title_${link.id}`}
                       >
                         {link.title}
                       </span>

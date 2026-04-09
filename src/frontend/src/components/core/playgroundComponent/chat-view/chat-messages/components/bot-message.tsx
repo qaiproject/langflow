@@ -1,4 +1,5 @@
 import { memo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import LangflowLogo from "@/components/common/QosmoLogo";
 import IconComponent, {
   ForwardedIconComponent,
@@ -24,6 +25,7 @@ import { EditMessageButton } from "./message-options";
 
 export const BotMessage = memo(
   ({ chat, lastMessage, updateChat, playgroundPage }: chatMessagePropsType) => {
+    const { t } = useTranslation();
     const setErrorData = useAlertStore((state) => state.setErrorData);
     const [editMessage, setEditMessage] = useState(false);
     const isBuilding = useFlowStore((state) => state.isBuilding);
@@ -64,7 +66,7 @@ export const BotMessage = memo(
           },
           onError: () => {
             setErrorData({
-              title: "Error updating messages.",
+              title: t("playground.messagesUpdateError"),
             });
           },
         },
@@ -95,7 +97,7 @@ export const BotMessage = memo(
         {
           onError: () => {
             setErrorData({
-              title: "Error updating messages.",
+              title: t("playground.messagesUpdateError"),
             });
           },
         },
@@ -104,7 +106,7 @@ export const BotMessage = memo(
 
     const editedFlag = chat.edit ? (
       <div className="mt-2 text-xs text-muted-foreground text-right">
-        (Edited)
+        ({t("messageOptions.edited")})
       </div>
     ) : null;
 
@@ -160,10 +162,16 @@ export const BotMessage = memo(
                   )}
                   <span>
                     {thinkingActive && displayTime > 0 ? (
-                      <span>Running... {formatSeconds(displayTime)}</span>
+                      <span>
+                        {t("playground.runningWithTime", {
+                          time: formatSeconds(displayTime),
+                        })}
+                      </span>
                     ) : !thinkingActive && displayTime > 0 ? (
                       <span className="text-muted-foreground">
-                        Finished in {formatSeconds(displayTime)}
+                        {t("playground.finishedIn", {
+                          time: formatSeconds(displayTime),
+                        })}
                       </span>
                     ) : null}
                   </span>

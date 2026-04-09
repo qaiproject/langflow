@@ -1,5 +1,6 @@
 import Convert from "ansi-to-html";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ContentBlockDisplay } from "@/components/core/chatComponents/ContentBlockDisplay";
 import { useUpdateMessage } from "@/controllers/API/queries/messages";
 import { CustomMarkdownField } from "@/customization/components/custom-markdown-field";
@@ -12,7 +13,6 @@ import IconComponent, {
   ForwardedIconComponent,
 } from "../../../../../components/common/genericIconComponent";
 import SanitizedHTMLWrapper from "../../../../../components/common/sanitizedHTMLWrapper";
-import { EMPTY_INPUT_SEND_MESSAGE } from "../../../../../constants/constants";
 import useAlertStore from "../../../../../stores/alertStore";
 import type { chatMessagePropsType } from "../../../../../types/components";
 import { cn } from "../../../../../utils/utils";
@@ -29,6 +29,7 @@ export default function ChatMessage({
   closeChat,
   playgroundPage,
 }: chatMessagePropsType): JSX.Element {
+  const { t } = useTranslation();
   const convert = new Convert({ newline: true });
   const [hidden, setHidden] = useState(true);
   const [streamUrl, setStreamUrl] = useState(chat.stream_url);
@@ -74,12 +75,12 @@ export default function ChatMessage({
         setStreamUrl(undefined);
         if (JSON.parse(event.data)?.error) {
           setErrorData({
-            title: "Error on Streaming",
+            title: t("playground.streamingError"),
             list: [JSON.parse(event.data)?.error],
           });
         }
         updateChat(chat, chatMessageRef.current);
-        reject(new Error("Streaming failed"));
+        reject(new Error(t("playground.streamingFailed")));
       };
       eventSource.current.addEventListener("close", (event) => {
         setStreamUrl(undefined); // Update state to reflect the stream is closed
@@ -149,7 +150,7 @@ export default function ChatMessage({
         },
         onError: () => {
           setErrorData({
-            title: "Error updating messages.",
+            title: t("playground.messagesUpdateError"),
           });
         },
       },
@@ -177,7 +178,7 @@ export default function ChatMessage({
       {
         onError: () => {
           setErrorData({
-            title: "Error updating messages.",
+            title: t("playground.messagesUpdateError"),
           });
         },
       },
@@ -185,7 +186,9 @@ export default function ChatMessage({
   };
 
   const editedFlag = chat.edit ? (
-    <div className="text-sm text-muted-foreground">(Edited)</div>
+    <div className="text-sm text-muted-foreground">
+      ({t("messageOptions.edited")})
+    </div>
   ) : null;
 
   if (chat.category === "error") {
@@ -239,7 +242,7 @@ export default function ChatMessage({
                   <img
                     src={Robot}
                     className="absolute bottom-0 left-0 scale-[60%]"
-                    alt={"robot_image"}
+                    alt={t("playground.robotImageAlt")}
                   />
                 )}
               </div>
@@ -395,7 +398,9 @@ export default function ChatMessage({
                         )}
                         data-testid={`chat-message-${chat.sender_name}-${chatMessage}`}
                       >
-                        {isEmpty ? EMPTY_INPUT_SEND_MESSAGE : decodedMessage}
+                        {isEmpty
+                          ? t("playground.emptyInputMessage")
+                          : decodedMessage}
                         {editedFlag}
                       </div>
                     </>

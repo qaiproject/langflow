@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen } from "@testing-library/react";
+import i18n from "@/i18n";
 import IOKeyPairInputWithVariables from "../key-pair-input-with-variables";
 
 // Mock the useGetGlobalVariables hook
@@ -123,7 +124,9 @@ describe("IOKeyPairInputWithVariables", () => {
       wrapper: createWrapper(),
     });
 
-    const keyInputs = screen.getAllByPlaceholderText("Type key...");
+    const keyInputs = screen.getAllByPlaceholderText(
+      i18n.t("parameterInput.typeKey"),
+    );
     expect(keyInputs).toHaveLength(1);
   });
 
@@ -140,7 +143,9 @@ describe("IOKeyPairInputWithVariables", () => {
       wrapper: createWrapper(),
     });
 
-    expect(screen.getAllByPlaceholderText("Type key...")).toHaveLength(1);
+    expect(
+      screen.getAllByPlaceholderText(i18n.t("parameterInput.typeKey")),
+    ).toHaveLength(1);
   });
 
   it("calls onChange when key input changes", () => {
@@ -151,7 +156,9 @@ describe("IOKeyPairInputWithVariables", () => {
       wrapper: createWrapper(),
     });
 
-    const keyInput = screen.getByPlaceholderText("Type key...");
+    const keyInput = screen.getByPlaceholderText(
+      i18n.t("parameterInput.typeKey"),
+    );
     fireEvent.change(keyInput, { target: { value: "x-api-key" } });
 
     expect(onChange).toHaveBeenCalled();
@@ -191,7 +198,9 @@ describe("IOKeyPairInputWithVariables", () => {
     });
 
     // Should render regular input instead of InputComponent
-    const inputs = screen.getAllByPlaceholderText(/Type/);
+    const inputs = screen.getAllByPlaceholderText(
+      i18n.t("parameterInput.typeValue"),
+    );
     expect(inputs.length).toBeGreaterThan(0);
   });
 
@@ -223,7 +232,9 @@ describe("IOKeyPairInputWithVariables", () => {
     });
 
     // Component should render
-    expect(screen.getAllByPlaceholderText("Type key...")).toHaveLength(2);
+    expect(
+      screen.getAllByPlaceholderText(i18n.t("parameterInput.typeKey")),
+    ).toHaveLength(2);
   });
 });
 

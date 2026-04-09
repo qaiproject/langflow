@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import ShadTooltip from "@/components/common/shadTooltipComponent";
 import { Button } from "@/components/ui/button";
 import useFlowStore from "@/stores/flowStore";
@@ -17,6 +18,7 @@ export const SidebarOpenView = ({
   playgroundPage,
   setActiveSession,
 }: SidebarOpenViewProps) => {
+  const { t } = useTranslation();
   const [openMenuSession, setOpenMenuSession] = useState<string | null>(null);
 
   const setNewSessionCloseVoiceAssistant = useVoiceStore(
@@ -37,9 +39,12 @@ export const SidebarOpenView = ({
                 name="MessagesSquare"
                 className="h-[18px] w-[18px] text-ring"
               />
-              <div className="text-mmd font-normal">Chat</div>
+              <div className="text-mmd font-normal">{t("playground.chat")}</div>
             </div>
-            <ShadTooltip styleClasses="z-50" content="New Chat">
+            <ShadTooltip
+              styleClasses="z-50"
+              content={t("playground.newChat")}
+            >
               <div>
                 <Button
                   data-testid="new-chat"

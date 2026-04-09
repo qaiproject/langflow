@@ -1,4 +1,5 @@
 import { type FC, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { FaDiscord, FaGithub } from "react-icons/fa";
 import IconComponent from "@/components/common/genericIconComponent";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ export const GetStartedProgress: FC<{
   isDiscordJoined: boolean;
   handleDismissDialog: () => void;
 }> = ({ userData, isGithubStarred, isDiscordJoined, handleDismissDialog }) => {
+  const { t } = useTranslation();
   const [isGithubStarredChild, setIsGithubStarredChild] =
     useState(isGithubStarred);
   const [isDiscordJoinedChild, setIsDiscordJoinedChild] =
@@ -84,7 +86,7 @@ export const GetStartedProgress: FC<{
   };
 
   return (
-    <div className="mt-3 h-[10.8rem] w-full">
+    <div className="mt-3 min-h-[10.8rem] w-full pb-2">
       <div className="mb-2 flex items-center justify-between">
         <span
           className="text-sm font-medium"
@@ -92,10 +94,11 @@ export const GetStartedProgress: FC<{
         >
           {percentageGetStarted >= 100 ? (
             <>
-              <span>All Set</span> <span className="pl-1"> 🎉 </span>
+              <span>{t("getStarted.allSet")}</span>{" "}
+              <span className="pl-1"> 🎉 </span>
             </>
           ) : (
-            "Get started"
+            t("getStarted.title")
           )}
         </span>
         <button
@@ -140,27 +143,30 @@ export const GetStartedProgress: FC<{
         >
           <div
             className={cn(
-              "flex items-center gap-2 rounded-md px-2 py-[10px] hover:bg-muted",
+              "flex items-start gap-2 rounded-md px-2 py-3 text-left hover:bg-muted",
               isGithubStarredChild && "pointer-events-none",
             )}
           >
             {isGithubStarredChild ? (
-              <span data-testid="github_starred_icon_get_started">
+              <span
+                className="mt-0.5 shrink-0"
+                data-testid="github_starred_icon_get_started"
+              >
                 <IconComponent
                   name="Check"
                   className="h-4 w-4 text-accent-emerald-foreground"
                 />
               </span>
             ) : (
-              <FaGithub className="h-4 w-4" />
+              <FaGithub className="mt-0.5 h-4 w-4 shrink-0" />
             )}
             <span
               className={cn(
-                "text-sm",
+                "min-w-0 flex-1 whitespace-normal text-left text-sm leading-5",
                 isGithubStarredChild && "text-muted-foreground line-through",
               )}
             >
-              Star repo for updates
+              {t("getStarted.starRepo")}
             </span>
           </div>
         </Button>
@@ -182,27 +188,30 @@ export const GetStartedProgress: FC<{
         >
           <div
             className={cn(
-              "flex items-center gap-2 rounded-md p-2 py-[10px] hover:bg-muted",
+              "flex items-start gap-2 rounded-md px-2 py-3 text-left hover:bg-muted",
               isDiscordJoinedChild && "pointer-events-none",
             )}
           >
             {isDiscordJoinedChild ? (
-              <span data-testid="discord_joined_icon_get_started">
+              <span
+                className="mt-0.5 shrink-0"
+                data-testid="discord_joined_icon_get_started"
+              >
                 <IconComponent
                   name="Check"
                   className="h-4 w-4 text-accent-emerald-foreground"
                 />
               </span>
             ) : (
-              <FaDiscord className="h-4 w-4 text-[#5865F2]" />
+              <FaDiscord className="mt-0.5 h-4 w-4 shrink-0 text-[#5865F2]" />
             )}
             <span
               className={cn(
-                "text-sm",
+                "min-w-0 flex-1 whitespace-normal text-left text-sm leading-5",
                 isDiscordJoinedChild && "text-muted-foreground line-through",
               )}
             >
-              Join the community
+              {t("getStarted.joinCommunity")}
             </span>
           </div>
         </Button>
@@ -214,12 +223,15 @@ export const GetStartedProgress: FC<{
         >
           <div
             className={cn(
-              "flex items-center gap-2 rounded-md p-2 py-[10px] hover:bg-muted",
+              "flex min-h-[48px] items-start gap-2 rounded-md px-2 py-3 text-left hover:bg-muted",
               hasFlows && "pointer-events-none text-muted-foreground",
             )}
             data-testid="create_flow_btn_get_started"
           >
-            <span data-testid="create_flow_icon_get_started">
+            <span
+              className="mt-0.5 shrink-0"
+              data-testid="create_flow_icon_get_started"
+            >
               <IconComponent
                 name={hasFlows ? "Check" : "Plus"}
                 className={cn(
@@ -228,8 +240,13 @@ export const GetStartedProgress: FC<{
                 )}
               />
             </span>
-            <span className={cn("text-sm", hasFlows && "line-through")}>
-              Create a flow
+            <span
+              className={cn(
+                "min-w-0 flex-1 whitespace-normal text-left text-sm leading-5",
+                hasFlows && "line-through",
+              )}
+            >
+              {t("getStarted.createFlow")}
             </span>
           </div>
         </Button>

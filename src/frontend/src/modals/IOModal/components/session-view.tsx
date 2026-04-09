@@ -2,6 +2,7 @@ import { useIsFetching } from "@tanstack/react-query";
 import type { NewValueParams, SelectionChangedEvent } from "ag-grid-community";
 import cloneDeep from "lodash/cloneDeep";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { removeMessages } from "@/components/core/playgroundComponent/chat-view/utils/message-utils";
 import Loading from "@/components/ui/loading";
 import {
@@ -22,6 +23,7 @@ export default function SessionView({
   session?: string;
   id?: string;
 }) {
+  const { t } = useTranslation();
   const messages = useMessagesStore((state) => state.messages);
   const setMessages = useMessagesStore((state) => state.setMessages);
   const setErrorData = useAlertStore((state) => state.setErrorData);
@@ -77,12 +79,12 @@ export default function SessionView({
       }
       setSelectedRows([]);
       setSuccessData({
-        title: "Messages deleted successfully.",
+        title: t("playground.messagesDeletedSuccess"),
       });
     },
     onError: () => {
       setErrorData({
-        title: "Error deleting messages.",
+        title: t("playground.messagesDeleteError"),
       });
     },
   });
@@ -106,12 +108,12 @@ export default function SessionView({
           updateMessage(data);
           // Set success message
           setSuccessData({
-            title: "Messages updated successfully.",
+            title: t("playground.messagesUpdatedSuccess"),
           });
         },
         onError: () => {
           setErrorData({
-            title: "Error updating messages.",
+            title: t("playground.messagesUpdateError"),
           });
           event.data[field] = event.oldValue;
           event.api.refreshCells();
@@ -150,7 +152,7 @@ export default function SessionView({
       onDelete={playgroundPage ? undefined : handleRemoveMessages}
       readOnlyEdit
       editable={editable}
-      overlayNoRowsTemplate="No data available"
+      overlayNoRowsTemplate={t("playground.noData")}
       onSelectionChanged={(event: SelectionChangedEvent) => {
         setSelectedRows(event.api.getSelectedRows().map((row) => row.id));
       }}

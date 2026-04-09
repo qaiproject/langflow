@@ -1,4 +1,5 @@
 import * as Form from "@radix-ui/react-form";
+import { useTranslation } from "react-i18next";
 import InputComponent from "../../../../../../components/core/parameterRenderComponent/components/inputComponent";
 import { Button } from "../../../../../../components/ui/button";
 import {
@@ -13,11 +14,21 @@ import {
 type PasswordFormComponentProps = {
   password: string;
   cnfPassword: string;
-  handleInput: (event: any) => void;
+  handleInput: (event: {
+    target: {
+      name: string;
+      value: string;
+    };
+  }) => void;
   handlePatchPassword: (
     password: string,
     cnfPassword: string,
-    handleInput: any,
+    handleInput: (event: {
+      target: {
+        name: string;
+        value: string;
+      };
+    }) => void,
   ) => void;
 };
 const PasswordFormComponent = ({
@@ -26,6 +37,7 @@ const PasswordFormComponent = ({
   handleInput,
   handlePatchPassword,
 }: PasswordFormComponentProps) => {
+  const { t } = useTranslation();
   return (
     <>
       <Form.Root
@@ -36,9 +48,9 @@ const PasswordFormComponent = ({
       >
         <Card x-chunk="dashboard-04-chunk-2">
           <CardHeader>
-            <CardTitle>Password</CardTitle>
+            <CardTitle>{t("passwordForm.title")}</CardTitle>
             <CardDescription>
-              Type your new password and confirm it.
+              {t("passwordForm.description")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -52,11 +64,11 @@ const PasswordFormComponent = ({
                   value={password}
                   isForm
                   password={true}
-                  placeholder="Password"
+                  placeholder={t("auth.password")}
                   className="w-full"
                 />
                 <Form.Message match="valueMissing" className="field-invalid">
-                  Please enter your password
+                  {t("auth.enterPassword")}
                 </Form.Message>
               </Form.Field>
               <Form.Field name="cnfPassword" className="w-full">
@@ -70,19 +82,19 @@ const PasswordFormComponent = ({
                   value={cnfPassword}
                   isForm
                   password={true}
-                  placeholder="Confirm Password"
+                  placeholder={t("auth.confirmPassword")}
                   className="w-full"
                 />
 
                 <Form.Message className="field-invalid" match="valueMissing">
-                  Please confirm your password
+                  {t("auth.confirmYourPassword")}
                 </Form.Message>
               </Form.Field>
             </div>
           </CardContent>
           <CardFooter className="border-t px-6 py-4">
             <Form.Submit asChild>
-              <Button type="submit">Save</Button>
+              <Button type="submit">{t("common.save")}</Button>
             </Form.Submit>
           </CardFooter>
         </Card>

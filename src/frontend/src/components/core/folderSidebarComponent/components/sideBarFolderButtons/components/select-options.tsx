@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/select-custom";
 import type { FolderType } from "@/pages/MainPage/entities";
 import { cn } from "@/utils/utils";
+import { useTranslation } from "react-i18next";
 import { handleSelectChange } from "../helpers/handle-select-change";
 import { FolderSelectItem } from "./folder-select-item";
 
@@ -25,6 +26,8 @@ export const SelectOptions = ({
   handleSelectFolderToRename: (folder: FolderType) => void;
   checkPathName: (folderId: string) => boolean;
 }) => {
+  const { t } = useTranslation();
+
   return (
     <div>
       <Select
@@ -39,7 +42,11 @@ export const SelectOptions = ({
         }
         value=""
       >
-        <ShadTooltip content="Options" side="right" styleClasses="z-50">
+        <ShadTooltip
+          content={t("playground.options")}
+          side="right"
+          styleClasses="z-50"
+        >
           <SelectTrigger
             className="w-fit"
             id={`options-trigger-${item.name}`}
@@ -63,21 +70,28 @@ export const SelectOptions = ({
             data-testid="btn-rename-project"
             className="text-xs"
           >
-            <FolderSelectItem name="Rename" iconName="SquarePen" />
+            <FolderSelectItem
+              name={t("playground.rename")}
+              iconName="SquarePen"
+            />
           </SelectItem>
           <SelectItem
             value="download"
             data-testid="btn-download-project"
             className="text-xs"
           >
-            <FolderSelectItem name="Download" iconName="Download" />
+            <FolderSelectItem name={t("common.download")} iconName="Download" />
           </SelectItem>
           <SelectItem
             value="delete"
             data-testid="btn-delete-project"
             className="text-xs"
           >
-            <FolderSelectItem name="Delete" iconName="Trash2" />
+            <FolderSelectItem
+              name={t("common.delete")}
+              iconName="Trash2"
+              destructive
+            />
           </SelectItem>
         </SelectContent>
       </Select>
