@@ -2,6 +2,31 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import type { SidebarSection } from "@/components/ui/sidebar";
 import SidebarSegmentedNav, { NAV_ITEMS } from "../sidebarSegmentedNav";
 
+jest.mock("react-i18next", () => ({
+  initReactI18next: {
+    type: "3rdParty",
+    init: () => {},
+  },
+  useTranslation: () => ({
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        "flowSidebar.search": "Search",
+        "flowSidebar.components": "Components",
+        "flowSidebar.mcp": "MCP",
+        "flowSidebar.bundles": "Bundles",
+        "flowSidebar.stickyNotes": "Sticky Notes",
+        "flowSidebar.addStickyNotes": "Add Sticky Notes",
+        "flowSidebar.versions": "Versions",
+        "flowSidebar.versionHistory": "Version History",
+        "flowSidebar.traces": "Traces",
+      };
+
+      return translations[key] ?? key;
+    },
+    i18n: { language: "en" },
+  }),
+}));
+
 const mockNavigate = jest.fn();
 
 // Mock the hooks and components

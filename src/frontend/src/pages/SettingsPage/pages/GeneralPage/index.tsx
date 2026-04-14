@@ -48,6 +48,10 @@ export const GeneralPage = () => {
       }
     ).response?.data?.detail;
   };
+  const getErrorList = (error: unknown) => {
+    const detail = getErrorDetail(error);
+    return detail ? [detail] : undefined;
+  };
 
   const [inputState, setInputState] = useState<patchUserInputStateType>(
     CONTROL_PATCH_USER_STATE,
@@ -88,7 +92,7 @@ export const GeneralPage = () => {
           onError: (error) => {
             setErrorData({
               title: SAVE_ERROR_ALERT,
-              list: [getErrorDetail(error)],
+              list: getErrorList(error),
             });
           },
         },
@@ -112,7 +116,7 @@ export const GeneralPage = () => {
           onError: (error) => {
             setErrorData({
               title: SAVE_ERROR_ALERT,
-              list: [getErrorDetail(error)],
+              list: getErrorList(error),
             });
           },
         },
@@ -133,7 +137,7 @@ export const GeneralPage = () => {
     onError: (error) => {
       setErrorData({
         title: t("generalPage.apiKeySaveError"),
-        list: [getErrorDetail(error)],
+        list: getErrorList(error),
       });
       setHasApiKey(false);
       setValidApiKey(false);

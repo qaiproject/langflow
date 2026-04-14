@@ -35,7 +35,7 @@ export default function EmbedModal({
   const widgetProps = {
     flowId: flowId,
     flowName: flowName,
-    isAuth: isAuth,
+    webhookAuthEnable: isAuth,
     tweaksBuildedObject: tweaksBuildedObject,
     activeTweaks: activeTweaks,
   };

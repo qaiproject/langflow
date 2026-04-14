@@ -2,6 +2,29 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoizedSidebarTrigger } from "../MemoizedComponents";
 
+jest.mock("react-i18next", () => ({
+  initReactI18next: {
+    type: "3rdParty",
+    init: () => {},
+  },
+  useTranslation: () => ({
+    t: (key: string, params?: Record<string, string>) => {
+      const translations: Record<string, string> = {
+        "sidebar.components": "Components",
+        "flowSidebar.search": "Search",
+        "flowSidebar.components": "Components",
+      };
+
+      if (key === "flow.lockStatus") {
+        return `Lock status: ${params?.status ?? ""}`;
+      }
+
+      return translations[key] ?? key;
+    },
+    i18n: { language: "en" },
+  }),
+}));
+
 jest.mock("@/components/core/canvasControlsComponent/CanvasControls", () => ({
   __esModule: true,
   default: ({ children }: any) => (
@@ -113,8 +136,8 @@ jest.mock("@/components/common/genericIconComponent", () => ({
 }));
 
 // Mock NAV_ITEMS
-jest.mock("../../flowSidebarComponent/components/sidebarSegmentedNav", () => ({
-  NAV_ITEMS: [
+jest.mock("../../flowSidebarComponent/components/sidebarSegmentedNav", () => {
+  const mockNavItems = [
     {
       id: "search",
       icon: "search",
@@ -127,8 +150,13 @@ jest.mock("../../flowSidebarComponent/components/sidebarSegmentedNav", () => ({
       label: "Components",
       tooltip: "Components",
     },
-  ],
-}));
+  ];
+
+  return {
+    NAV_ITEMS: mockNavItems,
+    getTranslatedNavItems: () => mockNavItems,
+  };
+});
 
 describe("MemoizedSidebarTrigger", () => {
   beforeEach(() => {

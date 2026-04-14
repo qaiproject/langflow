@@ -60,6 +60,45 @@ jest.mock("@/hooks/flows/use-apply-flow-to-canvas", () => ({
   default: () => jest.fn(),
 }));
 
+jest.mock("react-i18next", () => {
+  const actual = jest.requireActual("react-i18next");
+  const translations: Record<string, string> = {
+    "flowSidebar.versionHistory": "Version History",
+    "flowVersions.failedLoadVersionData": "Failed to load version data",
+    "flowVersions.failedPreviewVersionData":
+      "This version's data could not be rendered for preview",
+    "flowVersions.current": "Current",
+    "flowVersions.workingVersion": "Working version",
+    "flowVersions.moreOptions": "More options",
+    "flowVersions.currentDraft": "Current Draft",
+    "flowVersions.failedToExportVersion": "Failed to export version",
+    "flowVersions.versionDeleted": "Version deleted",
+    "flowVersions.failedToDeleteVersion": "Failed to delete version",
+    "flowVersions.deleteVersion": "Delete Version",
+    "export.title": "Export",
+    "common.delete": "Delete",
+    "common.cancel": "Cancel",
+    "common.unknownError": "Unknown error",
+  };
+
+  return {
+    ...actual,
+    useTranslation: () => ({
+      t: (key: string, params?: Record<string, any>) => {
+        if (key === "flowVersions.deleteVersionDescription") {
+          return `This will permanently delete ${params?.version}. This can't be undone.`;
+        }
+        if (key === "flowVersions.previewingVersion") {
+          return `Previewing ${params?.version}`;
+        }
+        return translations[key] ?? key;
+      },
+      i18n: { changeLanguage: jest.fn() },
+    }),
+    initReactI18next: actual.initReactI18next,
+  };
+});
+
 // Store mocks
 const mockCurrentFlow = {
   id: "flow-1",

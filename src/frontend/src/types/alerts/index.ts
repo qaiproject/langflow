@@ -13,6 +13,7 @@ export type NoticeAlertType = {
 };
 export type SuccessAlertType = {
   title: string;
+  list?: Array<string>;
   id: string;
   removeAlert: (id: string) => void;
 };

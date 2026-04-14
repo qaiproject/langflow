@@ -633,20 +633,22 @@ export default function Dropdown({
               hideAdvanced
             />
           ) : (
-            <NodeDialog
-              open={openDialog}
-              dialogInputs={dialogInputs}
-              onClose={() => {
-                setOpenDialog(false);
-                setOpen(false);
-              }}
-              onCreated={(createdValue) => {
-                setPendingSelect(createdValue);
-              }}
-              nodeId={nodeId!}
-              name={name!}
-              nodeClass={nodeClass!}
-            />
+            dialogInputs && (
+              <NodeDialog
+                open={openDialog}
+                dialogInputs={dialogInputs}
+                onClose={() => {
+                  setOpenDialog(false);
+                  setOpen(false);
+                }}
+                onCreated={(createdValue) => {
+                  setPendingSelect(createdValue);
+                }}
+                nodeId={nodeId!}
+                name={name!}
+                nodeClass={nodeClass!}
+              />
+            )
           )}
         </CommandGroup>
       )}

@@ -62,10 +62,18 @@ jest.mock("@/customization/feature-flags", () => ({
   ENABLE_MCP_COMPOSER: false,
 }));
 
-const customGetMCPUrlMock = jest.fn(() => "http://test.com/api");
+const customGetMCPUrlMock = jest.fn<
+  string,
+  [string, unknown, "sse" | "streamablehttp" | undefined]
+>(() => "http://test.com/api");
 
 jest.mock("@/customization/utils/custom-mcp-url", () => ({
-  customGetMCPUrl: (...args: unknown[]) => customGetMCPUrlMock(...args),
+  customGetMCPUrl: (
+    projectId: string,
+    composerConnection: unknown,
+    selectedTransport: "sse" | "streamablehttp" | undefined,
+  ) =>
+    customGetMCPUrlMock(projectId, composerConnection, selectedTransport),
 }));
 
 const createWrapper = () => {

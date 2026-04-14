@@ -1,5 +1,6 @@
 import { cloneDeep } from "lodash";
 import { memo, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import IconComponent from "@/components/common/genericIconComponent";
 import ShadTooltip from "@/components/common/shadTooltipComponent";
 import {
@@ -28,6 +29,7 @@ const NoteToolbarComponent = memo(function NoteToolbarComponent({
   data,
   bgColor,
 }: NoteToolbarProps) {
+  const { t } = useTranslation();
   const setNoticeData = useAlertStore((state) => state.setNoticeData);
   const takeSnapshot = useFlowsManagerStore((state) => state.takeSnapshot);
   const shortcuts = useShortcutsStore((state) => state.shortcuts);
@@ -52,8 +54,10 @@ const NoteToolbarComponent = memo(function NoteToolbarComponent({
     if (data.node?.documentation) {
       return customOpenNewTab(data.node.documentation);
     }
-    setNoticeData({ title: `${data.id} docs is not available at the moment.` });
-  }, [data.node?.documentation, data.id, setNoticeData]);
+    setNoticeData({
+      title: t("inspectionPanel.docsUnavailable", { id: data.id }),
+    });
+  }, [data.node?.documentation, data.id, setNoticeData, t]);
 
   /** Handles toolbar menu actions: copy, duplicate, delete, documentation */
   const handleSelectChange = useCallback(
@@ -121,7 +125,7 @@ const NoteToolbarComponent = memo(function NoteToolbarComponent({
       <span className="isolate inline-flex rounded-md shadow-sm">
         {/* Color picker popover */}
         <Popover>
-          <ShadTooltip content="Pick Color">
+          <ShadTooltip content={t("noteToolbar.pickColor")}>
             <PopoverTrigger>
               <div
                 data-testid="color_picker"
@@ -149,7 +153,7 @@ const NoteToolbarComponent = memo(function NoteToolbarComponent({
         {/* More options dropdown */}
         <Select onValueChange={handleSelectChange} value="">
           <SelectTrigger>
-            <ShadTooltip content="Show More" side="top">
+            <ShadTooltip content={t("playground.moreOptions")} side="top">
               <div
                 data-testid="more-options-modal"
                 className="relative -ml-px inline-flex h-8 w-[2rem] items-center rounded-r-md bg-background text-foreground shadow-md transition-all duration-500 ease-in-out hover:bg-muted focus:z-10"

@@ -7,7 +7,7 @@ import { customStringify } from "../utils/reactflowUtils";
 const useAlertStore = create<AlertStoreType>((set, get) => ({
   errorData: { title: "", list: [] },
   noticeData: { title: "", link: "" },
-  successData: { title: "" },
+  successData: { title: "", list: [] },
   notificationCenter: false,
   notificationList: [],
   tempNotificationList: [],
@@ -68,12 +68,13 @@ const useAlertStore = create<AlertStoreType>((set, get) => ({
       get().addNotificationToTempList(notification);
     }
   },
-  setSuccessData: (newState: { title: string }) => {
+  setSuccessData: (newState: { title: string; list?: Array<string> }) => {
     if (newState.title && newState.title !== "") {
       set({ successData: newState });
       const notification: Omit<AlertItemType, "id"> = {
         type: "success",
         title: newState.title,
+        list: newState.list,
       };
       get().addNotificationToHistory(notification);
       get().addNotificationToTempList(notification);

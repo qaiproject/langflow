@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 const useFocusOnUnlock = (
   isBuilding: boolean,
-  inputRef: React.RefObject<HTMLInputElement>,
+  inputRef: React.RefObject<HTMLTextAreaElement | null>,
 ) => {
   useEffect(() => {
     if (!isBuilding && inputRef.current) {
