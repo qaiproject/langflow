@@ -128,27 +128,29 @@ export function useKnowledgeBaseForm({
   // Initialize form with existing knowledge base data when in Add Sources mode
   useEffect(() => {
     if (existingKnowledgeBase && open) {
-      setSourceName(existingKnowledgeBase.name);
-      if (existingKnowledgeBase.embeddingModel) {
+      const knowledgeBase = existingKnowledgeBase;
+
+      setSourceName(knowledgeBase.name);
+      if (knowledgeBase.embeddingModel) {
         const matchingModel = embeddingModelOptions.find(
-          (opt) => opt.id === existingKnowledgeBase.embeddingModel,
+          (opt) => opt.id === knowledgeBase.embeddingModel,
         );
         if (matchingModel) {
           setSelectedEmbeddingModel([matchingModel]);
         }
       }
-      if (existingKnowledgeBase.chunkSize != null) {
-        setChunkSize(existingKnowledgeBase.chunkSize);
+      if (knowledgeBase.chunkSize != null) {
+        setChunkSize(knowledgeBase.chunkSize);
       } else {
         setChunkSize(DEFAULT_CHUNK_SIZE);
       }
-      if (existingKnowledgeBase.chunkOverlap != null) {
-        setChunkOverlap(existingKnowledgeBase.chunkOverlap);
+      if (knowledgeBase.chunkOverlap != null) {
+        setChunkOverlap(knowledgeBase.chunkOverlap);
       } else {
         setChunkOverlap(DEFAULT_CHUNK_OVERLAP);
       }
-      if (existingKnowledgeBase.separator != null) {
-        setSeparator(existingKnowledgeBase.separator);
+      if (knowledgeBase.separator != null) {
+        setSeparator(knowledgeBase.separator);
       } else {
         setSeparator(DEFAULT_SEPARATOR);
       }
@@ -157,17 +159,14 @@ export function useKnowledgeBaseForm({
       // advanced chunking config.
       const hasAdvancedConfig =
         isAddSourcesMode ||
-        existingKnowledgeBase.chunkSize != null ||
-        existingKnowledgeBase.chunkOverlap != null ||
-        existingKnowledgeBase.separator != null;
+        knowledgeBase.chunkSize != null ||
+        knowledgeBase.chunkOverlap != null ||
+        knowledgeBase.separator != null;
       if (hasAdvancedConfig) {
         setShowAdvanced(true);
       }
-      if (
-        existingKnowledgeBase.columnConfig &&
-        existingKnowledgeBase.columnConfig.length > 0
-      ) {
-        setColumnConfig(existingKnowledgeBase.columnConfig);
+      if (knowledgeBase.columnConfig && knowledgeBase.columnConfig.length > 0) {
+        setColumnConfig(knowledgeBase.columnConfig);
       }
     }
   }, [existingKnowledgeBase, open, embeddingModelOptions]);

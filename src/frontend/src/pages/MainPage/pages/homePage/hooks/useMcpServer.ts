@@ -54,6 +54,9 @@ export const useMcpServer = ({
   const { t } = useTranslation();
   const setSuccessData = useAlertStore((s) => s.setSuccessData);
   const setErrorData = useAlertStore((s) => s.setErrorData);
+  const addNotificationToHistory = useAlertStore(
+    (s) => s.addNotificationToHistory,
+  );
   const queryClient = useQueryClient();
 
   const { data: mcpProjectData, isLoading: isLoadingMCPProjectData } =
@@ -174,6 +177,12 @@ export const useMcpServer = ({
               title: t("mcp.installedSuccessfully", {
                 client: clientTitle ?? clientName,
               }),
+            });
+            addNotificationToHistory({
+              type: "success",
+              title: t("mcp.installedSuccessfully", {
+                client: clientTitle ?? clientName,
+              }),
               list: [t("mcp.installRestartClient")],
             });
             setS((p) => ({
@@ -197,7 +206,13 @@ export const useMcpServer = ({
         },
       );
     },
-    [patchInstallMCP, setSuccessData, setErrorData, t],
+    [
+      patchInstallMCP,
+      setSuccessData,
+      setErrorData,
+      addNotificationToHistory,
+      t,
+    ],
   );
 
   const handleOnNewValue = useCallback(

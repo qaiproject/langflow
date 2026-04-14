@@ -9,7 +9,7 @@ import type { GetCodeType } from "@/types/tweaks";
 export default function getWidgetCode({
   flowId,
   flowName,
-  isAuth,
+  webhookAuthEnable: isAuth,
   copy = false,
 }: GetCodeType): string {
   const source = copy

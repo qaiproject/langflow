@@ -3,6 +3,37 @@ import userEvent from "@testing-library/user-event";
 import { DateRangePopover } from "../DateRangePopover";
 import { formatDateLabel } from "../traceViewHelpers";
 
+jest.mock("react-i18next", () => ({
+  initReactI18next: {
+    type: "3rdParty",
+    init: () => {},
+  },
+  useTranslation: () => ({
+    t: (key: string, params?: Record<string, string>) => {
+      const translations: Record<string, string> = {
+        "traceFilters.dateRange": "Date range",
+        "traceFilters.invalidDateRange": "Invalid date range",
+        "traceFilters.startDate": "Start date",
+        "traceFilters.endDate": "End date",
+        "traceFilters.endDateBeforeStart":
+          "End date cannot be earlier than start date.",
+        "traceFilters.clearDates": "Clear Dates",
+      };
+
+      if (key === "traceFilters.fromDate") {
+        return `From ${params?.date ?? ""}`;
+      }
+
+      if (key === "traceFilters.untilDate") {
+        return `Until ${params?.date ?? ""}`;
+      }
+
+      return translations[key] ?? key;
+    },
+    i18n: { language: "en-US" },
+  }),
+}));
+
 jest.mock("@/components/common/genericIconComponent", () => ({
   __esModule: true,
   default: ({ name, ...props }: { name: string }) => (

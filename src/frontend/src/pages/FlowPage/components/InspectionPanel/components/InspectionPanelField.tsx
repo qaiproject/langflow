@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import NodeInputInfo from "@/CustomNodes/GenericNode/components/NodeInputInfo";
 import useHandleOnNewValue from "@/CustomNodes/hooks/use-handle-new-value";
 import useHandleNodeClass from "@/CustomNodes/hooks/use-handle-node-class";
@@ -47,6 +48,7 @@ export default function InspectionPanelField({
   proxy,
   showAdvanced = false,
 }: InspectionPanelFieldProps) {
+  const { t } = useTranslation();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isAutoLogin = useIsAutoLogin();
   const shouldDisplayApiKey = isAuthenticated && !isAutoLogin;
@@ -139,7 +141,7 @@ export default function InspectionPanelField({
                 </ShadTooltip>
               )}
               {showAdvanced && (
-                <ShadTooltip content="Add to canvas">
+                <ShadTooltip content={t("inspectionPanel.addToCanvas")}>
                   <button
                     className="ml-1 cursor-pointer text-placeholder hover:text-foreground"
                     onClick={handleToggleVisibility}

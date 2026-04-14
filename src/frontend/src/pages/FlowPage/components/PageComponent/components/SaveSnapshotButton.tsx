@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import { useSidebar } from "@/components/ui/sidebar";
 import { usePostCreateSnapshot } from "@/controllers/API/queries/flow-version";
@@ -12,6 +13,7 @@ interface SaveSnapshotButtonProps {
 export default function SaveSnapshotButton({
   flowId,
 }: SaveSnapshotButtonProps) {
+  const { t } = useTranslation();
   const setSuccessData = useAlertStore((state) => state.setSuccessData);
   const setErrorData = useAlertStore((state) => state.setErrorData);
   const { setActiveSection, open, toggleSidebar } = useSidebar();
@@ -34,14 +36,14 @@ export default function SaveSnapshotButton({
       { flowId, description: null },
       {
         onSuccess: () => {
-          setSuccessData({ title: "Version saved" });
+          setSuccessData({ title: t("flowVersions.versionSaved") });
           setIsSavingDisplay(false);
           setSavedSuccess(true);
         },
         onError: (err: any) => {
           const detail = err?.response?.data?.detail;
           setErrorData({
-            title: "Failed to save version",
+            title: t("flowVersions.failedToSaveVersion"),
             ...(detail ? { list: [detail] } : {}),
           });
           setIsSavingDisplay(false);
@@ -53,12 +55,12 @@ export default function SaveSnapshotButton({
   return (
     <CanvasBanner
       icon="BookMarked"
-      title="Save a version of your flow"
-      description="Capture the current state as a restore point"
+      title={t("flowVersions.saveVersionBannerTitle")}
+      description={t("flowVersions.saveVersionBannerDescription")}
       actionSlot={
         <div className="flex items-center gap-2">
           <CanvasBannerButton variant="outline" onClick={handleDismiss}>
-            Keep Building
+            {t("flowVersions.keepBuilding")}
           </CanvasBannerButton>
           <CanvasBannerButton
             onClick={handleSave}
@@ -70,15 +72,15 @@ export default function SaveSnapshotButton({
                   name="Loader2"
                   className="h-3.5 w-3.5 animate-spin"
                 />
-                Saving…
+                {t("flowVersions.saving")}
               </>
             ) : savedSuccess ? (
               <>
                 <ForwardedIconComponent name="Check" className="h-3.5 w-3.5" />
-                Saved
+                {t("flowVersions.saved")}
               </>
             ) : (
-              "Save"
+              t("common.save")
             )}
           </CanvasBannerButton>
         </div>

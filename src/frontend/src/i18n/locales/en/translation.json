@@ -72,7 +72,16 @@
     "saveErrorTitle": "Failed to save flow",
     "undefinedFlowsState": "Flows variable undefined",
     "cancel": "Cancel",
-    "save": "Save"
+    "save": "Save",
+    "saveChanges": "Save Changes",
+    "savingChanges": "Saving...",
+    "untitledFlow": "Untitled Flow",
+    "neverSaved": "Never saved",
+    "lastSavedAt": "Last saved: {{time}}",
+    "lockStatus": "Lock status: {{status}}",
+    "locked": "Locked",
+    "unlocked": "Unlocked",
+    "flowLocked": "Flow Locked"
   },
   "export": {
     "title": "Export",
@@ -108,11 +117,13 @@
     "save": "Save",
     "cancel": "Cancel",
     "confirm": "Confirm",
+    "replace": "Replace",
     "delete": "Delete",
     "edit": "Edit",
     "close": "Close",
     "retry": "Retry",
     "loading": "Loading...",
+    "unknownError": "Unknown error",
     "items": "items",
     "components": "components",
     "flows": "flows",
@@ -407,6 +418,13 @@
     "manageServers": "Manage Servers",
     "newCustomComponent": "New Custom Component"
   },
+  "inspectionPanel": {
+    "componentIdCopied": "Component ID copied to clipboard",
+    "copyFullId": "Click to copy full ID",
+    "docsUnavailable": "{{id}} docs is not available at the moment.",
+    "addToCanvas": "Add to canvas",
+    "addDescriptionPlaceholder": "Add a description..."
+  },
   "flowVersions": {
     "current": "Current",
     "workingVersion": "Working version",
@@ -416,7 +434,116 @@
     "noSavedVersionsYet": "No saved versions yet",
     "moreOptions": "More options",
     "deleteVersion": "Delete Version",
-    "deleteVersionDescription": "This will permanently delete {{version}}. This can't be undone."
+    "deleteVersionDescription": "This will permanently delete {{version}}. This can't be undone.",
+    "versionSaved": "Version saved",
+    "failedToSaveVersion": "Failed to save version",
+    "saveVersionBannerTitle": "Save a version of your flow",
+    "saveVersionBannerDescription": "Capture the current state as a restore point",
+    "keepBuilding": "Keep Building",
+    "saving": "Saving...",
+    "saved": "Saved",
+    "currentDraft": "Current Draft",
+    "noDataToExport": "No data available to export",
+    "defaultFlowName": "flow",
+    "failedToExportVersion": "Failed to export version",
+    "versionDeleted": "Version deleted",
+    "failedToDeleteVersion": "Failed to delete version",
+    "currentFlow": "Current Flow",
+    "previewingVersion": "Previewing {{version}}",
+    "readOnly": "Read-Only",
+    "loadingPreview": "Loading preview...",
+    "restoreBannerTitle": "Restore this version of your flow",
+    "restoreBannerDescriptionPrefix": "Replace the current draft with",
+    "restoring": "Restoring...",
+    "restore": "Restore",
+    "restoreVersion": "Restore Version",
+    "restoreConfirmPrefix": "Restore",
+    "restoreConfirmSuffix": "This will replace your current canvas.",
+    "saveCurrentDraftBeforeRestoring": "Save current draft before restoring"
+  },
+  "traceDetails": {
+    "title": "Trace Details",
+    "trace": "Trace",
+    "runSummary": "Run Summary",
+    "noTraceForRun": "No trace available for this run.",
+    "loadingTrace": "Loading trace...",
+    "failedToLoadTraceDetails": "Failed to load trace details.",
+    "selectSpanToViewDetails": "Select a span to view details",
+    "error": "Error",
+    "latency": "Latency",
+    "tokens": "Tokens",
+    "prompt": "Prompt",
+    "completion": "Completion",
+    "estimatedCost": "Estimated Cost",
+    "input": "Input",
+    "output": "Output",
+    "noAdditionalDetails": "No additional details available"
+  },
+  "outputModal": {
+    "copiedToClipboard": "Copied to clipboard",
+    "description": "Inspect the output of the component below.",
+    "title": "Component Output",
+    "outputs": "Outputs",
+    "logs": "Logs",
+    "noToolsAvailable": "No tools available",
+    "noOutput": "NO OUTPUT",
+    "streamingNotSupported": "Streaming is not supported",
+    "usePlaygroundForStreaming": "Use the playground to interact with components that stream data"
+  },
+  "shareModal": {
+    "component": "component",
+    "flow": "flow",
+    "workflow": "workflow",
+    "yourComponent": "your component",
+    "sharedSuccessfully": "{{type}} shared successfully!",
+    "errorSharing": "Error sharing {{type}}",
+    "replaceExisting": "It seems {{name}} already exists. Do you want to replace it with the current?",
+    "irreversibleNote": "Note: This action is irreversible.",
+    "publishDescription": "Publish {{type}} to the Langflow Store.",
+    "setStatusPublic": "Set {{type}} status to public",
+    "attention": "Attention",
+    "apiKeysRemoved": "API keys in specified fields are automatically removed upon sharing.",
+    "shareType": "Share {{type}}"
+  },
+  "tableOptions": {
+    "addNewRow": "Add a new row",
+    "selectItemsToDuplicate": "Select items to duplicate",
+    "duplicateSelectedItems": "Duplicate selected items",
+    "selectItemsToDelete": "Select items to delete",
+    "deleteSelectedItems": "Delete selected items",
+    "resetColumns": "Reset Columns",
+    "paginationInfo": "Pagination Info"
+  },
+  "nodeBadges": {
+    "legacy": "Legacy",
+    "betaComponent": "Beta component",
+    "dismiss": "Dismiss",
+    "dismissWarningBar": "Dismiss warning bar",
+    "use": "Use",
+    "noDirectReplacement": "No direct replacement."
+  },
+  "fileUpload": {
+    "uploadOrDropYourFile": "Upload or drop your file",
+    "dropYourFileHere": "Drop your file here"
+  },
+  "jsonEditor": {
+    "copyFailed": "Copy Failed",
+    "editorNotAvailable": "Editor not available",
+    "jsonCopiedToClipboard": "JSON copied to clipboard",
+    "copyManually": "Unable to copy to clipboard. Please copy manually.",
+    "copyJsonToClipboard": "Copy JSON to clipboard",
+    "invalidResult": "Invalid Result",
+    "resultNotSerializable": "The filtered result contains values that cannot be serialized to JSON",
+    "resultMustBeObjectOrArray": "The filtered result must be a JSON object or array, not a primitive value",
+    "invalidPath": "Invalid Path",
+    "pathLedToUndefined": "Path '{{path}}' led to undefined or null value",
+    "invalidArrayIndex": "Invalid Array Index",
+    "arrayIndexOutOfBounds": "Index {{index}} is out of bounds for array of length {{length}}",
+    "invalidProperty": "Invalid Property",
+    "propertyMissingInArrayItems": "Property '{{key}}' does not exist in array items",
+    "propertyMissingInObject": "Property '{{key}}' does not exist in object",
+    "transformReturnedUndefined": "Transform resulted in undefined value",
+    "transformError": "Transform Error"
   },
   "store": {
     "title": "Langflow Store",
@@ -533,7 +660,37 @@
     "selectedCount": "{{count}} selected",
     "noFilesFoundTryAgain": "No files found, try again",
     "uploadOrImportFiles": "Upload or import files,",
-    "orVisit": "or visit"
+    "orVisit": "or visit",
+    "uploadSuccessSingle": "File uploaded successfully",
+    "uploadSuccessMultiple": "Files uploaded successfully",
+    "uploadErrorTitle": "Error uploading file",
+    "uploadErrorFallback": "An error occurred while uploading the file",
+    "dropFilesOrFoldersHere": "Drop files or folders here",
+    "dropFilesHere": "Drop files here",
+    "clickToSelectFilesOrDropFolder": "Click to select files (or drop a folder)",
+    "clickOrDragFilesHere": "Click or drag files here",
+    "dragDropSupport": "Drag-and-drop supports both individual files and folders.",
+    "avoidHiddenDirectories": "Avoid folders with large hidden directories (.mypy_cache, .git, node_modules, etc.)",
+    "selectFolderInstead": "Select a folder instead",
+    "moreTypes": "+{{count}} more",
+    "maxSize": "{{size}} max",
+    "remove": "Remove",
+    "deleteFileTitle": "Delete File",
+    "removeFileTitle": "Remove File",
+    "confirmDeleteFile": "Are you sure you want to delete \"{{name}}\"?",
+    "confirmRemoveFile": "Are you sure you want to remove \"{{name}}\"?",
+    "deletedSuccessfully": "The file has been deleted successfully",
+    "deleteDescriptionLocal": "This action cannot be undone. The file will be permanently deleted.",
+    "deleteDescriptionRemote": "This will remove the file from your list. You can add it back later if needed.",
+    "unsupportedType": "Type not supported by component",
+    "uploadFailed": "Upload failed,",
+    "tryAgain": "try again?",
+    "importFrom": "Import from...",
+    "importSources": {
+      "drive": "Drive",
+      "oneDrive": "OneDrive",
+      "s3Bucket": "S3 Bucket"
+    }
   },
   "saveChanges": {
     "title": "{{flowName}} has unsaved changes",
@@ -766,6 +923,30 @@
     "title": "Notifications",
     "empty": "No new notifications"
   },
+  "appHeader": {
+    "notificationsAndErrors": "Notifications and errors",
+    "goToGithubRepo": "Go to GitHub repo",
+    "goToDiscordServer": "Go to Discord server"
+  },
+  "nodeToolbar": {
+    "minimizeUnavailable": "Minimization is only available for components with one active connection or fewer.",
+    "codeUnavailable": "You can not access {{id}} code",
+    "componentSaved": "{{id}} saved successfully",
+    "componentOverridden": "{{id}} successfully overridden!",
+    "newComponentSaved": "New component successfully saved!",
+    "defaultNodeName": "Node",
+    "nodeDownloaded": "{{name}} downloaded successfully",
+    "downloadFailed": "Failed to download {{name}}",
+    "freeze": "Freeze",
+    "restore": "Restore",
+    "createNew": "Create New",
+    "replaceExistingComponent": "It seems {{name}} already exists. Do you want to replace it with the current or create a new one?",
+    "expand": "Expand",
+    "ungroup": "Ungroup"
+  },
+  "noteToolbar": {
+    "pickColor": "Pick Color"
+  },
   "messagesPage": {
     "description": "Review and manage your saved messages."
   },
@@ -854,6 +1035,20 @@
     "field": "Field",
     "empty": "Empty"
   },
+  "componentUpdates": {
+    "errorTitle": "Error updating components",
+    "errorLine1": "There was an error updating the components.",
+    "errorLine2": "If the error persists, please report it on our Discord or GitHub.",
+    "edgesLost": "Some edges were lost after updating the components. Please review the flow and reconnect them.",
+    "successSingle": "Successfully updated 1 component",
+    "successMultiple": "Successfully updated {{count}} components",
+    "availableSingle": "An update is available for 1 component",
+    "availableMultiple": "Updates are available for {{count}} components",
+    "dismiss": "Dismiss",
+    "dismissAll": "Dismiss All",
+    "reviewAll": "Review All",
+    "updateAll": "Update All"
+  },
   "chatComponent": {
     "title": "Chat Input",
     "description": "Get chat inputs from the Playground.",
@@ -902,7 +1097,8 @@
     "error": "Error...",
     "file": "File",
     "fileAlt": "Attached file preview",
-    "generatedImage": "Generated image"
+    "generatedImage": "Generated image",
+    "deleteFile": "Delete file"
   },
   "templatesModal": {
     "templates": "Templates",
@@ -962,6 +1158,28 @@
       "people": "People",
       "space": "Space"
     }
+  },
+  "traceFilters": {
+    "dateRange": "Date range",
+    "fromDate": "From {{date}}",
+    "untilDate": "Until {{date}}",
+    "invalidDateRange": "Invalid date range",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "endDateBeforeStart": "End date cannot be earlier than start date.",
+    "clearDates": "Clear Dates"
+  },
+  "traceInsights": {
+    "flowActivity": "Flow Activity",
+    "runs": "Runs",
+    "totalRuns": "Total {{count}}",
+    "groupBySession": "Group by Session",
+    "searchRuns": "Search runs...",
+    "allStatus": "All Status",
+    "success": "Success",
+    "error": "Error",
+    "reload": "Reload",
+    "runsCount": "{{count}} runs"
   },
   "timeElapsed": {
     "year_one": "{{count}} year",

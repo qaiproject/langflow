@@ -1,4 +1,6 @@
+import type { ComponentProps } from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
+import type { MCPTransport } from "@/controllers/API/queries/mcp/use-patch-install-mcp";
 import { McpJsonContent } from "../McpJsonContent";
 
 jest.mock("react-syntax-highlighter", () => ({
@@ -110,10 +112,10 @@ jest.mock("@/utils/utils", () => ({
     args.filter(Boolean).join(" "),
 }));
 
-const defaultProps = {
+const defaultProps: ComponentProps<typeof McpJsonContent> = {
   selectedPlatform: "macoslinux",
   setSelectedPlatform: jest.fn(),
-  selectedTransport: "sse",
+  selectedTransport: "sse" as MCPTransport,
   setSelectedTransport: jest.fn(),
   isDarkMode: false,
   isCopied: false,

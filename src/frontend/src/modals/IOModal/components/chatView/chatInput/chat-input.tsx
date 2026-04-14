@@ -33,7 +33,7 @@ export default function ChatInput({
   files,
   setFiles,
   isDragging,
-  playgroundPage,
+  playgroundPage = false,
 }: ChatInputType): JSX.Element {
   const { t } = useTranslation();
   const currentFlowId = useFlowsManagerStore((state) => state.currentFlowId);

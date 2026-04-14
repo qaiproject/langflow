@@ -16,6 +16,12 @@ jest.mock("../KnowledgeBaseDrawer", () => {
       return null;
     }
 
+    type MockKnowledgeBase = {
+      name: string;
+      embedding_provider?: string;
+      embedding_model?: string;
+    };
+
     return (
       <div
         data-testid="knowledge-base-drawer"
@@ -32,9 +38,11 @@ jest.mock("../KnowledgeBaseDrawer", () => {
           <div data-testid="embedding-provider">
             <label>Embedding Provider</label>
             <div>
-              {knowledgeBase.embedding_provider ||
-                knowledgeBase.embedding_model ||
-                "Unknown"}
+              {
+                (knowledgeBase as MockKnowledgeBase).embedding_provider ||
+                  knowledgeBase.embedding_model ||
+                  "Unknown"
+              }
             </div>
           </div>
           <div data-testid="source-files">

@@ -34,12 +34,12 @@ export default function SliderComponent({
   disabled,
   rangeSpec,
   editNode = false,
-  minLabel = MIN_LABEL,
-  maxLabel = MAX_LABEL,
+  minLabel,
+  maxLabel,
   minLabelIcon = MIN_LABEL_ICON,
   maxLabelIcon = MAX_LABEL_ICON,
   sliderButtons = false,
-  sliderButtonsOptions = DEFAULT_SLIDER_BUTTONS_OPTIONS,
+  sliderButtonsOptions,
   handleOnNewValue,
   showParameter = true,
 }: InputProps<string[] | number[], SliderComponentType>): JSX.Element | null {
@@ -53,7 +53,7 @@ export default function SliderComponent({
     { id: 3, label: t("slider.wild") },
   ];
 
-  sliderButtonsOptions =
+  const resolvedSliderButtonsOptions =
     sliderButtons && sliderButtonsOptions && sliderButtonsOptions.length > 0
       ? sliderButtonsOptions
       : defaultSliderButtonsOptions;
@@ -295,7 +295,7 @@ export default function SliderComponent({
       {sliderButtons && (
         <div className="my-3">
           <div className={clsx("flex rounded-md bg-background")}>
-            {sliderButtonsOptions?.map((option) => (
+            {resolvedSliderButtonsOptions.map((option) => (
               <button
                 key={option.id}
                 onClick={() => handleOptionClick(option.id)}

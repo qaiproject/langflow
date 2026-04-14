@@ -3,6 +3,45 @@ import userEvent from "@testing-library/user-event";
 
 import DragFilesComponent from "../index";
 
+jest.mock("react-i18next", () => ({
+  initReactI18next: {
+    type: "3rdParty",
+    init: () => {},
+  },
+  useTranslation: () => ({
+    t: (key: string, params?: Record<string, string | number>) => {
+      const translations: Record<string, string> = {
+        "fileManager.dropFilesOrFoldersHere": "Drop files or folders here",
+        "fileManager.dropFilesHere": "Drop files here",
+        "fileManager.clickToSelectFilesOrDropFolder":
+          "Click to select files (or drop a folder)",
+        "fileManager.clickOrDragFilesHere": "Click or drag files here",
+        "fileManager.dragDropSupport":
+          "Drag-and-drop supports both individual files and folders.",
+        "fileManager.avoidHiddenDirectories":
+          "Avoid folders with large hidden directories (.mypy_cache, .git, node_modules, etc.)",
+        "fileManager.selectFolderInstead": "Select a folder instead",
+        "fileManager.uploadSuccessSingle": "File uploaded successfully",
+        "fileManager.uploadSuccessMultiple": "Files uploaded successfully",
+        "fileManager.uploadErrorTitle": "Error uploading file",
+        "fileManager.uploadErrorFallback":
+          "An error occurred while uploading the file",
+      };
+
+      if (key === "fileManager.moreTypes") {
+        return `+${params?.count} more`;
+      }
+
+      if (key === "fileManager.maxSize") {
+        return `${params?.size} max`;
+      }
+
+      return translations[key] ?? key;
+    },
+    i18n: { language: "en" },
+  }),
+}));
+
 jest.mock("@/components/common/genericIconComponent", () => ({
   __esModule: true,
   default: ({ name }: { name: string }) => (

@@ -64,6 +64,45 @@ jest.mock("@/hooks/flows/use-apply-flow-to-canvas", () => ({
   default: () => applyFlowToCanvasMock,
 }));
 
+jest.mock("react-i18next", () => {
+  const actual = jest.requireActual("react-i18next");
+  const translations: Record<string, string> = {
+    "flowSidebar.versionHistory": "Version History",
+    "flowVersions.failedLoadVersionData": "Failed to load version data",
+    "flowVersions.failedPreviewVersionData":
+      "This version's data could not be rendered for preview",
+    "flowVersions.current": "Current",
+    "flowVersions.workingVersion": "Working version",
+    "flowVersions.moreOptions": "More options",
+    "flowVersions.currentDraft": "Current Draft",
+    "flowVersions.failedToExportVersion": "Failed to export version",
+    "flowVersions.versionDeleted": "Version deleted",
+    "flowVersions.failedToDeleteVersion": "Failed to delete version",
+    "flowVersions.deleteVersion": "Delete Version",
+    "export.title": "Export",
+    "common.delete": "Delete",
+    "common.cancel": "Cancel",
+    "common.unknownError": "Unknown error",
+  };
+
+  return {
+    ...actual,
+    useTranslation: () => ({
+      t: (key: string, params?: Record<string, any>) => {
+        if (key === "flowVersions.deleteVersionDescription") {
+          return `This will permanently delete ${params?.version}. This can't be undone.`;
+        }
+        if (key === "flowVersions.previewingVersion") {
+          return `Previewing ${params?.version}`;
+        }
+        return translations[key] ?? key;
+      },
+      i18n: { changeLanguage: jest.fn() },
+    }),
+    initReactI18next: actual.initReactI18next,
+  };
+});
+
 // ---------------------------------------------------------------------------
 // Store mocks — with subscribe support
 // ---------------------------------------------------------------------------
@@ -94,7 +133,7 @@ const setStateMock = jest.fn((partial: any) => {
 jest.mock("@/stores/flowStore", () => {
   const store: any = (selector: any) => selector(storeState);
   store.getState = () => storeState;
-  store.setState = (...args: any[]) => setStateMock(...args);
+  store.setState = (partial: any) => setStateMock(partial);
   store.subscribe = jest.fn((cb: any) => {
     storeSubscribers.add(cb);
     return () => storeSubscribers.delete(cb);
@@ -312,8 +351,9 @@ describe("FlowVersionSidebarContent store behavior", () => {
     render(<FlowVersionSidebarContent flowId="flow-1" />);
 
     // Click on a version entry to trigger selection
-    const user = userEvent.setup();
-    const entryRow = screen.getByText("v1").closest("[class*=cursor-pointer]");
+    const entryRow = screen.getByText("v1").closest(
+      "[class*=cursor-pointer]",
+    ) as HTMLElement | null;
     if (entryRow) {
       act(() => {
         entryRow.click();
@@ -349,7 +389,9 @@ describe("FlowVersionSidebarContent store behavior", () => {
     render(<FlowVersionSidebarContent flowId="flow-1" />);
 
     // Click entry to trigger selection
-    const entryRow = screen.getByText("v1").closest("[class*=cursor-pointer]");
+    const entryRow = screen.getByText("v1").closest(
+      "[class*=cursor-pointer]",
+    ) as HTMLElement | null;
     if (entryRow) {
       act(() => {
         entryRow.click();
@@ -384,7 +426,9 @@ describe("FlowVersionSidebarContent store behavior", () => {
 
     render(<FlowVersionSidebarContent flowId="flow-1" />);
 
-    const entryRow = screen.getByText("v1").closest("[class*=cursor-pointer]");
+    const entryRow = screen.getByText("v1").closest(
+      "[class*=cursor-pointer]",
+    ) as HTMLElement | null;
     if (entryRow) {
       act(() => {
         entryRow.click();
@@ -406,7 +450,9 @@ describe("FlowVersionSidebarContent store behavior", () => {
     render(<FlowVersionSidebarContent flowId="flow-1" />);
 
     // Click version entry — this sets store nodes to version-node via layoutEffect
-    const entryRow = screen.getByText("v1").closest("[class*=cursor-pointer]");
+    const entryRow = screen.getByText("v1").closest(
+      "[class*=cursor-pointer]",
+    ) as HTMLElement | null;
     if (entryRow) {
       act(() => {
         entryRow.click();
@@ -419,7 +465,7 @@ describe("FlowVersionSidebarContent store behavior", () => {
     // Click Current row
     const draftRow = screen
       .getByText("Current")
-      .closest("[class*=cursor-pointer]");
+      .closest("[class*=cursor-pointer]") as HTMLElement | null;
     if (draftRow) {
       act(() => {
         draftRow.click();

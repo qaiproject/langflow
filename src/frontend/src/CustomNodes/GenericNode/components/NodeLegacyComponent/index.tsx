@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 import useFlowStore from "@/stores/flowStore";
 import { cn } from "@/utils/utils";
 import { useGetReplacementComponents } from "../../hooks/use-get-replacement-components";
@@ -12,6 +13,7 @@ export default function NodeLegacyComponent({
   replacement?: string[];
   setDismissAll: (value: boolean) => void;
 }) {
+  const { t } = useTranslation();
   const setFilterComponent = useFlowStore((state) => state.setFilterComponent);
   const setFilterType = useFlowStore((state) => state.setFilterType);
   const setFilterEdge = useFlowStore((state) => state.setFilterEdge);
@@ -32,7 +34,9 @@ export default function NodeLegacyComponent({
     >
       <div className="flex items-center gap-3 w-full">
         <div className="h-2.5 w-2.5 rounded-full bg-warning" />
-        <div className="mb-px flex-1 truncate text-mmd font-medium">Legacy</div>
+        <div className="mb-px flex-1 truncate text-mmd font-medium">
+          {t("nodeBadges.legacy")}
+        </div>
 
         <Button
           variant="ghost"
@@ -42,10 +46,10 @@ export default function NodeLegacyComponent({
             e.stopPropagation();
             setDismissAll(true);
           }}
-          aria-label="Dismiss warning bar"
+          aria-label={t("nodeBadges.dismissWarningBar")}
           data-testid="dismiss-warning-bar"
         >
-          Dismiss
+          {t("nodeBadges.dismiss")}
         </Button>
       </div>
       <div className="text-mmd text-muted-foreground w-full">
@@ -54,7 +58,7 @@ export default function NodeLegacyComponent({
         replacement.length > 0 &&
         foundComponents.some((component) => component) ? (
           <span className="block items-center">
-            Use{" "}
+            {t("nodeBadges.use")}{" "}
             {foundComponents.map((component, index) => (
               <>
                 {component && (
@@ -75,7 +79,7 @@ export default function NodeLegacyComponent({
             .
           </span>
         ) : (
-          "No direct replacement."
+          t("nodeBadges.noDirectReplacement")
         )}
       </div>
     </div>

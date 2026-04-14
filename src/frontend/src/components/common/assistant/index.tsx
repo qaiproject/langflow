@@ -8,6 +8,20 @@ import useAssistantManagerStore from "@/stores/assistantManagerStore";
 import { targetHandleType } from "@/types/flow";
 import ForwardedIconComponent from "../genericIconComponent";
 
+type AssistantResponse = {
+  data?: {
+    outputs?: Array<{
+      outputs?: Array<{
+        outputs?: {
+          message?: {
+            message?: string;
+          };
+        };
+      }>;
+    }>;
+  };
+};
+
 interface AssistantButtonProps {
   type: "field" | "flow" | "project" | "header";
   compData?: targetHandleType;
@@ -118,9 +132,10 @@ export const AssistantButton: React.FC<AssistantButtonProps> = ({
         setClicked(true);
         // we use result instead of data because data is undefined on first call
         const result = await refetch();
-        handleOnNewValue({
+        const response = result.data as AssistantResponse | undefined;
+        handleOnNewValue?.({
           value:
-            result.data?.data?.outputs[0]?.outputs[0]?.outputs?.message
+            response?.data?.outputs?.[0]?.outputs?.[0]?.outputs?.message
               ?.message,
         });
         break;
