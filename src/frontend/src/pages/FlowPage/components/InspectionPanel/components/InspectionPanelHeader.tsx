@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useTranslation } from "react-i18next";
 import useHandleOnNewValue from "@/CustomNodes/hooks/use-handle-new-value";
 import useHandleNodeClass from "@/CustomNodes/hooks/use-handle-node-class";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
@@ -27,6 +28,7 @@ export default function InspectionPanelHeader({
   isEditingFields,
   setIsEditingFields,
 }: InspectionPanelHeaderProps) {
+  const { t } = useTranslation();
   const [openCodeModal, setOpenCodeModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [isHoveringContent, setIsHoveringContent] = useState(false);
@@ -47,8 +49,8 @@ export default function InspectionPanelHeader({
 
   const handleCopyId = useCallback(() => {
     navigator.clipboard.writeText(data.id);
-    setSuccessData({ title: "Component ID copied to clipboard" });
-  }, [data.id, setSuccessData]);
+    setSuccessData({ title: t("inspectionPanel.componentIdCopied") });
+  }, [data.id, setSuccessData, t]);
 
   const handleOpenCode = useCallback(() => {
     if (hasCode) {
@@ -61,9 +63,9 @@ export default function InspectionPanelHeader({
       return customOpenNewTab(data.node.documentation);
     }
     setNoticeData({
-      title: `${data.id} docs is not available at the moment.`,
+      title: t("inspectionPanel.docsUnavailable", { id: data.id }),
     });
-  }, [data.id, data.node?.documentation, setNoticeData]);
+  }, [data.id, data.node?.documentation, setNoticeData, t]);
 
   // Wrapper to match CodeAreaModal's expected signature
   const handleSetValue = useCallback(
@@ -116,7 +118,10 @@ export default function InspectionPanelHeader({
         onMouseLeave={() => setIsHoveringContent(false)}
       >
         <div className="absolute -left-2 top-[18px] w-7 pr-2">
-          <ShadTooltip content={editMode ? "Save" : "Edit"} side="top">
+          <ShadTooltip
+            content={editMode ? t("common.save") : t("common.edit")}
+            side="top"
+          >
             <Button
               unstyled
               onClick={() => {
@@ -152,7 +157,7 @@ export default function InspectionPanelHeader({
             <span className="font-semibold truncate" data-testid="panel-name">
               {nameElement}
             </span>
-            <ShadTooltip content="Click to copy full ID">
+            <ShadTooltip content={t("inspectionPanel.copyFullId")}>
               <Badge
                 variant="secondaryStatic"
                 size="sm"

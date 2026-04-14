@@ -72,7 +72,16 @@
     "saveErrorTitle": "Nie uda\u0142o si\u0119 zapisa\u0107 flow",
     "undefinedFlowsState": "Stan listy flow jest niezdefiniowany",
     "cancel": "Anuluj",
-    "save": "Zapisz"
+    "save": "Zapisz",
+    "saveChanges": "Zapisz zmiany",
+    "savingChanges": "Zapisywanie...",
+    "untitledFlow": "Flow bez nazwy",
+    "neverSaved": "Jeszcze nie zapisano",
+    "lastSavedAt": "Ostatni zapis: {{time}}",
+    "lockStatus": "Stan blokady: {{status}}",
+    "locked": "Zablokowany",
+    "unlocked": "Odblokowany",
+    "flowLocked": "Flow zablokowany"
   },
   "export": {
     "title": "Eksport",
@@ -105,6 +114,7 @@
     "search": "Szukaj",
     "searchOptions": "Szukaj opcji...",
     "required": "*",
+    "replace": "Zastąp",
     "save": "Zapisz",
     "cancel": "Anuluj",
     "confirm": "Potwierd\u017a",
@@ -113,6 +123,7 @@
     "close": "Zamknij",
     "retry": "Spr\u00f3buj ponownie",
     "loading": "\u0141adowanie...",
+    "unknownError": "Nieznany błąd",
     "items": "element\u00f3w",
     "components": "komponent\u00f3w",
     "flows": "flow",
@@ -408,6 +419,13 @@
     "manageServers": "Zarządzaj serwerami",
     "newCustomComponent": "Nowy komponent niestandardowy"
   },
+  "inspectionPanel": {
+    "componentIdCopied": "ID komponentu skopiowano do schowka",
+    "copyFullId": "Kliknij, aby skopiować pełne ID",
+    "docsUnavailable": "Dokumentacja dla {{id}} jest obecnie niedostępna.",
+    "addToCanvas": "Dodaj do canvasa",
+    "addDescriptionPlaceholder": "Dodaj opis..."
+  },
   "flowVersions": {
     "current": "Bie\u017c\u0105ca",
     "workingVersion": "Wersja robocza",
@@ -417,7 +435,116 @@
     "noSavedVersionsYet": "Brak zapisanych wersji",
     "moreOptions": "Wi\u0119cej opcji",
     "deleteVersion": "Usu\u0144 wersj\u0119",
-    "deleteVersionDescription": "To trwale usunie {{version}}. Tej operacji nie mo\u017cna cofn\u0105\u0107."
+    "deleteVersionDescription": "To trwale usunie {{version}}. Tej operacji nie mo\u017cna cofn\u0105\u0107.",
+    "versionSaved": "Wersja została zapisana",
+    "failedToSaveVersion": "Nie udało się zapisać wersji",
+    "saveVersionBannerTitle": "Zapisz wersję swojego flow",
+    "saveVersionBannerDescription": "Zachowaj bieżący stan jako punkt przywracania",
+    "keepBuilding": "Buduj dalej",
+    "saving": "Zapisywanie...",
+    "saved": "Zapisano",
+    "currentDraft": "Bieżąca wersja robocza",
+    "noDataToExport": "Brak danych do eksportu",
+    "defaultFlowName": "flow",
+    "failedToExportVersion": "Nie udało się wyeksportować wersji",
+    "versionDeleted": "Wersja została usunięta",
+    "failedToDeleteVersion": "Nie udało się usunąć wersji",
+    "currentFlow": "Bieżący flow",
+    "previewingVersion": "Podgląd {{version}}",
+    "readOnly": "Tylko do odczytu",
+    "loadingPreview": "Ładowanie podglądu...",
+    "restoreBannerTitle": "Przywróć tę wersję swojego flow",
+    "restoreBannerDescriptionPrefix": "Zastąp bieżący szkic wersją",
+    "restoring": "Przywracanie...",
+    "restore": "Przywróć",
+    "restoreVersion": "Przywróć wersję",
+    "restoreConfirmPrefix": "Przywrócić",
+    "restoreConfirmSuffix": "To zastąpi Twój bieżący canvas.",
+    "saveCurrentDraftBeforeRestoring": "Zapisz bieżący szkic przed przywróceniem"
+  },
+  "traceDetails": {
+    "title": "Szczegóły trace",
+    "trace": "Trace",
+    "runSummary": "Podsumowanie uruchomienia",
+    "noTraceForRun": "Brak trace dla tego uruchomienia.",
+    "loadingTrace": "Ładowanie trace...",
+    "failedToLoadTraceDetails": "Nie udało się załadować szczegółów trace.",
+    "selectSpanToViewDetails": "Wybierz span, aby zobaczyć szczegóły",
+    "error": "Błąd",
+    "latency": "Opóźnienie",
+    "tokens": "Tokeny",
+    "prompt": "Prompt",
+    "completion": "Odpowiedź",
+    "estimatedCost": "Szacowany koszt",
+    "input": "Wejście",
+    "output": "Wyjście",
+    "noAdditionalDetails": "Brak dodatkowych szczegółów"
+  },
+  "outputModal": {
+    "copiedToClipboard": "Skopiowano do schowka",
+    "description": "Sprawdź poniżej wyjście komponentu.",
+    "title": "Wyjście komponentu",
+    "outputs": "Wyjścia",
+    "logs": "Logi",
+    "noToolsAvailable": "Brak dostępnych narzędzi",
+    "noOutput": "BRAK WYJŚCIA",
+    "streamingNotSupported": "Streaming nie jest obsługiwany",
+    "usePlaygroundForStreaming": "Użyj playgroundu, aby pracować z komponentami strumieniującymi dane"
+  },
+  "shareModal": {
+    "component": "komponent",
+    "flow": "flow",
+    "workflow": "flow",
+    "yourComponent": "swój komponent",
+    "sharedSuccessfully": "{{type}} został pomyślnie udostępniony!",
+    "errorSharing": "Błąd podczas udostępniania {{type}}",
+    "replaceExisting": "Wygląda na to, że {{name}} już istnieje. Czy chcesz zastąpić go bieżącą wersją?",
+    "irreversibleNote": "Uwaga: tej operacji nie można cofnąć.",
+    "publishDescription": "Opublikuj {{type}} w Langflow Store.",
+    "setStatusPublic": "Ustaw status {{type}} jako publiczny",
+    "attention": "Uwaga",
+    "apiKeysRemoved": "Klucze API w wskazanych polach są automatycznie usuwane podczas udostępniania.",
+    "shareType": "Udostępnij {{type}}"
+  },
+  "tableOptions": {
+    "addNewRow": "Dodaj nowy wiersz",
+    "selectItemsToDuplicate": "Wybierz elementy do zduplikowania",
+    "duplicateSelectedItems": "Duplikuj wybrane elementy",
+    "selectItemsToDelete": "Wybierz elementy do usunięcia",
+    "deleteSelectedItems": "Usuń wybrane elementy",
+    "resetColumns": "Resetuj kolumny",
+    "paginationInfo": "Informacje o paginacji"
+  },
+  "nodeBadges": {
+    "legacy": "Starszy",
+    "betaComponent": "Komponent beta",
+    "dismiss": "Zamknij",
+    "dismissWarningBar": "Zamknij pasek ostrzeżenia",
+    "use": "Użyj",
+    "noDirectReplacement": "Brak bezpośredniego zamiennika."
+  },
+  "fileUpload": {
+    "uploadOrDropYourFile": "Prześlij lub upuść plik",
+    "dropYourFileHere": "Upuść tutaj plik"
+  },
+  "jsonEditor": {
+    "copyFailed": "Kopiowanie nie powiodło się",
+    "editorNotAvailable": "Edytor jest niedostępny",
+    "jsonCopiedToClipboard": "JSON skopiowano do schowka",
+    "copyManually": "Nie udało się skopiować do schowka. Skopiuj ręcznie.",
+    "copyJsonToClipboard": "Skopiuj JSON do schowka",
+    "invalidResult": "Nieprawidłowy wynik",
+    "resultNotSerializable": "Przefiltrowany wynik zawiera wartości, których nie można zserializować do JSON",
+    "resultMustBeObjectOrArray": "Przefiltrowany wynik musi być obiektem JSON lub tablicą, a nie wartością prostą",
+    "invalidPath": "Nieprawidłowa ścieżka",
+    "pathLedToUndefined": "Ścieżka '{{path}}' prowadzi do wartości undefined lub null",
+    "invalidArrayIndex": "Nieprawidłowy indeks tablicy",
+    "arrayIndexOutOfBounds": "Indeks {{index}} wykracza poza zakres tablicy o długości {{length}}",
+    "invalidProperty": "Nieprawidłowa właściwość",
+    "propertyMissingInArrayItems": "Właściwość '{{key}}' nie istnieje w elementach tablicy",
+    "propertyMissingInObject": "Właściwość '{{key}}' nie istnieje w obiekcie",
+    "transformReturnedUndefined": "Transformacja zwróciła wartość undefined",
+    "transformError": "Błąd transformacji"
   },
   "store": {
     "title": "Sklep Langflow",
@@ -535,7 +662,37 @@
     "selectedCount": "Wybrano: {{count}}",
     "noFilesFoundTryAgain": "Nie znaleziono plików, spróbuj ponownie",
     "uploadOrImportFiles": "Prześlij lub zaimportuj pliki,",
-    "orVisit": "albo przejdź do"
+    "orVisit": "albo przejdź do",
+    "uploadSuccessSingle": "Plik został pomyślnie przesłany",
+    "uploadSuccessMultiple": "Pliki zostały pomyślnie przesłane",
+    "uploadErrorTitle": "Błąd przesyłania pliku",
+    "uploadErrorFallback": "Wystąpił błąd podczas przesyłania pliku",
+    "dropFilesOrFoldersHere": "Upuść tutaj pliki lub foldery",
+    "dropFilesHere": "Upuść tutaj pliki",
+    "clickToSelectFilesOrDropFolder": "Kliknij, aby wybrać pliki lub upuść folder",
+    "clickOrDragFilesHere": "Kliknij lub przeciągnij tutaj pliki",
+    "dragDropSupport": "Przeciąganie i upuszczanie obsługuje zarówno pojedyncze pliki, jak i foldery.",
+    "avoidHiddenDirectories": "Uwaga: unikaj folderów z dużymi ukrytymi katalogami (.mypy_cache, .git, node_modules itp.)",
+    "selectFolderInstead": "Wybierz folder zamiast tego",
+    "moreTypes": "+{{count}} więcej",
+    "maxSize": "maks. {{size}}",
+    "remove": "Usuń z listy",
+    "deleteFileTitle": "Usuń plik",
+    "removeFileTitle": "Usuń plik z listy",
+    "confirmDeleteFile": "Czy na pewno chcesz usunąć „{{name}}”?",
+    "confirmRemoveFile": "Czy na pewno chcesz usunąć z listy „{{name}}”?",
+    "deletedSuccessfully": "Plik został pomyślnie usunięty",
+    "deleteDescriptionLocal": "Tej operacji nie można cofnąć. Plik zostanie trwale usunięty.",
+    "deleteDescriptionRemote": "To usunie plik z Twojej listy. W razie potrzeby możesz dodać go ponownie później.",
+    "unsupportedType": "Ten typ nie jest obsługiwany przez komponent",
+    "uploadFailed": "Przesyłanie nie powiodło się,",
+    "tryAgain": "spróbować ponownie?",
+    "importFrom": "Importuj z...",
+    "importSources": {
+      "drive": "Dysk",
+      "oneDrive": "OneDrive",
+      "s3Bucket": "Bucket S3"
+    }
   },
   "saveChanges": {
     "title": "{{flowName}} ma niezapisane zmiany",
@@ -774,6 +931,30 @@
     "title": "Powiadomienia",
     "empty": "Brak nowych powiadomie\u0144"
   },
+  "appHeader": {
+    "notificationsAndErrors": "Powiadomienia i błędy",
+    "goToGithubRepo": "Przejdź do repozytorium GitHub",
+    "goToDiscordServer": "Przejdź do serwera Discord"
+  },
+  "nodeToolbar": {
+    "minimizeUnavailable": "Minimalizacja jest dostępna tylko dla komponentów z co najwyżej jednym aktywnym połączeniem.",
+    "codeUnavailable": "Nie możesz uzyskać dostępu do kodu {{id}}.",
+    "componentSaved": "{{id}} został zapisany pomyślnie",
+    "componentOverridden": "{{id}} został pomyślnie nadpisany!",
+    "newComponentSaved": "Nowy komponent został pomyślnie zapisany!",
+    "defaultNodeName": "Węzeł",
+    "nodeDownloaded": "{{name}} został pobrany pomyślnie",
+    "downloadFailed": "Nie udało się pobrać {{name}}",
+    "freeze": "Zamroź",
+    "restore": "Przywróć",
+    "createNew": "Utwórz nowy",
+    "replaceExistingComponent": "Wygląda na to, że {{name}} już istnieje. Czy chcesz zastąpić go bieżącym komponentem czy utworzyć nowy?",
+    "expand": "Rozwiń",
+    "ungroup": "Rozgrupuj"
+  },
+  "noteToolbar": {
+    "pickColor": "Wybierz kolor"
+  },
   "messagesPage": {
     "description": "Przegl\u0105daj i zarz\u0105dzaj zapisanymi wiadomo\u015bciami."
   },
@@ -862,6 +1043,20 @@
     "field": "Pole",
     "empty": "Puste"
   },
+  "componentUpdates": {
+    "errorTitle": "Błąd aktualizacji komponentów",
+    "errorLine1": "Wystąpił błąd podczas aktualizacji komponentów.",
+    "errorLine2": "Jeśli problem będzie się powtarzał, zgłoś go na Discordzie lub GitHubie.",
+    "edgesLost": "Po aktualizacji komponentów część połączeń została utracona. Sprawdź flow i połącz je ponownie.",
+    "successSingle": "Pomyślnie zaktualizowano 1 komponent",
+    "successMultiple": "Pomyślnie zaktualizowano {{count}} komponentów",
+    "availableSingle": "Dostępna jest aktualizacja dla 1 komponentu",
+    "availableMultiple": "Dostępne są aktualizacje dla {{count}} komponentów",
+    "dismiss": "Odrzuć",
+    "dismissAll": "Odrzuć wszystkie",
+    "reviewAll": "Przejrzyj wszystkie",
+    "updateAll": "Aktualizuj wszystkie"
+  },
   "chatComponent": {
     "title": "Wej\u015bcie czatu",
     "description": "Pobiera wiadomo\u015bci czatu z Playgroundu.",
@@ -910,7 +1105,8 @@
     "error": "Błąd...",
     "file": "Plik",
     "fileAlt": "Podgląd załączonego pliku",
-    "generatedImage": "Wygenerowany obraz"
+    "generatedImage": "Wygenerowany obraz",
+    "deleteFile": "Usuń plik"
   },
   "templatesModal": {
     "templates": "Szablony",
@@ -970,6 +1166,28 @@
       "people": "Ludzie",
       "space": "Kosmos"
     }
+  },
+  "traceFilters": {
+    "dateRange": "Zakres dat",
+    "fromDate": "Od {{date}}",
+    "untilDate": "Do {{date}}",
+    "invalidDateRange": "Nieprawidłowy zakres dat",
+    "startDate": "Data początkowa",
+    "endDate": "Data końcowa",
+    "endDateBeforeStart": "Data końcowa nie może być wcześniejsza niż data początkowa.",
+    "clearDates": "Wyczyść daty"
+  },
+  "traceInsights": {
+    "flowActivity": "Aktywność flow",
+    "runs": "Uruchomienia",
+    "totalRuns": "Łącznie {{count}}",
+    "groupBySession": "Grupuj według sesji",
+    "searchRuns": "Szukaj uruchomień...",
+    "allStatus": "Wszystkie statusy",
+    "success": "Sukces",
+    "error": "Błąd",
+    "reload": "Odśwież",
+    "runsCount": "{{count}} uruchomień"
   },
   "timeElapsed": {
     "year_one": "{{count}} rok",

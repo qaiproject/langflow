@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import useAlertStore from "@/stores/alertStore";
 import { ChatMessageType } from "@/types/chat";
 
@@ -13,6 +14,7 @@ export function useStreamingMessage({
   isBuilding,
   updateChat,
 }: UseStreamingMessageProps) {
+  const { t } = useTranslation();
   const [streamUrl, setStreamUrl] = useState(chat.stream_url);
   // We need to check if message is not undefined because
   // we need to run .toString() on it
@@ -59,12 +61,12 @@ export function useStreamingMessage({
         const errorEvent = event as MessageEvent;
         if (errorEvent.data && JSON.parse(errorEvent.data)?.error) {
           setErrorData({
-            title: "Error on Streaming",
+            title: t("playground.streamingError"),
             list: [JSON.parse(errorEvent.data)?.error],
           });
         }
         updateChat?.(chat, chatMessageRef.current);
-        reject(new Error("Streaming failed"));
+        reject(new Error(t("playground.streamingFailed")));
       };
       eventSource.current.addEventListener("close", (event) => {
         setStreamUrl(undefined); // Update state to reflect the stream is closed

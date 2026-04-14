@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
 import KnowledgeBaseEmptyState from "../KnowledgeBaseEmptyState";
 
@@ -104,19 +104,12 @@ const createTestWrapper = () => {
 };
 
 describe("KnowledgeBaseEmptyState", () => {
-  const mockHandleCreateKnowledge = jest.fn();
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("renders empty state message correctly", () => {
-    render(
-      <KnowledgeBaseEmptyState
-        handleCreateKnowledge={mockHandleCreateKnowledge}
-      />,
-      { wrapper: createTestWrapper() },
-    );
+    render(<KnowledgeBaseEmptyState />, { wrapper: createTestWrapper() });
 
     expect(screen.getByText("No knowledge bases")).toBeInTheDocument();
     expect(
@@ -125,24 +118,14 @@ describe("KnowledgeBaseEmptyState", () => {
   });
 
   it("renders Add Knowledge button", () => {
-    render(
-      <KnowledgeBaseEmptyState
-        handleCreateKnowledge={mockHandleCreateKnowledge}
-      />,
-      { wrapper: createTestWrapper() },
-    );
+    render(<KnowledgeBaseEmptyState />, { wrapper: createTestWrapper() });
 
     const addButton = screen.getByText("Add Knowledge");
     expect(addButton).toBeInTheDocument();
   });
 
   it("opens modal when Add Knowledge button is clicked", () => {
-    render(
-      <KnowledgeBaseEmptyState
-        handleCreateKnowledge={mockHandleCreateKnowledge}
-      />,
-      { wrapper: createTestWrapper() },
-    );
+    render(<KnowledgeBaseEmptyState />, { wrapper: createTestWrapper() });
 
     const addButton = screen.getByText("Add Knowledge");
     fireEvent.click(addButton);
@@ -151,12 +134,7 @@ describe("KnowledgeBaseEmptyState", () => {
   });
 
   it("calls captureSubmit when form is submitted", () => {
-    render(
-      <KnowledgeBaseEmptyState
-        handleCreateKnowledge={mockHandleCreateKnowledge}
-      />,
-      { wrapper: createTestWrapper() },
-    );
+    render(<KnowledgeBaseEmptyState />, { wrapper: createTestWrapper() });
 
     const addButton = screen.getByText("Add Knowledge");
     fireEvent.click(addButton);
@@ -172,12 +150,7 @@ describe("KnowledgeBaseEmptyState", () => {
   });
 
   it("calls applyOptimisticUpdate when modal closes after submission", () => {
-    render(
-      <KnowledgeBaseEmptyState
-        handleCreateKnowledge={mockHandleCreateKnowledge}
-      />,
-      { wrapper: createTestWrapper() },
-    );
+    render(<KnowledgeBaseEmptyState />, { wrapper: createTestWrapper() });
 
     const addButton = screen.getByText("Add Knowledge");
     fireEvent.click(addButton);
@@ -191,12 +164,7 @@ describe("KnowledgeBaseEmptyState", () => {
   it("closes modal without calling applyOptimisticUpdate when closed without submission", () => {
     mockApplyOptimisticUpdate.mockClear();
 
-    render(
-      <KnowledgeBaseEmptyState
-        handleCreateKnowledge={mockHandleCreateKnowledge}
-      />,
-      { wrapper: createTestWrapper() },
-    );
+    render(<KnowledgeBaseEmptyState />, { wrapper: createTestWrapper() });
 
     const addButton = screen.getByText("Add Knowledge");
     fireEvent.click(addButton);

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import i18next from "i18next";
 import ShortUniqueId from "short-unique-id";
 import { INVALID_FILE_SIZE_ALERT } from "@/constants/alerts_constants";
 import {
@@ -35,7 +36,7 @@ export const useFileHandler = (currentFlowId: string) => {
       ) {
         console.error("Error uploading file");
         setErrorData({
-          title: "Error uploading file",
+          title: i18next.t("alerts.error.uploadFile"),
           list: [FS_ERROR_TEXT, SN_ERROR_TEXT],
         });
         return;
@@ -76,7 +77,7 @@ export const useFileHandler = (currentFlowId: string) => {
               return newFiles;
             });
             setErrorData({
-              title: "Error uploading file",
+              title: i18next.t("alerts.error.uploadFile"),
               list: [error.response?.data?.detail],
             });
           },

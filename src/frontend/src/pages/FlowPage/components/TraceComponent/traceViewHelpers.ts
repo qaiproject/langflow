@@ -187,20 +187,21 @@ export const endOfDay = (date: Date) => {
   return d;
 };
 
-const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  month: "short",
-  day: "numeric",
-  year: "numeric",
-});
-
-export const formatDateLabel = (value: string): string => {
+export const formatDateLabel = (
+  value: string,
+  locale: string = "en-US",
+): string => {
   if (!value) return "";
   const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   const parsed = match
     ? new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]))
     : new Date(value);
   if (Number.isNaN(parsed.getTime())) return value;
-  return DATE_FORMATTER.format(parsed);
+  return new Intl.DateTimeFormat(locale, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(parsed);
 };
 
 export const toUtcIsoForDate = (

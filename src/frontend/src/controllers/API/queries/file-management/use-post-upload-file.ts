@@ -115,13 +115,19 @@ export const usePostUploadFileV2: useMutationFunctionType<
         return res;
       },
       {
-        onSettled: (data, error, variables, context) => {
+        onSettled: (data, error, variables, onMutateResult, context) => {
           if (!error) {
             queryClient.invalidateQueries({
               queryKey: ["useGetFilesV2"],
             });
           }
-          options?.onSettled?.(data, error, variables, context);
+          options?.onSettled?.(
+            data,
+            error,
+            variables,
+            onMutateResult,
+            context,
+          );
         },
         retry: 0,
         ...options,

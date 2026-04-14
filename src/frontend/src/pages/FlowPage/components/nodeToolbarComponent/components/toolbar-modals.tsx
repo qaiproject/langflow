@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { useTranslation } from "react-i18next";
 import CodeAreaModal from "@/modals/codeAreaModal";
 import ConfirmationModal from "@/modals/confirmationModal";
 import EditNodeModal from "@/modals/editNodeModal";
@@ -51,13 +52,16 @@ const ToolbarModals = memo(
     addFlow,
     name = "code",
   }: ToolbarModalsProps) => {
+    const { t } = useTranslation();
     // Handlers for confirmation modal
     const handleConfirm = () => {
       addFlow({
         flow: flowComponent,
         override: true,
       });
-      setSuccessData({ title: `${data.id} successfully overridden!` });
+      setSuccessData({
+        title: t("nodeToolbar.componentOverridden", { id: data.id }),
+      });
       setShowOverrideModal(false);
     };
 
@@ -70,7 +74,7 @@ const ToolbarModals = memo(
         flow: flowComponent,
         override: true,
       });
-      setSuccessData({ title: "New component successfully saved!" });
+      setSuccessData({ title: t("nodeToolbar.newComponentSaved") });
       setShowOverrideModal(false);
     };
 
@@ -96,20 +100,21 @@ const ToolbarModals = memo(
         {showOverrideModal && (
           <ConfirmationModal
             open={showOverrideModal}
-            title="Replace"
+            title={t("common.replace")}
             onConfirm={handleConfirm}
             onClose={handleClose}
             onCancel={handleCancel}
-            cancelText="Create New"
-            confirmationText="Replace"
+            cancelText={t("nodeToolbar.createNew")}
+            confirmationText={t("common.replace")}
             size="x-small"
             icon="SaveAll"
             index={6}
           >
             <ConfirmationModal.Content>
               <span>
-                It seems {data.node?.display_name} already exists. Do you want
-                to replace it with the current or create a new one?
+                {t("nodeToolbar.replaceExistingComponent", {
+                  name: data.node?.display_name,
+                })}
               </span>
             </ConfirmationModal.Content>
           </ConfirmationModal>

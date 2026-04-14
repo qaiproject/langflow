@@ -1,5 +1,6 @@
 import { cloneDeep } from "lodash";
 import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import useSaveFlow from "@/hooks/flows/use-save-flow";
 import { useUtilityStore } from "@/stores/utilityStore";
 import IconComponent from "../../components/common/genericIconComponent";
@@ -41,6 +42,7 @@ export default function ShareModal({
   setOpen?: (open: boolean) => void;
   disabled?: boolean;
 }): JSX.Element {
+  const { t } = useTranslation();
   const version = useDarkStore((state) => state.version);
   const hasStore = useStoreStore((state) => state.hasStore);
   const hasApiKey = useStoreStore((state) => state.hasApiKey);
@@ -52,7 +54,9 @@ export default function ShareModal({
       ? [open, setOpen]
       : useState(children ? false : true);
   const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
-  const nameComponent = is_component ? "component" : "workflow";
+  const nameComponent = is_component
+    ? t("shareModal.component")
+    : t("shareModal.workflow");
   const [sharePublic, setSharePublic] = useState(true);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [unavaliableNames, setUnavaliableNames] = useState<
@@ -107,7 +111,11 @@ export default function ShareModal({
         saveFlow(flow);
       }
       setSuccessData({
-        title: `${is_component ? "Component" : "Flow"} shared successfully!`,
+        title: t("shareModal.sharedSuccessfully", {
+          type: is_component
+            ? t("shareModal.component")
+            : t("shareModal.flow"),
+        }),
       });
     }
 
@@ -118,7 +126,11 @@ export default function ShareModal({
         sharePublic,
       ).then(successShare, (err) => {
         setErrorData({
-          title: "Error sharing " + (is_component ? "component" : "flow"),
+          title: t("shareModal.errorSharing", {
+            type: is_component
+              ? t("shareModal.component")
+              : t("shareModal.flow"),
+          }),
           list: [err["response"]["data"]["detail"]],
         });
       });
@@ -130,7 +142,11 @@ export default function ShareModal({
         unavaliableNames.find((e) => e.name === name)!.id,
       ).then(successShare, (err) => {
         setErrorData({
-          title: "Error sharing " + is_component ? "component" : "flow",
+          title: t("shareModal.errorSharing", {
+            type: is_component
+              ? t("shareModal.component")
+              : t("shareModal.flow"),
+          }),
           list: [err["response"]["data"]["detail"]],
         });
       });
@@ -151,9 +167,9 @@ export default function ShareModal({
       <>
         <ConfirmationModal
           open={openConfirmationModal}
-          title={`Replace`}
-          cancelText="Cancel"
-          confirmationText="Replace"
+          title={t("common.replace")}
+          cancelText={t("common.cancel")}
+          confirmationText={t("common.replace")}
           size={"x-small"}
           icon={"SaveAll"}
           index={6}
@@ -167,12 +183,11 @@ export default function ShareModal({
         >
           <ConfirmationModal.Content>
             <span>
-              It seems {name} already exists. Do you want to replace it with the
-              current?
+              {t("shareModal.replaceExisting", { name })}
             </span>
             <br></br>
             <span className="text-xs text-destructive">
-              Note: This action is irreversible.
+              {t("shareModal.irreversibleNote")}
             </span>
           </ConfirmationModal.Content>
         </ConfirmationModal>
@@ -209,11 +224,13 @@ export default function ShareModal({
           {children ? children : <></>}
         </BaseModal.Trigger>
         <BaseModal.Header
-          description={`Publish ${
-            is_component ? "your component" : "workflow"
-          } to the Langflow Store.`}
+          description={t("shareModal.publishDescription", {
+            type: is_component
+              ? t("shareModal.yourComponent")
+              : t("shareModal.workflow"),
+          })}
         >
-          <span className="pr-2">Share</span>
+          <span className="pr-2">{t("common.share")}</span>
           <IconComponent
             name="Share3"
             className="-m-0.5 h-6 w-6 text-foreground"
@@ -248,12 +265,12 @@ export default function ShareModal({
                   htmlFor="public"
                   className="export-modal-save-api text-sm"
                 >
-                  Set {nameComponent} status to public
+                  {t("shareModal.setStatusPublic", { type: nameComponent })}
                 </label>
               </div>
               <span className="text-xs text-destructive">
-                <b>Attention:</b> API keys in specified fields are automatically
-                removed upon sharing.
+                <b>{t("shareModal.attention")}:</b>{" "}
+                {t("shareModal.apiKeysRemoved")}
               </span>
             </>
           )}
@@ -261,7 +278,11 @@ export default function ShareModal({
 
         <BaseModal.Footer
           submit={{
-            label: `Share ${is_component ? "Component" : "Flow"}`,
+            label: t("shareModal.shareType", {
+              type: is_component
+                ? t("shareModal.component")
+                : t("shareModal.flow"),
+            }),
             loading: loadingNames,
             dataTestId: "share-modal-button-flow",
           }}
@@ -278,7 +299,7 @@ export default function ShareModal({
                   }}
                 >
                   <IconComponent name="Download" className="h-4 w-4" />
-                  Export
+                  {t("export.title")}
                 </Button>
               </ExportModal>
             )}
@@ -293,7 +314,7 @@ export default function ShareModal({
                 }}
               >
                 <IconComponent name="Download" className="h-4 w-4" />
-                Export
+                {t("export.title")}
               </Button>
             )}
           </>

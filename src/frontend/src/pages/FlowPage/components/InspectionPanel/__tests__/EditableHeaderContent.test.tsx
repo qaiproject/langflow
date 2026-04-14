@@ -9,6 +9,22 @@ import userEvent from "@testing-library/user-event";
 import type { NodeDataType } from "@/types/flow";
 import EditableHeaderContent from "../components/EditableHeaderContent";
 
+jest.mock("react-i18next", () => ({
+  initReactI18next: {
+    type: "3rdParty",
+    init: () => {},
+  },
+  useTranslation: () => ({
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        "inspectionPanel.addDescriptionPlaceholder": "Add a description...",
+      };
+      return translations[key] ?? key;
+    },
+    i18n: { language: "en" },
+  }),
+}));
+
 // Mock Markdown component
 jest.mock("react-markdown", () => {
   return function MockMarkdown({ children }: any) {

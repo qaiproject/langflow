@@ -1,6 +1,31 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import MenuBar from "../index";
 
+jest.mock("react-i18next", () => ({
+  initReactI18next: {
+    type: "3rdParty",
+    init: () => {},
+  },
+  useTranslation: () => ({
+    t: (key: string, params?: Record<string, string>) => {
+      const translations: Record<string, string> = {
+        "flow.savedSuccessfully": "Flow saved successfully!",
+        "flow.untitledFlow": "Untitled Flow",
+        "flow.savingChanges": "Saving...",
+        "flow.saveChanges": "Save Changes",
+        "flow.neverSaved": "Never saved",
+      };
+
+      if (key === "flow.lastSavedAt") {
+        return `Last saved: ${params?.time ?? ""}`;
+      }
+
+      return translations[key] ?? key;
+    },
+    i18n: { language: "en" },
+  }),
+}));
+
 jest.mock("@/components/ui/button", () => ({
   Button: ({ children, ...rest }) => <button {...rest}>{children}</button>,
 }));

@@ -1,5 +1,6 @@
 import type { CellClickedEvent } from "ag-grid-community";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import IconComponent from "@/components/common/genericIconComponent";
 import PaginatorComponent from "@/components/common/paginatorComponent";
@@ -46,6 +47,7 @@ export function FlowInsightsContent({
   refreshOnMount?: boolean;
   showFlowActivityHeader?: boolean;
 }): JSX.Element {
+  const { t } = useTranslation();
   const currentFlowId = useFlowsManagerStore((state) => state.currentFlowId);
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
@@ -199,7 +201,9 @@ export function FlowInsightsContent({
               <div className="flex items-center gap-2 text-muted-foreground">
                 <span className="font-medium text-foreground">Session</span>
                 <span className="font-mono text-xs">{sessionId}</span>
-                <span className="text-xs">{sessionRows.length} runs</span>
+                <span className="text-xs">
+                  {t("traceInsights.runsCount", { count: sessionRows.length })}
+                </span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="px-4 pb-4">
@@ -230,14 +234,18 @@ export function FlowInsightsContent({
             className="border-b border-border px-4 py-3"
             data-testid="flow-activity-header"
           >
-            <h2 className="text-base font-semibold">Flow Activity</h2>
+            <h2 className="text-base font-semibold">
+              {t("traceInsights.flowActivity")}
+            </h2>
           </div>
         )}
         <div className="flex flex-nowrap items-center justify-between gap-2 border-b px-4 py-2">
           <div className="flex min-w-0 items-center gap-3 whitespace-nowrap">
             <div className="flex items-center gap-3 text-sm">
-              <span className="font-medium">Runs</span>
-              <span className="text-muted-foreground">Total {totalRuns}</span>
+              <span className="font-medium">{t("traceInsights.runs")}</span>
+              <span className="text-muted-foreground">
+                {t("traceInsights.totalRuns", { count: totalRuns })}
+              </span>
             </div>
             <Button
               variant="ghost"
@@ -250,7 +258,7 @@ export function FlowInsightsContent({
               aria-pressed={groupBySession}
             >
               <IconComponent name="Layers" className="h-4 w-4" />
-              Group by Session
+              {t("traceInsights.groupBySession")}
             </Button>
           </div>
 
@@ -263,19 +271,19 @@ export function FlowInsightsContent({
               <Input
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
-                placeholder="Search runs..."
+                placeholder={t("traceInsights.searchRuns")}
                 className="h-8 pl-8 text-sm"
               />
             </div>
 
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="h-8 w-[130px]">
-                <SelectValue placeholder="All Status" />
+                <SelectValue placeholder={t("traceInsights.allStatus")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="ok">Success</SelectItem>
-                <SelectItem value="error">Error</SelectItem>
+                <SelectItem value="all">{t("traceInsights.allStatus")}</SelectItem>
+                <SelectItem value="ok">{t("traceInsights.success")}</SelectItem>
+                <SelectItem value="error">{t("traceInsights.error")}</SelectItem>
               </SelectContent>
             </Select>
 
@@ -290,7 +298,7 @@ export function FlowInsightsContent({
               variant="ghost"
               size="icon"
               onClick={() => refetch()}
-              aria-label="Reload"
+              aria-label={t("traceInsights.reload")}
             >
               <IconComponent name="RefreshCcw" className="h-4 w-4" />
             </Button>
@@ -300,7 +308,7 @@ export function FlowInsightsContent({
               onClick={() =>
                 downloadJson(`runs-${resolvedFlowId ?? "unknown"}.json`, rows)
               }
-              aria-label="Download"
+              aria-label={t("common.download")}
             >
               <IconComponent name="Download" className="h-4 w-4" />
             </Button>

@@ -294,9 +294,12 @@ export type QueryFunctionType = (
 ) => UseQueryResult<any>;
 
 export type MutationFunctionType = (
-  mutationKey: UseMutationOptions["mutationKey"],
-  mutationFn: UseMutationOptions<any, any, any>["mutationFn"],
-  options?: Omit<UseMutationOptions<any, any>, "mutationFn" | "mutationKey">,
+  mutationKey: UseMutationOptions<any, any, any, any>["mutationKey"],
+  mutationFn: UseMutationOptions<any, any, any, any>["mutationFn"],
+  options?: Omit<
+    UseMutationOptions<any, any, any, any>,
+    "mutationFn" | "mutationKey"
+  >,
 ) => UseMutationResult<any, any, any, any>;
 
 export type useMutationFunctionType<
@@ -304,20 +307,21 @@ export type useMutationFunctionType<
   Variables = any,
   Data = any,
   Error = any,
+  Context = unknown,
 > = Params extends undefined
   ? (
       options?: Omit<
-        UseMutationOptions<Data, Error>,
+        UseMutationOptions<Data, Error, Variables, Context>,
         "mutationFn" | "mutationKey"
       >,
-    ) => UseMutationResult<Data, Error, Variables>
+    ) => UseMutationResult<Data, Error, Variables, Context>
   : (
       params: Params,
       options?: Omit<
-        UseMutationOptions<Data, Error>,
+        UseMutationOptions<Data, Error, Variables, Context>,
         "mutationFn" | "mutationKey"
       >,
-    ) => UseMutationResult<Data, Error, Variables>;
+    ) => UseMutationResult<Data, Error, Variables, Context>;
 
 export type FieldValidatorType =
   | "no_spaces"

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import ShadTooltip from "@/components/common/shadTooltipComponent";
@@ -68,17 +69,8 @@ export const NAV_ITEMS: NavItem[] = [
   },
 ];
 
-const SidebarSegmentedNav = () => {
-  const { t } = useTranslation();
-  const { activeSection, setActiveSection, toggleSidebar, open } = useSidebar();
-  const { focusSearch, setSearch } = useSearchContext();
-  const setPlaygroundOpen = usePlaygroundStore((state) => state.setIsOpen);
-  const setPlaygroundFullscreen = usePlaygroundStore(
-    (state) => state.setIsFullscreen,
-  );
-  const [isAddNoteActive, setIsAddNoteActive] = useState(false);
-
-  const navItems: NavItem[] = NAV_ITEMS.map((item) => ({
+export const getTranslatedNavItems = (t: TFunction): NavItem[] =>
+  NAV_ITEMS.map((item) => ({
     ...item,
     label:
       item.id === "search"
@@ -109,6 +101,18 @@ const SidebarSegmentedNav = () => {
                   ? t("flowSidebar.versionHistory")
                   : t("flowSidebar.traces"),
   }));
+
+const SidebarSegmentedNav = () => {
+  const { t } = useTranslation();
+  const { activeSection, setActiveSection, toggleSidebar, open } = useSidebar();
+  const { focusSearch, setSearch } = useSearchContext();
+  const setPlaygroundOpen = usePlaygroundStore((state) => state.setIsOpen);
+  const setPlaygroundFullscreen = usePlaygroundStore(
+    (state) => state.setIsFullscreen,
+  );
+  const [isAddNoteActive, setIsAddNoteActive] = useState(false);
+
+  const navItems = getTranslatedNavItems(t);
   const handleAddNote = () => {
     if (activeSection === "traces") {
       setActiveSection("components");
