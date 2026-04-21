@@ -9,7 +9,7 @@ export type MessagesStoreType = {
   updateMessagePartial: (message: Partial<Message>) => void;
   updateMessageText: (id: string, chunk: string) => void;
   clearMessages: () => void;
-  removeMessages: (ids: string[]) => void;
+  removeMessages: (ids: string[]) => Promise<Message[]>;
   deleteSession: (id: string) => void;
   renameSession: (oldSessionId: string, newSessionId: string) => void;
   displayLoadingMessage: boolean;

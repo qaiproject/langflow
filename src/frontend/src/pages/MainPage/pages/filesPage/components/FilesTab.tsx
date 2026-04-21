@@ -381,7 +381,7 @@ const FilesTab = ({
                   isShiftPressed && quantitySelected > 0 && "no-select-cells",
                 )}
                 pagination
-                ref={tableRef}
+                ref={tableRef as any}
                 quickFilterText={quickFilterText}
                 gridOptions={{
                   stopEditingWhenCellsLoseFocus: true,

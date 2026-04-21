@@ -2,6 +2,7 @@ import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useRef } from "react";
 import { api } from "@/controllers/API/api";
 import { getURL } from "@/controllers/API/helpers/constants";
+import i18n from "@/i18n";
 import useAlertStore from "@/stores/alertStore";
 import useFlowStore from "@/stores/flowStore";
 import useFlowsManagerStore from "@/stores/flowsManagerStore";
@@ -106,7 +107,7 @@ export async function refreshAllModelInputs(
 
     if (nodesWithModelFields.length === 0) {
       if (showNotifications) {
-        setSuccessData({ title: "No model components to refresh" });
+        setSuccessData({ title: i18n.t("modelProvider.noComponentsToRefresh") });
       }
       return;
     }
@@ -118,15 +119,16 @@ export async function refreshAllModelInputs(
 
     if (showNotifications) {
       const count = nodesWithModelFields.length;
-      const plural = count > 1 ? "s" : "";
-      setSuccessData({ title: `Refreshed ${count} model component${plural}` });
+      setSuccessData({
+        title: i18n.t("modelProvider.refreshedComponents", { count }),
+      });
     }
   } catch (error) {
     console.error("Error refreshing model inputs:", error);
     if (showNotifications) {
       setErrorData({
-        title: "Error refreshing model components",
-        list: [(error as Error)?.message || "An unexpected error occurred"],
+        title: i18n.t("modelProvider.refreshComponentsError"),
+        list: [(error as Error)?.message || i18n.t("common.unknownError")],
       });
     }
   } finally {

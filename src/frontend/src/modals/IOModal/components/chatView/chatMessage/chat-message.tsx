@@ -79,7 +79,7 @@ export default function ChatMessage({
             list: [JSON.parse(event.data)?.error],
           });
         }
-        updateChat(chat, chatMessageRef.current);
+        updateChat?.(chat, chatMessageRef.current);
         reject(new Error(t("playground.streamingFailed")));
       };
       eventSource.current.addEventListener("close", (event) => {
@@ -145,7 +145,7 @@ export default function ChatMessage({
       },
       {
         onSuccess: () => {
-          updateChat(chat, message);
+          updateChat?.(chat, message);
           setEditMessage(false);
         },
         onError: () => {
@@ -309,7 +309,7 @@ export default function ChatMessage({
                   lastMessage
                 }
                 state={chat.properties?.state}
-                chatId={chat.id}
+                chatId={chat.id ?? `placeholder-${chat.timestamp}`}
               />
             )}
             {!chat.isSend ? (

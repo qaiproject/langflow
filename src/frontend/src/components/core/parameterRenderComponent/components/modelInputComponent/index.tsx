@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import LoadingTextComponent from "@/components/common/loadingTextComponent";
 import { useGetEnabledModels } from "@/controllers/API/queries/models/use-get-enabled-models";
@@ -32,7 +33,7 @@ export default function ModelInputComponent({
   disabled,
   handleOnNewValue,
   options = [],
-  placeholder = "Setup Provider",
+  placeholder,
   nodeId,
   nodeClass,
   handleNodeClass,
@@ -42,6 +43,7 @@ export default function ModelInputComponent({
   inspectionPanel,
   showEmptyState = false,
 }: BaseInputProps<any> & ModelInputComponentType): JSX.Element | null {
+  const { t } = useTranslation();
   const { setErrorData } = useAlertStore();
   const refButton = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
@@ -234,7 +236,7 @@ export default function ModelInputComponent({
       size="xs"
       disabled
     >
-      <LoadingTextComponent text="Loading models" />
+      <LoadingTextComponent text={t("modelProvider.loadingModels")} />
     </Button>
   );
 
@@ -263,7 +265,7 @@ export default function ModelInputComponent({
   const renderManageProvidersButton = () => (
     <div className="bottom-0 bg-background">
       {renderFooterButton(
-        "Manage Model Providers",
+        t("modelProvider.manageProviders"),
         "Settings",
         () => setOpenManageProvidersDialog(true),
         "manage-model-providers",
@@ -290,7 +292,7 @@ export default function ModelInputComponent({
             onSelect={handleModelSelect}
           />
           {renderFooterButton(
-            "Refresh List",
+            t("modelProvider.refreshList"),
             "RotateCw",
             handleRefreshButtonPress,
             "refresh-model-list",

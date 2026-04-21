@@ -1,4 +1,5 @@
 import type { handleOnNewValueType } from "@/CustomNodes/hooks/use-handle-new-value";
+import { useTranslation } from "react-i18next";
 import CodeAreaComponent from "@/components/core/parameterRenderComponent/components/codeAreaComponent";
 import ModelInputComponent from "@/components/core/parameterRenderComponent/components/modelInputComponent";
 import SliderComponent from "@/components/core/parameterRenderComponent/components/sliderComponent";
@@ -35,7 +36,7 @@ export function ParameterRenderComponent({
   templateData,
   templateValue,
   editNode,
-  showParameter,
+  showParameter = true,
   inspectionPanel = false,
   handleNodeClass,
   nodeClass,
@@ -52,8 +53,8 @@ export function ParameterRenderComponent({
   templateData: Partial<InputFieldType>;
   templateValue: any;
   editNode: boolean;
-  showParameter: boolean;
-  inspectionPanel: boolean;
+  showParameter?: boolean;
+  inspectionPanel?: boolean;
   handleNodeClass: (value: any, code?: string, type?: string) => void;
   nodeClass: APIClassType;
   disabled: boolean;
@@ -61,6 +62,7 @@ export function ParameterRenderComponent({
   isToolMode?: boolean;
   nodeInformationMetadata?: NodeInfoType;
 }) {
+  const { t } = useTranslation();
   // no-op
   const id = (
     templateData.type +
@@ -230,11 +232,11 @@ export function ParameterRenderComponent({
         return (
           <TableNodeComponent
             {...baseInputProps}
-            description={templateData.info || "Add or edit data"}
+            description={templateData.info || t("parameterInput.editData")}
             columns={
               templateData?.table_schema?.columns ?? templateData?.table_schema
             }
-            tableTitle={templateData?.display_name ?? "Table"}
+            tableTitle={templateData?.display_name ?? t("parameterInput.table")}
             table_options={templateData?.table_options}
             trigger_icon={templateData?.trigger_icon}
             trigger_text={templateData?.trigger_text}
@@ -245,8 +247,8 @@ export function ParameterRenderComponent({
         return (
           <ToolsComponent
             {...baseInputProps}
-            description={templateData.info || "Add or edit data"}
-            title={nodeClass?.display_name ?? "Tools"}
+            description={templateData.info || t("parameterInput.editData")}
+            title={nodeClass?.display_name ?? t("parameterInput.tools")}
             icon={nodeClass?.icon ?? ""}
             template={nodeClass?.template}
           />

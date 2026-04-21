@@ -30,6 +30,9 @@ export const useMessagesStore = create<MessagesStoreType>((set, get) => ({
     if (existingMessage) {
       // Check if this is a streaming partial message (state: "partial")
       if (message.properties?.state === "partial") {
+        if (!message.id) {
+          return;
+        }
         // For streaming, accumulate the text content
         get().updateMessageText(message.id, message.text || "");
         // Update other properties but preserve accumulated text
@@ -95,7 +98,7 @@ export const useMessagesStore = create<MessagesStoreType>((set, get) => ({
       try {
         set((state) => {
           const updatedMessages = state.messages.filter(
-            (msg) => !ids.includes(msg.id),
+            (msg) => msg.id == null || !ids.includes(msg.id),
           );
           get().setMessages(updatedMessages);
           resolve(updatedMessages);

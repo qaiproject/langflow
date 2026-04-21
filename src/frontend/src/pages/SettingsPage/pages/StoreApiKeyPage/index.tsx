@@ -55,7 +55,7 @@ const StoreApiKeyPage = () => {
     onError: (error) => {
       setErrorData({
         title: t("generalPage.apiKeySaveError"),
-        list: [getErrorDetail(error)],
+        list: [getErrorDetail(error) ?? t("alerts.error.generic")],
       });
       setHasApiKey(false);
       setValidApiKey(false);

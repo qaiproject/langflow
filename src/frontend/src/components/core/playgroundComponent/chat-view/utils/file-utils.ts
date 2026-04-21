@@ -62,8 +62,15 @@ export function isImageFile(
  * @param file - Can be a File object, object with name property, or string path
  * @returns The file name
  */
+type DisplayableFile =
+  | File
+  | { name: string }
+  | { path: string }
+  | { path: string; name: string }
+  | string;
+
 export function getFileDisplayName(
-  file: File | { name: string } | { path: string; name: string } | string,
+  file: DisplayableFile,
 ): string {
   if (file instanceof File) {
     return file.name;
@@ -71,11 +78,15 @@ export function getFileDisplayName(
     // Extract name from path (normalize Windows paths first)
     const normalizedPath = file.replace(/\\/g, "/");
     return normalizedPath.split("/").pop() || file;
-  } else if ("name" in file) {
-    return file.name;
   } else if ("path" in file) {
     const normalizedPath = file.path.replace(/\\/g, "/");
-    return normalizedPath.split("/").pop() || file.path;
+    return (
+      ("name" in file && file.name) ||
+      normalizedPath.split("/").pop() ||
+      file.path
+    );
+  } else if ("name" in file) {
+    return file.name;
   }
   return "";
 }
