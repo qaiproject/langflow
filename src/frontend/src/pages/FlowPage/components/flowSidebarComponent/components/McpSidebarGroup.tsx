@@ -13,6 +13,7 @@ import AddMcpServerModal from "@/modals/addMcpServerModal";
 import DeleteConfirmationModal from "@/modals/deleteConfirmationModal";
 import useAlertStore from "@/stores/alertStore";
 import type { APIClassType } from "@/types/api";
+import { translateComponentText } from "@/utils/componentTranslations";
 import { removeCountFromString } from "@/utils/utils";
 import { SearchConfigTrigger } from "./searchConfigTrigger";
 import SidebarDraggableComponent from "./sidebarDraggableComponent";
@@ -134,7 +135,12 @@ const McpSidebarGroup = ({
             hasMcpServers &&
             mcpComponents.map((mcpComponent, idx) => (
               <ShadTooltip
-                content={mcpComponent.display_name || mcpComponent.name}
+                content={
+                  mcpComponent.mcpServerName ??
+                  translateComponentText(
+                    mcpComponent.display_name || mcpComponent.name,
+                  )
+                }
                 side="right"
                 key={mcpComponent.mcpServerName ?? mcpComponent.display_name}
               >

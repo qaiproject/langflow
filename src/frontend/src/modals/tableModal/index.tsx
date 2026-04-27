@@ -5,6 +5,7 @@ import TableComponent, {
   type TableComponentProps,
 } from "@/components/core/parameterRenderComponent/components/tableComponent";
 import type { TableOptionsTypeAPI } from "@/types/api";
+import { translateComponentText } from "@/utils/componentTranslations";
 import BaseModal from "../baseModal";
 
 interface TableModalProps extends TableComponentProps {
@@ -69,9 +70,11 @@ const TableModal = forwardRef<AgGridReact, TableModalProps>(
       >
         <BaseModal.Trigger asChild>{children}</BaseModal.Trigger>
         <BaseModal.Header
-          description={props.tableOptions?.description ?? description}
+          description={translateComponentText(
+            props.tableOptions?.description ?? description,
+          )}
         >
-          <span className="pr-2">{tableTitle}</span>
+          <span className="pr-2">{translateComponentText(tableTitle)}</span>
           <ForwardedIconComponent
             name={tableIcon ?? "Table"}
             className="mr-2 h-4 w-4"

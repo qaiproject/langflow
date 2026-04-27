@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import JsonOutputViewComponent from "@/components/core/jsonOutputComponent/json-output-view";
 import { MAX_TEXT_LENGTH } from "@/constants/constants";
 import type { LogsLogType, OutputLogType } from "@/types/api";
+import { translateComponentText } from "@/utils/componentTranslations";
 import ForwardedIconComponent from "../../../../../../components/common/genericIconComponent";
 import DataOutputComponent from "../../../../../../components/core/dataOutputComponent";
 import {
@@ -111,7 +112,7 @@ const SwitchOutputView: React.FC<SwitchOutputViewProps> = ({
                 data-testid="tool_description"
                 className="text-sm text-muted-foreground mb-3"
               >
-                {tool.description}
+                {translateComponentText(tool.description)}
               </div>
             )}
             {tool?.tags && tool?.tags?.length > 0 && (

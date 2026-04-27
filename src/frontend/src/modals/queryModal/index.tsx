@@ -6,6 +6,7 @@ import {
 } from "../../constants/constants";
 import type { queryModalPropsType } from "../../types/components";
 import { handleKeyDown } from "../../utils/reactflowUtils";
+import { translateComponentText } from "../../utils/componentTranslations";
 import { classNames } from "../../utils/utils";
 import BaseModal from "../baseModal";
 
@@ -39,7 +40,9 @@ export default function QueryModal({
       <BaseModal.Header>
         <div className="flex w-full items-start gap-3">
           <div className="flex">
-            <span data-testid="modal-title">{title ?? TEXT_DIALOG_TITLE}</span>
+            <span data-testid="modal-title">
+              {translateComponentText(title) ?? TEXT_DIALOG_TITLE}
+            </span>
           </div>
         </div>
       </BaseModal.Header>
@@ -52,7 +55,9 @@ export default function QueryModal({
             onChange={(event) => {
               setInputValue(event.target.value);
             }}
-            placeholder={placeholder ?? EDIT_TEXT_PLACEHOLDER}
+            placeholder={
+              translateComponentText(placeholder) ?? EDIT_TEXT_PLACEHOLDER
+            }
             onKeyDown={(e) => {
               handleKeyDown(e, value, "");
             }}
@@ -61,7 +66,9 @@ export default function QueryModal({
           />
         </div>
         <div className="flex flex-col gap-2">
-          <p className="text-sm text-muted-foreground">{description}</p>
+          <p className="text-sm text-muted-foreground">
+            {translateComponentText(description)}
+          </p>
         </div>
       </BaseModal.Content>
       <BaseModal.Footer

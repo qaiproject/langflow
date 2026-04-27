@@ -11,6 +11,7 @@ import CustomInputFileComponent from "@/customization/components/custom-input-fi
 import CustomLinkComponent from "@/customization/components/custom-linkComponent";
 import { ENABLE_INSPECTION_PANEL } from "@/customization/feature-flags";
 import type { APIClassType, InputFieldType } from "@/types/api";
+import { translateComponentText } from "@/utils/componentTranslations";
 import AccordionPromptComponent from "./components/accordionPromptComponent";
 import DictComponent from "./components/dictComponent";
 import { EmptyParameterComponent } from "./components/emptyParameterComponent";
@@ -63,6 +64,12 @@ export function ParameterRenderComponent({
   nodeInformationMetadata?: NodeInfoType;
 }) {
   const { t } = useTranslation();
+  const translatedDisplayName = translateComponentText(
+    templateData.display_name,
+  );
+  const translatedInfo = translateComponentText(templateData.info);
+  const translatedPlaceholder =
+    placeholder || translateComponentText(templateData?.placeholder);
   // no-op
   const id = (
     templateData.type +
@@ -81,9 +88,9 @@ export function ParameterRenderComponent({
       nodeClass,
       handleNodeClass,
       nodeId,
-      helperText: templateData?.helper_text,
+      helperText: translateComponentText(templateData?.helper_text),
       readonly: templateData.readonly,
-      placeholder: placeholder || templateData?.placeholder,
+      placeholder: translatedPlaceholder,
       isToolMode,
       nodeInformationMetadata,
       hasRefreshButton: templateData.refresh_button,
@@ -99,7 +106,7 @@ export function ParameterRenderComponent({
               {...baseInputProps}
               componentName={name}
               id={`inputlist_${id}`}
-              listAddLabel={templateData?.list_add_label}
+              listAddLabel={translateComponentText(templateData?.list_add_label)}
             />
           );
         }
@@ -126,7 +133,7 @@ export function ParameterRenderComponent({
           handleNodeClass={handleNodeClass}
           templateData={templateData}
           name={name}
-          display_name={templateData.display_name ?? ""}
+          display_name={translatedDisplayName ?? ""}
           editNode={editNode}
         />
       );
@@ -232,14 +239,14 @@ export function ParameterRenderComponent({
         return (
           <TableNodeComponent
             {...baseInputProps}
-            description={templateData.info || t("parameterInput.editData")}
+            description={translatedInfo || t("parameterInput.editData")}
             columns={
               templateData?.table_schema?.columns ?? templateData?.table_schema
             }
-            tableTitle={templateData?.display_name ?? t("parameterInput.table")}
+            tableTitle={translatedDisplayName ?? t("parameterInput.table")}
             table_options={templateData?.table_options}
             trigger_icon={templateData?.trigger_icon}
-            trigger_text={templateData?.trigger_text}
+            trigger_text={translateComponentText(templateData?.trigger_text)}
             table_icon={templateData?.table_icon}
           />
         );
@@ -247,8 +254,11 @@ export function ParameterRenderComponent({
         return (
           <ToolsComponent
             {...baseInputProps}
-            description={templateData.info || t("parameterInput.editData")}
-            title={nodeClass?.display_name ?? t("parameterInput.tools")}
+            description={translatedInfo || t("parameterInput.editData")}
+            title={
+              translateComponentText(nodeClass?.display_name) ??
+              t("parameterInput.tools")
+            }
             icon={nodeClass?.icon ?? ""}
             template={nodeClass?.template}
           />
@@ -273,7 +283,7 @@ export function ParameterRenderComponent({
         return (
           <SortableListComponent
             {...baseInputProps}
-            helperText={templateData?.helper_text}
+            helperText={translateComponentText(templateData?.helper_text)}
             helperMetadata={templateData?.helper_text_metadata}
             options={templateData?.options}
             searchCategory={templateData?.search_category}
@@ -293,7 +303,7 @@ export function ParameterRenderComponent({
             name={name}
             nodeId={nodeId}
             nodeClass={nodeClass}
-            helperText={templateData?.helper_text}
+            helperText={translateComponentText(templateData?.helper_text)}
             helperMetadata={templateData?.helper_text_metadata}
             options={templateData?.options}
             searchCategory={templateData?.search_category}
@@ -314,8 +324,8 @@ export function ParameterRenderComponent({
         return (
           <QueryComponent
             {...baseInputProps}
-            display_name={templateData.display_name ?? ""}
-            info={templateData.info ?? ""}
+            display_name={translatedDisplayName ?? ""}
+            info={translatedInfo ?? ""}
             separator={templateData.separator}
             id={`query_${id}`}
           />
@@ -335,7 +345,7 @@ export function ParameterRenderComponent({
           <ModelInputComponent
             {...baseInputProps}
             options={templateData?.options || []}
-            placeholder={templateData?.placeholder}
+            placeholder={translatedPlaceholder}
             externalOptions={templateData?.external_options}
           />
         );

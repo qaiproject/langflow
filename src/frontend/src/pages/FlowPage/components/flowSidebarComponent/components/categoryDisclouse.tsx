@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/disclosure";
 import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import type { APIClassType } from "@/types/api";
+import { translateComponentText } from "@/utils/componentTranslations";
 import SidebarItemsList from "./sidebarItemsList";
 
 export const CategoryDisclosure = memo(function CategoryDisclosure({
@@ -44,6 +45,7 @@ export const CategoryDisclosure = memo(function CategoryDisclosure({
   );
 
   const isOpen = openCategories.includes(item.name);
+  const translatedDisplayName = translateComponentText(item.display_name);
   const handleOpenChange = useCallback(
     (isOpen: boolean) => {
       setOpenCategories((prev) =>
@@ -69,7 +71,7 @@ export const CategoryDisclosure = memo(function CategoryDisclosure({
                 className="h-4 w-4 group-aria-expanded/collapsible:text-accent-pink-foreground"
               />
               <span className="flex-1 group-aria-expanded/collapsible:font-semibold">
-                {item.display_name}
+                {translatedDisplayName}
               </span>
               <ForwardedIconComponent
                 name="ChevronRight"

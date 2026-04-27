@@ -18,6 +18,7 @@ import { track } from "@/customization/utils/analytics";
 import useAlertStore from "@/stores/alertStore";
 import useFlowStore from "@/stores/flowStore";
 import type { APIClassType, InputFieldType } from "@/types/api";
+import { translateComponentText } from "@/utils/componentTranslations";
 
 interface NodeDialogProps {
   open: boolean;
@@ -233,12 +234,14 @@ export const NodeDialog: React.FC<NodeDialogProps> = ({
         <DialogHeader className="px-5 pb-3">
           <DialogTitle>
             <div className="flex items-center">
-              <span className="pb-2">{dialogNodeData?.display_name}</span>
+              <span className="pb-2">
+                {translateComponentText(dialogNodeData?.display_name)}
+              </span>
             </div>
           </DialogTitle>
           <DialogDescription>
             <div className="flex items-center gap-2">
-              {dialogNodeData?.description}
+              {translateComponentText(dialogNodeData?.description)}
             </div>
           </DialogDescription>
         </DialogHeader>
@@ -249,8 +252,9 @@ export const NodeDialog: React.FC<NodeDialogProps> = ({
               <div className="flex items-center gap-2">
                 {getCustomParameterTitle({
                   title:
-                    (fieldValue as { display_name: string })?.display_name ??
-                    "",
+                    translateComponentText(
+                      (fieldValue as { display_name: string })?.display_name,
+                    ) ?? "",
                   nodeId,
                   isFlexView: false,
                   required:
