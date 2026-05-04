@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import ShadTooltip from "@/components/common/shadTooltipComponent";
 import useFlowStore from "@/stores/flowStore";
+import { translateComponentText } from "@/utils/componentTranslations";
 import { checkChatInput, checkWebhookInput } from "@/utils/reactflowUtils";
 import { removeCountFromString } from "@/utils/utils";
 import { disableItem } from "../helpers/disable-item";
@@ -38,6 +39,9 @@ const SidebarItemsList = ({
         })
         .map((SBItemName) => {
           const currentItem = dataFilter[item.name][SBItemName];
+          const translatedDisplayName = translateComponentText(
+            currentItem.display_name,
+          );
           if (SBItemName === "MCPTools") {
             return null;
           }
@@ -56,7 +60,7 @@ const SidebarItemsList = ({
           }
           return (
             <ShadTooltip
-              content={currentItem.display_name}
+              content={translatedDisplayName}
               side="right"
               key={SBItemName}
             >
@@ -73,7 +77,7 @@ const SidebarItemsList = ({
                 color={nodeColors[item.name]}
                 itemName={SBItemName}
                 error={!!currentItem.error}
-                display_name={currentItem.display_name}
+                display_name={translatedDisplayName}
                 official={currentItem.official !== false}
                 beta={currentItem.beta ?? false}
                 legacy={currentItem.legacy ?? false}
@@ -97,6 +101,7 @@ const UniqueInputsDraggableComponent = ({
   nodeColors,
 }) => {
   const nodes = useFlowStore((state) => state.nodes);
+  const translatedDisplayName = translateComponentText(currentItem.display_name);
   const chatInputAdded = useMemo(() => checkChatInput(nodes), [nodes]);
   const webhookInputAdded = useMemo(() => checkWebhookInput(nodes), [nodes]);
   const uniqueInputsComponents: UniqueInputsComponents = useMemo(() => {
@@ -108,7 +113,7 @@ const UniqueInputsDraggableComponent = ({
 
   return (
     <ShadTooltip
-      content={currentItem.display_name}
+      content={translatedDisplayName}
       side="right"
       key={SBItemName}
     >
@@ -125,7 +130,7 @@ const UniqueInputsDraggableComponent = ({
         color={nodeColors[item.name]}
         itemName={SBItemName}
         error={!!currentItem.error}
-        display_name={currentItem.display_name}
+        display_name={translatedDisplayName}
         official={currentItem.official !== false}
         beta={currentItem.beta ?? false}
         legacy={currentItem.legacy ?? false}

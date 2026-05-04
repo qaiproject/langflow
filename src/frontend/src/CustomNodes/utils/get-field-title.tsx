@@ -1,4 +1,5 @@
 import i18n from "@/i18n";
+import { translateComponentText } from "@/utils/componentTranslations";
 import type { APITemplateType } from "../../types/api";
 
 export default function getFieldTitle(
@@ -20,5 +21,7 @@ export default function getFieldTitle(
     return translatedFieldNames[field.name];
   }
 
-  return field.display_name ? field.display_name : (field.name ?? templateField);
+  return translateComponentText(
+    field.display_name ? field.display_name : (field.name ?? templateField),
+  );
 }

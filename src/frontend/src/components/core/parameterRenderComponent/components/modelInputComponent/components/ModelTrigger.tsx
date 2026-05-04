@@ -1,4 +1,5 @@
 import { RefObject } from "react";
+import { useTranslation } from "react-i18next";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import { Button } from "@/components/ui/button";
 import { PopoverTrigger } from "@/components/ui/popover";
@@ -24,13 +25,14 @@ const ModelTrigger = ({
   disabled,
   options,
   selectedModel,
-  placeholder = "Setup Provider",
+  placeholder,
   hasEnabledProviders,
   onOpenManageProviders,
   id,
   refButton,
   showEmptyState = false,
 }: ModelTriggerProps) => {
+  const { t } = useTranslation();
   const renderSelectedIcon = () => {
     if (disabled || options.length === 0) {
       return null;
@@ -56,7 +58,9 @@ const ModelTrigger = ({
         onClick={onOpenManageProviders}
       >
         <ForwardedIconComponent name="Brain" className="h-4 w-4" />
-        <div className="text-[13px]">{placeholder}</div>
+        <div className="text-[13px]">
+          {placeholder ?? t("modelProvider.setupProvider")}
+        </div>
       </Button>
     );
   }
@@ -87,7 +91,7 @@ const ModelTrigger = ({
                 RECEIVING_INPUT_VALUE
               ) : isEmptyStateMode ? (
                 <div className="truncate text-muted-foreground">
-                  No models enabled
+                  {t("modelProvider.noModelsEnabled")}
                 </div>
               ) : (
                 <div
@@ -96,7 +100,7 @@ const ModelTrigger = ({
                     !selectedModel?.name && "text-muted-foreground",
                   )}
                 >
-                  {selectedModel?.name || "Select a model"}
+                  {selectedModel?.name || t("modelProvider.selectModel")}
                 </div>
               )}
             </span>

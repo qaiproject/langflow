@@ -191,9 +191,9 @@ export type Users = {
   username: string;
   is_active: boolean;
   is_superuser: boolean;
-  profile_image: string;
-  create_at: Date;
-  updated_at: Date;
+  profile_image?: string;
+  create_at?: string | Date;
+  updated_at?: string | Date;
   optins?: {
     github_starred?: boolean;
     discord_clicked?: boolean;

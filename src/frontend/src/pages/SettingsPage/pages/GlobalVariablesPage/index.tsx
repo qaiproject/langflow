@@ -48,7 +48,19 @@ export default function GlobalVariablesPage() {
 
   const DropdownEditor = ({ options, value, onValueChange }) => {
     return (
-      <Dropdown options={options} value={value} onSelect={onValueChange}>
+      <Dropdown
+        id="global-variable-dropdown"
+        editNode={false}
+        handleOnNewValue={() => {}}
+        disabled={false}
+        nodeId=""
+        nodeClass={{} as any}
+        handleNodeClass={() => {}}
+        name="type"
+        options={options}
+        value={value}
+        onSelect={onValueChange}
+      >
         <div className="-mt-1.5 w-full"></div>
       </Dropdown>
     );

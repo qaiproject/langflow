@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useGetGlobalVariables } from "@/controllers/API/queries/variables";
 import GeneralDeleteConfirmationModal from "@/shared/components/delete-confirmation-modal";
 import { cn } from "../../../../../utils/utils";
+import { translateComponentText } from "../../../../../utils/componentTranslations";
 import ForwardedIconComponent from "../../../../common/genericIconComponent";
 import { CommandItem } from "../../../../ui/command";
 import GlobalVariableModal from "../../../GlobalVariableModal/GlobalVariableModal";
@@ -97,7 +98,10 @@ export default function InputGlobalComponent({
 
   // Render add new variable button
   const renderAddVariableButton = () => (
-    <GlobalVariableModal referenceField={display_name} disabled={disabled}>
+    <GlobalVariableModal
+      referenceField={translateComponentText(display_name)}
+      disabled={disabled}
+    >
       <CommandItem value="doNotFilter-addNewVariable">
         <ForwardedIconComponent
           name="Plus"

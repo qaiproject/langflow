@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs-button";
+import { translateComponentText } from "@/utils/componentTranslations";
 import { testIdCase } from "@/utils/utils";
 import type { InputProps, TabComponentType } from "../../types";
 
@@ -57,7 +58,7 @@ export default function TabComponent({
               disabled={disabled}
               data-testid={`tab_${index}_${testIdCase(tab)}`}
             >
-              {tab}
+              {translateComponentText(tab)}
             </TabsTrigger>
           ))}
         </TabsList>

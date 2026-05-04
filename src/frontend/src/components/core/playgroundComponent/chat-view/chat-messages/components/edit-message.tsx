@@ -69,7 +69,8 @@ export const MarkdownField = ({
               </div>
             );
           },
-          code: ({ node, inline, className, children, ...props }) => {
+          code: ({ node, className, children, ...props }) => {
+            const isInlineCode = !className;
             let content = children as string;
             if (
               Array.isArray(children) &&
@@ -92,7 +93,7 @@ export const MarkdownField = ({
 
               const match = /language-(\w+)/.exec(className || "");
 
-              return !inline ? (
+              return !isInlineCode ? (
                 <CodeTabsComponent
                   language={(match && match[1]) || ""}
                   code={String(content).replace(/\n$/, "")}

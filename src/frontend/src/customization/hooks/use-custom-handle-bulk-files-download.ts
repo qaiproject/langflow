@@ -1,6 +1,8 @@
+import { useTranslation } from "react-i18next";
 import { useGetDownloadFilesV2 } from "@/controllers/API/queries/file-management/use-get-download-files";
 
 export const useCustomHandleBulkFilesDownload = () => {
+  const { t } = useTranslation();
   const { mutate: downloadFiles } = useGetDownloadFilesV2();
 
   const handleBulkDownload = async (
@@ -21,10 +23,8 @@ export const useCustomHandleBulkFilesDownload = () => {
         },
         onError: (error) => {
           setErrorData({
-            title: "Error downloading files",
-            list: [
-              error.message || "An error occurred while downloading the files",
-            ],
+            title: t("filesPage.errorDownloadingFiles"),
+            list: [error.message || t("filesPage.genericDownloadError")],
           });
           setIsDownloading(false);
         },

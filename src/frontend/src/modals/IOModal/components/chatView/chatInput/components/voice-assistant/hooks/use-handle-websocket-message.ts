@@ -56,8 +56,14 @@ export const useHandleWebsocketMessage = (
             float32Data.length,
             24000,
           );
-          audioBuffer.copyToChannel(float32Data, 0);
-          audioBuffer.copyToChannel(float32Data, 1);
+          audioBuffer.copyToChannel(
+            float32Data as Float32Array<ArrayBuffer>,
+            0,
+          );
+          audioBuffer.copyToChannel(
+            float32Data as Float32Array<ArrayBuffer>,
+            1,
+          );
           audioQueueRef.current.push(audioBuffer);
           if (!isPlayingRef.current) {
             playNextAudioChunk();

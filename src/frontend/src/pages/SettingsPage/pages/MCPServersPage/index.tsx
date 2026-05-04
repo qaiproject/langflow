@@ -16,7 +16,7 @@ import { useGetMCPServers } from "@/controllers/API/queries/mcp/use-get-mcp-serv
 import AddMcpServerModal from "@/modals/addMcpServerModal";
 import DeleteConfirmationModal from "@/modals/deleteConfirmationModal";
 import useAlertStore from "@/stores/alertStore";
-import type { MCPServerInfoType } from "@/types/mcp";
+import type { MCPServerInfoType, MCPServerType } from "@/types/mcp";
 import { cn } from "@/utils/utils";
 
 export default function MCPServersPage() {
@@ -27,7 +27,7 @@ export default function MCPServersPage() {
   const [addOpen, setAddOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [editInitialData, setEditInitialData] =
-    useState<MCPServerInfoType | null>(null);
+    useState<MCPServerType | null>(null);
   const { mutateAsync: getServer } = useGetMCPServer();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [serverToDelete, setServerToDelete] =
@@ -182,7 +182,7 @@ export default function MCPServersPage() {
               <AddMcpServerModal
                 open={editOpen}
                 setOpen={setEditOpen}
-                initialData={editInitialData}
+                initialData={editInitialData ?? undefined}
               />
             )}
             <DeleteConfirmationModal

@@ -21,7 +21,9 @@ export const useBarControls = (
       if (analyserRef?.current) {
         const analyser = analyserRef.current;
         analyser.fftSize = 256;
-        timeDataRef.current = new Uint8Array(analyser.fftSize);
+        timeDataRef.current = new Uint8Array(
+          analyser.fftSize,
+        ) as Uint8Array<ArrayBuffer>;
         analyzerInitializedRef.current = true;
       }
 
@@ -67,7 +69,9 @@ export const useBarControls = (
     ) {
       const analyser = analyserRef.current;
       analyser.fftSize = 256;
-      timeDataRef.current = new Uint8Array(analyser.fftSize);
+      timeDataRef.current = new Uint8Array(
+        analyser.fftSize,
+      ) as Uint8Array<ArrayBuffer>;
       analyzerInitializedRef.current = true;
     }
   }, [analyserRef?.current, isRecording]);
@@ -81,7 +85,9 @@ export const useBarControls = (
     ) {
       const analyser = analyserRef.current;
       analyser.fftSize = 256;
-      timeDataRef.current = new Uint8Array(analyser.fftSize);
+      timeDataRef.current = new Uint8Array(
+        analyser.fftSize,
+      ) as Uint8Array<ArrayBuffer>;
       analyzerInitializedRef.current = true;
     }
 
@@ -94,10 +100,14 @@ export const useBarControls = (
           const analyser = analyserRef.current;
 
           if (timeDataRef.current.length !== analyser.fftSize) {
-            timeDataRef.current = new Uint8Array(analyser.fftSize);
+            timeDataRef.current = new Uint8Array(
+              analyser.fftSize,
+            ) as Uint8Array<ArrayBuffer>;
           }
 
-          analyser.getByteTimeDomainData(timeDataRef.current);
+          analyser.getByteTimeDomainData(
+            timeDataRef.current as Uint8Array<ArrayBuffer>,
+          );
 
           let sum = 0;
           let max = 0;

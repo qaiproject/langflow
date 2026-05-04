@@ -19,6 +19,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Textarea } from "@/components/ui/textarea";
+import { translateComponentText } from "@/utils/componentTranslations";
 import { parseString, sanitizeMcpName } from "@/utils/stringManipulation";
 
 export default function ToolsTable({
@@ -430,7 +431,9 @@ export default function ToolsTable({
                   className="text-mmd text-muted-foreground"
                   data-testid="sidebar_header_description"
                 >
-                  {focusedRow?.display_description ?? focusedRow?.description}
+                  {translateComponentText(
+                    focusedRow?.display_description ?? focusedRow?.description,
+                  )}
                 </p>
               </div>
             ))}
@@ -453,9 +456,13 @@ export default function ToolsTable({
                     {actionArgs.map((field, index) => (
                       <div key={index} className="flex flex-col gap-2">
                         <label className="flex text-sm font-medium">
-                          {field.display_name}
+                          {translateComponentText(field.display_name)}
                           {field.description && (
-                            <ShadTooltip content={field.description}>
+                            <ShadTooltip
+                              content={translateComponentText(
+                                field.description,
+                              )}
+                            >
                               <div className="flex items-center text-sm font-medium hover:cursor-help">
                                 <ForwardedIconComponent
                                   name="info"

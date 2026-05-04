@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { BorderTrail } from "@/components/core/border-trail";
 import { useToolDurations } from "@/components/core/playgroundComponent/chat-view/chat-messages/hooks/use-tool-durations";
 import {
@@ -37,6 +38,7 @@ export function ContentBlockDisplay({
   playgroundPage,
   hideHeader = false,
 }: ContentBlockDisplayProps) {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Use shared hook for tool duration tracking
@@ -61,7 +63,10 @@ export function ContentBlockDisplay({
   }
 
   const headerIcon = state === "partial" ? "Bot" : "Check";
-  const headerTitle = state === "partial" ? "Steps" : "Finished";
+  const headerTitle =
+    state === "partial"
+      ? t("chatComponent.steps")
+      : t("chatComponent.finished");
 
   return (
     <div className="relative py-3">
@@ -130,7 +135,7 @@ export function ContentBlockDisplay({
                   const rawTitle =
                     content.header?.title ||
                     content.name ||
-                    `Tool ${flatIdx + 1}`;
+                    t("chatComponent.toolWithIndex", { index: flatIdx + 1 });
                   const toolTitle =
                     typeof rawTitle === "string"
                       ? formatToolTitle(rawTitle)
@@ -148,7 +153,7 @@ export function ContentBlockDisplay({
                         <div className="flex items-center justify-between w-full pr-2">
                           <div className="flex items-center gap-1 text-sm font-normal min-w-0 flex-1 overflow-hidden">
                             <div className="text-muted-foreground whitespace-nowrap flex-shrink-0">
-                              Called tool{" "}
+                              {t("chatComponent.calledTool")}{" "}
                             </div>
                             <div className="truncate flex-1 muted-foreground bg-muted py-1 px-1.5 rounded-sm text-xs max-w-fit">
                               <p className="truncate font-normal font-mono">

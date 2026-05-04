@@ -21,6 +21,7 @@ import { useShortcutsStore } from "../../stores/shortcuts";
 import { useTypesStore } from "../../stores/typesStore";
 import type { OutputFieldType, VertexBuildTypeAPI } from "../../types/api";
 import type { NodeDataType } from "../../types/flow";
+import { translateComponentText } from "../../utils/componentTranslations";
 import { scapedJSONStringfy } from "../../utils/reactflowUtils";
 import { classNames, cn } from "../../utils/utils";
 import { processNodeAdvancedFields } from "../helpers/process-node-advanced-fields";
@@ -116,10 +117,10 @@ function GenericNode({
     data.type === "ChatInput" || data.node?.display_name === "Chat Input";
   const translatedDisplayName = isChatInputNode
     ? i18n.t("chatComponent.title")
-    : data.node?.display_name;
+    : translateComponentText(data.node?.display_name);
   const translatedDescription = isChatInputNode
     ? i18n.t("chatComponent.description")
-    : data.node?.description;
+    : translateComponentText(data.node?.description);
 
   const getValidationStatus = useCallback((data) => {
     setValidationStatus(data);

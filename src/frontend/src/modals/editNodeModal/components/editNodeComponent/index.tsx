@@ -45,6 +45,6 @@ export function EditNodeComponent({
         </div>
       </div>
     ),
-    [nodeClass],
+    [autoHeight, columnDefs, nodeClass, rowData],
   );
 }
