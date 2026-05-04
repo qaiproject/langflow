@@ -16,6 +16,7 @@ import {
 } from "@/customization/utils/custom-buildUtils";
 import { customPollBuildEvents } from "@/customization/utils/custom-poll-build-events";
 import { getFetchCredentials } from "@/customization/utils/get-fetch-credentials";
+import i18n from "@/i18n";
 import { BuildStatus, EventDeliveryType } from "../constants/enums";
 import { getVerticesOrder, postBuildVertex } from "../controllers/API";
 import useAlertStore from "../stores/alertStore";
@@ -312,8 +313,8 @@ export async function buildFlowVertices({
             onBuildStopped && onBuildStopped();
             return;
           }
-          onBuildError!("Error Building Component", [
-            "Network error. Please check the connection to the server.",
+          onBuildError!(i18n.t("alerts.error.buildingComponent"), [
+            i18n.t("alerts.error.networkConnection"),
           ]);
         },
         buildController,
@@ -397,8 +398,8 @@ export async function buildFlowVertices({
             onBuildStopped && onBuildStopped();
             return;
           }
-          onBuildError!("Error Building Component", [
-            "Network error. Please check the connection to the server.",
+          onBuildError!(i18n.t("alerts.error.buildingComponent"), [
+            i18n.t("alerts.error.networkConnection"),
           ]);
         },
         buildController,
@@ -425,9 +426,9 @@ export async function buildFlowVertices({
       onBuildStopped && onBuildStopped();
       return;
     }
-    onBuildError!("Error Building Flow", [
+    onBuildError!(i18n.t("alerts.error.buildingFlow"), [
       (error as Error).message ||
-        "Langflow was not able to connect to the server. Please make sure your connection is working properly.",
+        i18n.t("alerts.error.serverConnection"),
     ]);
     throw error;
   }
@@ -470,7 +471,7 @@ export function processEndVertexEvent(
         },
       );
       onBuildError &&
-        onBuildError("Error Building Component", errorMessages, [
+        onBuildError(i18n.t("alerts.error.buildingComponent"), errorMessages, [
           { id: buildData.id },
         ]);
       onBuildUpdate(buildData, BuildStatus.ERROR, "");
@@ -766,7 +767,8 @@ async function onEvent(
       handleMessageEvent(type, data);
       // Use a falsy check to correctly determine if the source ID is missing.
       if (data?.category === "error" && !data?.properties?.source?.id) {
-        onBuildError && onBuildError("Error Building Flow", [data.text]);
+        onBuildError &&
+          onBuildError(i18n.t("alerts.error.buildingFlow"), [data.text]);
       }
       buildResults.push(false);
       return true;
@@ -957,7 +959,7 @@ async function buildVertex({
           return [outputs.message.errorMessage];
         });
         onBuildError!(
-          "Error Building Component",
+          i18n.t("alerts.error.buildingComponent"),
           errorMessages,
           verticesIds.map((id) => ({ id })),
         );
@@ -973,13 +975,13 @@ async function buildVertex({
     let errorMessage: string | string[] =
       (error as AxiosError<any>).response?.data?.detail ||
       (error as AxiosError<any>).response?.data?.message ||
-      "An unexpected error occurred while building the Component. Please try again.";
+      i18n.t("alerts.error.buildingComponentUnexpected");
     errorMessage = tryParseJson(errorMessage as string) ?? errorMessage;
     if (!Array.isArray(errorMessage)) {
       errorMessage = [errorMessage];
     }
     onBuildError!(
-      "Error Building Component",
+      i18n.t("alerts.error.buildingComponent"),
       errorMessage,
       verticesIds.map((id) => ({ id })),
     );

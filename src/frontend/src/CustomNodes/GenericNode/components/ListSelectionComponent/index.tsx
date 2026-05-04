@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import SearchBarComponent from "@/components/core/parameterRenderComponent/components/searchBarComponent";
 import type { InputProps } from "@/components/core/parameterRenderComponent/types";
@@ -6,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { DialogFooter, DialogHeader } from "@/components/ui/dialog";
 import { Dialog, DialogContent } from "@/components/ui/dialog-with-no-close";
 import { Input } from "@/components/ui/input";
+import { translateComponentText } from "@/utils/componentTranslations";
 import { cn, testIdCase } from "@/utils/utils";
 import ListItem from "./ListItem";
 
@@ -33,11 +35,12 @@ const ListSelectionComponent = ({
   selectedList = [],
   options,
   limit = 1,
-  headerSearchPlaceholder = "Search...",
+  headerSearchPlaceholder,
   addButtonText,
   onAddButtonClick,
   ...baseInputProps
 }: InputProps<any, ListSelectionComponentProps>) => {
+  const { t } = useTranslation();
   const { nodeClass } = baseInputProps;
   const [search, setSearch] = useState("");
   const [hoveredItem, setHoveredItem] = useState<any | null>(null);
@@ -183,7 +186,7 @@ const ListSelectionComponent = ({
                 className="h-[18px] w-[18px] text-muted-foreground"
               />
               <div className="text-[13px] font-semibold">
-                {nodeClass?.display_name}
+                {translateComponentText(nodeClass?.display_name)}
               </div>
             </div>
           ) : (
@@ -192,7 +195,9 @@ const ListSelectionComponent = ({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="border-none focus:ring-0"
-                placeholder={headerSearchPlaceholder}
+                placeholder={
+                  headerSearchPlaceholder ?? t("common.searchPlaceholder")
+                }
                 data-testid="search_bar_input"
               />
             </div>
@@ -244,7 +249,7 @@ const ListSelectionComponent = ({
             ))
           ) : (
             <div className="py-3 text-center text-muted-foreground">
-              No items match your search
+              {t("common.noItemsMatchSearch")}
             </div>
           )}
         </div>

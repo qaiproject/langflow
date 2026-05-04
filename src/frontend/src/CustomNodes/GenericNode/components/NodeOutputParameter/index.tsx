@@ -2,6 +2,7 @@ import { useMemo } from "react";
 
 import { getNodeOutputColors } from "../../../helpers/get-node-output-colors";
 import { getNodeOutputColorsName } from "../../../helpers/get-node-output-colors-name";
+import { translateComponentText } from "../../../../utils/componentTranslations";
 import NodeOutputField from "../NodeOutputfield";
 
 export const OutputParameter = ({
@@ -74,7 +75,7 @@ export const OutputParameter = ({
       data={data}
       colors={colors}
       outputProxy={output.proxy}
-      title={output.display_name ?? output.name}
+      title={translateComponentText(output.display_name ?? output.name)}
       tooltipTitle={
         output.allows_loop && output.loop_types
           ? `${output.selected ?? output.types[0]}\n${output.loop_types.join("\n")}`

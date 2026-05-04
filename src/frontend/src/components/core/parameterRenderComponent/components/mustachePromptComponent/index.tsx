@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import SanitizedHTMLWrapper from "@/components/common/sanitizedHTMLWrapper";
 import MustachePromptModal from "@/modals/mustachePromptModal";
@@ -25,6 +26,7 @@ export default function MustachePromptAreaComponent({
   readonly = false,
   showParameter = true,
 }: InputProps<string, PromptAreaComponentType>): JSX.Element | null {
+  const { t } = useTranslation();
   const coloredContent = (typeof value === "string" ? value : "")
     // escape HTML first
     .replace(/</g, "&lt;")
@@ -54,7 +56,12 @@ export default function MustachePromptAreaComponent({
         />
       ) : (
         <span className="text-sm text-muted-foreground">
-          {getPlaceholder(disabled, "Use {{variable}} as placeholder")}
+          {getPlaceholder(
+            disabled,
+            t("parameterInput.mustachePlaceholder", {
+              variable: "{{variable}}",
+            }),
+          )}
         </span>
       )}
     </span>

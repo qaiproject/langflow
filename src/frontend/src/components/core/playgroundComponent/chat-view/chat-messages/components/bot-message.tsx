@@ -188,7 +188,7 @@ export const BotMessage = memo(
                       lastMessage,
                     )}
                     state={getContentBlockState(chat, isBuilding, lastMessage)}
-                    chatId={chat.id}
+                    chatId={chat.id ?? `placeholder-${chat.timestamp}`}
                     hideHeader={true}
                   />
                 )}

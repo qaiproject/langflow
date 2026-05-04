@@ -4,6 +4,7 @@ import ShadTooltip from "@/components/common/shadTooltipComponent";
 import { ICON_STROKE_WIDTH } from "@/constants/constants";
 import { ENABLE_MCP_COMPOSER } from "@/customization/feature-flags";
 import ToolsModal from "@/modals/toolsModal";
+import { translateComponentText } from "@/utils/componentTranslations";
 import { cn, testIdCase } from "@/utils/utils";
 import { ForwardedIconComponent } from "../../../../common/genericIconComponent";
 import { Badge } from "../../../../ui/badge";
@@ -61,10 +62,10 @@ export default function ToolsComponent({
         placeholder={placeholder || ""}
         setOpen={setIsModalOpen}
         isAction={isAction}
-        description={description}
+        description={translateComponentText(description)}
         rows={value || []}
         handleOnNewValue={handleOnNewValue}
-        title={title}
+        title={translateComponentText(title)}
         icon={icon}
       />
       <div
@@ -94,7 +95,7 @@ export default function ToolsComponent({
               className="icon-size"
               strokeWidth={ICON_STROKE_WIDTH}
             />
-            {button_description}
+            {translateComponentText(button_description)}
           </Button>
         )}
 

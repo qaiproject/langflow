@@ -118,7 +118,10 @@ function handleError(eventOrError: Event): void {
 }
 
 function hasWebhookComponent(
-  flow: { data?: { nodes?: Array<{ id: string }> } } | null,
+  flow:
+    | { data?: { nodes?: Array<{ id: string }> } | null }
+    | null
+    | undefined,
 ): boolean {
   if (!flow?.data?.nodes) {
     return false;
@@ -133,7 +136,7 @@ export function useWebhookEvents() {
 
   // Memoize webhook check to avoid reconnecting on every render
   const flowHasWebhook = useMemo(
-    () => hasWebhookComponent(currentFlow),
+    () => hasWebhookComponent(currentFlow ?? null),
     [currentFlow?.data?.nodes],
   );
 

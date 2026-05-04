@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { translateComponentText } from "@/utils/componentTranslations";
 
 interface ComboBoxItemProps {
   item: any;
@@ -47,14 +48,16 @@ const ComboBoxItem = ({ item }: ComboBoxItemProps) => {
             className="ml-2 flex w-72 cursor-pointer text-sm font-bold text-primary"
             htmlFor={`check-${item?.name}`}
           >
-            <span className="truncate">{item?.name}</span>
+            <span className="truncate">{translateComponentText(item?.name)}</span>
           </label>
 
           <label
             className="flex w-72 cursor-pointer text-sm text-muted-foreground"
             htmlFor={`check-${item?.name}`}
           >
-            <span className="truncate">{item?.description}</span>
+            <span className="truncate">
+              {translateComponentText(item?.description)}
+            </span>
           </label>
         </Button>
       </div>

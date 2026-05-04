@@ -8,6 +8,7 @@ import {
 import { sortToolModeFields } from "@/CustomNodes/helpers/sort-tool-mode-field";
 import getFieldTitle from "@/CustomNodes/utils/get-field-title";
 import useFlowStore from "@/stores/flowStore";
+import { translateComponentText } from "@/utils/componentTranslations";
 import { scapedJSONStringfy } from "@/utils/reactflowUtils";
 import NodeInputField from "../NodeInputField";
 import { findPrimaryInput } from "./utils";
@@ -116,7 +117,7 @@ const RenderInputParameters = ({
           data={data}
           colors={memoizedColor.colors}
           title={getFieldTitle(data.node?.template!, templateField)}
-          info={template.info!}
+          info={translateComponentText(template.info)!}
           name={templateField}
           tooltipTitle={template.input_types?.join("\n") ?? template.type}
           required={template.required}

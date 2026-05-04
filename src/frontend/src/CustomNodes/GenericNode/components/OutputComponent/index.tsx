@@ -15,6 +15,7 @@ import {
 import useFlowStore from "@/stores/flowStore";
 import ShadTooltip from "../../../../components/common/shadTooltipComponent";
 import type { outputComponentType } from "../../../../types/components";
+import { translateComponentText } from "../../../../utils/componentTranslations";
 import { cn } from "../../../../utils/utils";
 
 export default function OutputComponent({
@@ -30,6 +31,7 @@ export default function OutputComponent({
   handleSelectOutput,
   outputName,
 }: outputComponentType) {
+  const translatedName = translateComponentText(name);
   const nodeType = useFlowStore(
     (state) => state.nodes.find((node) => node.id === nodeId)?.data?.type,
   );
@@ -54,7 +56,7 @@ export default function OutputComponent({
         frozen ? "text-ice" : "",
       )}
     >
-      {name}
+      {translatedName}
     </span>,
   );
 
@@ -80,7 +82,7 @@ export default function OutputComponent({
               data-testid={`dropdown-output-${outputName?.toLowerCase()}`}
             >
               <div className="flex items-center gap-1 truncate rounded-md px-2 py-1 text-sm font-medium group-hover:bg-primary/10">
-                {name}
+                {translatedName}
                 <ForwardedIconComponent
                   name="ChevronDown"
                   className="h-4 w-4 text-muted-foreground"
@@ -107,7 +109,9 @@ export default function OutputComponent({
                       value={output.name}
                     >
                       <span className="truncate text-[13px]">
-                        {output.display_name ?? output.name}
+                        {translateComponentText(
+                          output.display_name ?? output.name,
+                        )}
                       </span>
                       <span className="ml-4 text-[13px] text-muted-foreground">
                         {output.types.join(", ")}

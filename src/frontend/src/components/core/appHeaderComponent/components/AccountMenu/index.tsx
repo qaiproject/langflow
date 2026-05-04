@@ -22,6 +22,7 @@ import {
   HeaderMenuItems,
   HeaderMenuToggle,
 } from "../HeaderMenu";
+import LanguageButtons from "../LanguageButtons";
 import ThemeButtons from "../ThemeButtons";
 
 export const AccountMenu = () => {
@@ -166,6 +167,13 @@ export const AccountMenu = () => {
             <span className="">{t("menu.theme")}</span>
             <div className="relative top-[1px] float-right">
               <ThemeButtons />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between px-4 py-[6.5px] text-sm">
+            <span>{t("menu.language")}</span>
+            <div className="relative top-[1px] float-right">
+              <LanguageButtons />
             </div>
           </div>
 

@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { SpanNode } from "./SpanNode";
 import type { Span } from "./types";
 
@@ -17,6 +18,8 @@ export function SpanTree({
   selectedSpanId,
   onSelectSpan,
 }: SpanTreeProps) {
+  const { t } = useTranslation();
+
   // Track which spans are expanded (default: root level expanded)
   const [expandedIds, setExpandedIds] = useState<Set<string>>(() => {
     const initial = new Set<string>();
@@ -67,7 +70,7 @@ export function SpanTree({
     <div
       className="flex flex-col"
       role="tree"
-      aria-label="Trace spans"
+      aria-label={t("traceDetails.traceSpans")}
       data-testid="span-tree"
     >
       {spans.map((span) => renderSpan(span, 0))}

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import { Button } from "@/components/ui/button";
+import { translateComponentText } from "@/utils/componentTranslations";
 import { cn } from "@/utils/utils";
 
 const ListItem = ({
@@ -24,6 +26,7 @@ const ListItem = ({
   isKeyboardNavActive: boolean;
   dataTestId: string;
 }) => {
+  const { t } = useTranslation();
   const [isHovered, setIsHovered] = useState(false);
   const itemRef = useRef<HTMLButtonElement>(null);
   const formattedIcon =
@@ -79,10 +82,10 @@ const ListItem = ({
         )}
         <div className="flex w-full flex-col truncate">
           <div className="flex w-full items-center gap-2 truncate text-mmd font-medium">
-            <span className="truncate">{item.name}</span>
+            <span className="truncate">{translateComponentText(item.name)}</span>
             {"description" in item && item.description && (
               <span className="font-normal text-muted-foreground">
-                {item.description}
+                {translateComponentText(item.description)}
               </span>
             )}
           </div>
@@ -96,7 +99,7 @@ const ListItem = ({
         {isHovered || isFocused ? (
           <div className="ml-auto flex items-center justify-start rounded-md">
             <div className="flex items-center pr-1.5 text-mmd font-semibold text-muted-foreground">
-              Select
+              {t("common.select")}
             </div>
             <div className="flex items-center justify-center rounded-md">
               <ForwardedIconComponent

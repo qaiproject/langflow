@@ -12,6 +12,7 @@ import {
   convertStringToHTML,
   getStatusColor,
 } from "@/utils/stringManipulation";
+import { translateComponentText } from "@/utils/componentTranslations";
 import type { DropDownComponent } from "../../../types/components";
 import {
   cn,
@@ -66,7 +67,7 @@ export default function Dropdown({
       AI: t("chatComponent.optionAI"),
     };
 
-    return translatedOptionLabels[label] ?? label;
+    return translatedOptionLabels[label] ?? translateComponentText(label);
   };
   const validOptions = useMemo(
     () => filterNullOptions(options),
@@ -586,7 +587,9 @@ export default function Dropdown({
           >
             <div className="flex items-center gap-2 pl-1 text-[13px] font-semibold">
               <ForwardedIconComponent name="Plus" className="h-3 w-3 " />
-              {sourceOptions?.fields?.data?.node?.display_name}
+              {translateComponentText(
+                sourceOptions?.fields?.data?.node?.display_name,
+              )}
             </div>
             {sourceOptions?.fields?.data?.node?.icon && (
               <div className="ml-auto">

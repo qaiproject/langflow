@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Markdown from "react-markdown";
+import { useTranslation } from "react-i18next";
 import remarkGfm from "remark-gfm";
 import { normalizeTimeString } from "@/CustomNodes/GenericNode/components/NodeStatus/utils/format-run-time";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
@@ -19,6 +20,7 @@ import {
 } from "./helpers/visual-variants";
 
 export default function FlowBuildingComponent() {
+  const { t } = useTranslation();
   const isBuilding = useFlowStore((state) => state.isBuilding);
   const flowBuildStatus = useFlowStore((state) => state.flowBuildStatus);
   const buildInfo = useFlowStore((state) => state.buildInfo);
@@ -84,11 +86,11 @@ export default function FlowBuildingComponent() {
     return (
       <TextShimmer duration={1}>
         {statusBuilding.length > 0
-          ? `Running ${statusBuilding[0]?.id}`
-          : "Running flow"}
+          ? t("flow.runningNode", { node: statusBuilding[0]?.id })
+          : t("flow.runningFlow")}
       </TextShimmer>
     );
-  }, [isBuilding, statusBuilding]);
+  }, [isBuilding, statusBuilding, t]);
 
   useEffect(() => {
     if (buildInfo?.success) {
@@ -155,14 +157,14 @@ export default function FlowBuildingComponent() {
                         {buildingContent ? (
                           buildingContent
                         ) : buildInfo?.success ? (
-                          "Flow built successfully"
+                          t("alerts.success.flowBuilt")
                         ) : (
                           <div className="flex items-center gap-2">
                             <ForwardedIconComponent
                               name="CircleAlert"
                               className="h-5 w-5"
                             />
-                            Flow build failed
+                            {t("flow.buildFailed")}
                           </div>
                         )}
                       </div>
@@ -198,7 +200,7 @@ export default function FlowBuildingComponent() {
                                   transition={{ duration: 0.2 }}
                                 >
                                   <Button size="sm" onClick={handleRetry}>
-                                    Retry
+                                    {t("common.retry")}
                                   </Button>
                                 </motion.div>
                                 <motion.div
@@ -214,7 +216,7 @@ export default function FlowBuildingComponent() {
                                     className="text-primary"
                                     onClick={handleDismiss}
                                   >
-                                    Dismiss
+                                    {t("common.dismiss")}
                                   </Button>
                                 </motion.div>
                               </motion.div>
@@ -234,7 +236,7 @@ export default function FlowBuildingComponent() {
                                   size="sm"
                                   onClick={handleStop}
                                 >
-                                  Stop
+                                  {t("common.stop")}
                                 </Button>
                               </motion.div>
                             )}

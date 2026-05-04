@@ -4,6 +4,7 @@ import ShadTooltip from "@/components/common/shadTooltipComponent";
 import { EditNodeComponent } from "@/modals/editNodeModal/components/editNodeComponent";
 import type { APIClassType } from "@/types/api";
 import type { AllNodeType } from "@/types/flow";
+import { translateComponentText } from "@/utils/componentTranslations";
 import { customStringify } from "@/utils/reactflowUtils";
 
 export function TweakComponent({
@@ -29,7 +30,9 @@ export function TweakComponent({
     <AccordionComponent
       trigger={
         <ShadTooltip side="top" styleClasses="z-50" content={node.data.id}>
-          <div className="text-primary">{node.data.node?.display_name}</div>
+          <div className="text-primary">
+            {translateComponentText(node.data.node?.display_name)}
+          </div>
         </ShadTooltip>
       }
       keyValue={node.data.id}

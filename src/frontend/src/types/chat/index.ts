@@ -10,7 +10,7 @@ export type ChatMessageType = {
   prompt?: string;
   chatKey?: string;
   componentId?: string;
-  id: string;
+  id: string | null;
   timestamp: string;
   flow_id?: string;
   session_id?: string;
@@ -29,20 +29,20 @@ export type ChatMessageType = {
 };
 
 export type SourceType = {
-  id: string;
-  display_name: string;
-  source: string;
+  id?: string;
+  display_name?: string;
+  source?: string;
 };
 
 export type PropertiesType = {
-  source: SourceType;
+  source?: SourceType;
   icon?: string;
   background_color?: string;
   text_color?: string;
   targets?: string[];
   edited?: boolean;
   allow_markdown?: boolean;
-  state?: string;
+  state?: "partial" | "complete";
   positive_feedback?: boolean | null;
   build_duration?: number | null;
 };
