@@ -11,9 +11,10 @@ import { ENABLE_PUBLISH } from "@/customization/feature-flags";
 import { track } from "@/customization/utils/analytics";
 import { customOpenNewTab } from "@/customization/utils/custom-open-new-tab";
 import { LangflowButtonRedirectTarget } from "@/customization/utils/urls";
+import { isAuthenticatedPlayground } from "@/modals/IOModal/helpers/playground-auth";
 import { useUtilityStore } from "@/stores/utilityStore";
 import { swatchColors } from "@/utils/styleUtils";
-import LangflowLogoColor from "@/components/common/QosmoLogo";
+import LangflowLogoColor from "../../assets/LangflowLogoColor.svg?react";
 import IconComponent from "../../components/common/genericIconComponent";
 import ShadTooltip from "../../components/common/shadTooltipComponent";
 import { Button } from "../../components/ui/button";
@@ -85,8 +86,7 @@ export default function IOModal({
   const [visibleSession, setvisibleSession] = useState<string | undefined>(
     currentFlowId,
   );
-  const PlaygroundTitle =
-    playgroundPage && flowName ? flowName : t("playground.title");
+  const PlaygroundTitle = playgroundPage && flowName ? flowName : "Playground";
 
   const {
     data: sessionsFromDb,
@@ -130,7 +130,7 @@ export default function IOModal({
 
     // Delete the session (which will delete all associated messages on the backend)
     deleteSessionFunction(
-      { sessionId: session_id },
+      { sessionId: session_id, flowId: currentFlowId },
       {
         onSuccess: () => {
           // Remove the session from local state
@@ -140,14 +140,14 @@ export default function IOModal({
           const messageIdsToRemove = messages
             .filter((msg) => msg.session_id === session_id)
             .map((msg) => msg.id)
-            .filter((id): id is string => id !== null);
+            .filter((id): id is string => id != null);
 
           if (messageIdsToRemove.length > 0) {
             removeMessages(messageIdsToRemove);
           }
 
           setSuccessData({
-            title: t("playground.sessionDeletedSuccess"),
+            title: t("success.sessionDeleted"),
           });
         },
         onError: () => {
@@ -157,7 +157,7 @@ export default function IOModal({
           }
 
           setErrorData({
-            title: t("playground.sessionDeleteError"),
+            title: t("errors.deleteSession"),
           });
         },
       },
@@ -232,7 +232,7 @@ export default function IOModal({
   );
 
   useEffect(() => {
-    if (playgroundPage && messages.length > 0) {
+    if (playgroundPage && !isAuthenticatedPlayground() && messages.length > 0) {
       window.sessionStorage.setItem(currentFlowId, JSON.stringify(messages));
     }
     if (newChatOnPlayground && !sessionsLoading) {
@@ -395,7 +395,7 @@ export default function IOModal({
                   <ShadTooltip
                     styleClasses="z-50"
                     side="right"
-                    content={t("playground.hideSidebar")}
+                    content={t("modal.io.hideSidebar")}
                   >
                     <Button
                       variant="ghost"
@@ -424,7 +424,7 @@ export default function IOModal({
                 {sidebarOpen && showPublishOptions && (
                   <div className="absolute bottom-2 left-0 flex w-full flex-col gap-8 border-t border-border px-2 py-4 transition-all">
                     <div className="flex items-center justify-between px-2">
-                      <div className="text-sm">{t("menu.theme")}</div>
+                      <div className="text-sm">{t("modal.io.theme")}</div>
                       <ThemeButtons />
                     </div>
                     <Button
@@ -434,7 +434,7 @@ export default function IOModal({
                     >
                       <LangflowLogoColor />
                       <div className="text-sm">
-                        {t("playground.builtWithLangflow")}
+                        {t("modal.io.builtWithLangflow")}
                       </div>
                     </Button>
                   </div>
@@ -446,7 +446,7 @@ export default function IOModal({
                 <ShadTooltip
                   styleClasses="z-50"
                   side="right"
-                  content={t("playground.builtWithLangflow")}
+                  content={t("modal.io.builtWithLangflowTooltip")}
                 >
                   <Button
                     variant="primary"

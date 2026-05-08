@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useHotkeys } from "react-hotkeys-hook";
 import { useBlocker, useParams } from "react-router-dom";
+import { AssistantPanel } from "@/components/core/assistantPanel";
 import { FlowPageSlidingContainerContent } from "@/components/core/playgroundComponent/sliding-container/components/flow-page-sliding-container";
 import { SidebarProvider, useSidebar } from "@/components/ui/sidebar";
 import {
@@ -17,7 +18,9 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useWebhookEvents } from "@/hooks/use-webhook-events";
 import { SaveChangesModal } from "@/modals/saveChangesModal";
 import useAlertStore from "@/stores/alertStore";
+import useAssistantManagerStore from "@/stores/assistantManagerStore";
 import { usePlaygroundStore } from "@/stores/playgroundStore";
+import { useShortcutsStore } from "@/stores/shortcuts";
 import { useTypesStore } from "@/stores/typesStore";
 import { customStringify } from "@/utils/reactflowUtils";
 import { cn } from "@/utils/utils";
@@ -59,7 +62,6 @@ function FlowPageMainContent({
 }
 
 export default function FlowPage({ view }: { view?: boolean }): JSX.Element {
-  const { t, i18n } = useTranslation();
   const types = useTypesStore((state) => state.types);
 
   useGetTypes({
@@ -105,7 +107,7 @@ export default function FlowPage({ view }: { view?: boolean }): JSX.Element {
       if (proceed) {
         blocker.proceed && blocker.proceed();
         setSuccessData({
-          title: t("flow.savedSuccessfully"),
+          title: "Flow saved successfully!",
         });
       }
     }, 1200);
@@ -113,7 +115,7 @@ export default function FlowPage({ view }: { view?: boolean }): JSX.Element {
       if (!autoSaving || saving === false) {
         blocker.proceed && blocker.proceed();
         setSuccessData({
-          title: t("flow.savedSuccessfully"),
+          title: "Flow saved successfully!",
         });
       }
       proceed = true;
@@ -212,6 +214,38 @@ export default function FlowPage({ view }: { view?: boolean }): JSX.Element {
   const inputs = useFlowStore((state) => state.inputs);
   const outputs = useFlowStore((state) => state.outputs);
 
+  // Assistant state
+  const assistantOpen = useAssistantManagerStore(
+    (state) => state.assistantSidebarOpen,
+  );
+  const setAssistantOpen = useAssistantManagerStore(
+    (state) => state.setAssistantSidebarOpen,
+  );
+
+  // Toggle assistant with configurable shortcut (only when not typing in an input)
+  const aiAssistantShortcut = useShortcutsStore((state) => state.aiAssistant);
+  useHotkeys(
+    aiAssistantShortcut,
+    () => setAssistantOpen(!assistantOpen),
+    {
+      preventDefault: true,
+      enableOnFormTags: false,
+    },
+    [assistantOpen, aiAssistantShortcut],
+  );
+
+  // Close assistant with Escape
+  useHotkeys(
+    "escape",
+    () => {
+      if (assistantOpen) setAssistantOpen(false);
+    },
+    {
+      enableOnFormTags: true,
+    },
+    [assistantOpen],
+  );
+
   // Auto-close playground when all chat components are removed
   useEffect(() => {
     const hasChatInput = inputs.some((input) => input.type === "ChatInput");
@@ -233,58 +267,43 @@ export default function FlowPage({ view }: { view?: boolean }): JSX.Element {
 
   return (
     <>
-      {/* TODO: will be revert - original main layout without playground panel */}
-      {/*
+      {/* Assistant Panel - single instance that handles both modes internally */}
+      <AssistantPanel
+        isOpen={assistantOpen}
+        onClose={() => setAssistantOpen(false)}
+      />
+
       <div className="flow-page-positioning">
         {currentFlow && (
           <div className="flex h-full overflow-hidden">
-            <SidebarProvider
-              width="17.5rem"
-              defaultOpen={!isMobile}
-              segmentedSidebar={ENABLE_NEW_SIDEBAR}
+            {/* Main content + Playground Sidebar (right) */}
+            <SimpleSidebarProvider
+              width="326px"
+              minWidth={0.15}
+              maxWidth={0.6}
+              open={isSlidingContainerOpen}
+              onOpenChange={(open) => {
+                const wasOpen = isSlidingContainerOpen;
+                setSlidingContainerOpen(open);
+                if (open && !wasOpen) {
+                  setIsFullscreen(true);
+                }
+              }}
+              fullscreen={isFullscreen}
+              onMaxWidth={() => {
+                setIsFullscreen(true);
+                setSlidingContainerOpen(true);
+              }}
             >
-              <FlowSearchProvider>
-                {!view && <FlowSidebarComponent isLoading={isLoading} />}
-                <main className="flex w-full overflow-hidden">
-                  <div className="h-full w/full">
-                    <Page setIsLoading={setIsLoading} />
-                  </div>
-                </main>
-              </FlowSearchProvider>
-            </SidebarProvider>
-          </div>
-        )}
-      </div>
-      */}
-
-      <SimpleSidebarProvider
-        width="326px"
-        minWidth={0.15}
-        maxWidth={0.6}
-        open={isSlidingContainerOpen}
-        onOpenChange={(open) => {
-          const wasOpen = isSlidingContainerOpen;
-          setSlidingContainerOpen(open);
-          if (open && !wasOpen) {
-            setIsFullscreen(true);
-          }
-        }}
-        fullscreen={isFullscreen}
-        onMaxWidth={() => {
-          setIsFullscreen(true);
-          setSlidingContainerOpen(true);
-        }}
-      >
-        <div className="flow-page-positioning">
-          {currentFlow && (
-            <div className="flex h-full overflow-hidden">
               <SidebarProvider
                 width="17.5rem"
                 defaultOpen={!isMobile}
                 segmentedSidebar={ENABLE_NEW_SIDEBAR}
               >
                 <FlowSearchProvider>
+                  {/* FlowSidebarComponent - stays in place */}
                   {!view && <FlowSidebarComponent isLoading={isLoading} />}
+
                   <main
                     className={cn(
                       "flex flex-1 min-w-0 overflow-hidden transition-all duration-300",
@@ -308,10 +327,10 @@ export default function FlowPage({ view }: { view?: boolean }): JSX.Element {
                   setIsFullscreen={setIsFullscreen}
                 />
               </SimpleSidebar>
-            </div>
-          )}
-        </div>
-      </SimpleSidebarProvider>
+            </SimpleSidebarProvider>
+          </div>
+        )}
+      </div>
       {blocker.state === "blocked" && (
         <>
           {!isBuilding && currentSavedFlow && (
@@ -322,16 +341,13 @@ export default function FlowPage({ view }: { view?: boolean }): JSX.Element {
               flowName={currentSavedFlow.name}
               lastSaved={
                 updatedAt
-                  ? new Date(updatedAt).toLocaleString(
-                      i18n.language === "pl" ? "pl-PL" : "en-US",
-                      {
-                        hour: "numeric",
-                        minute: "numeric",
-                        second: "numeric",
-                        month: "numeric",
-                        day: "numeric",
-                      },
-                    )
+                  ? new Date(updatedAt).toLocaleString("en-US", {
+                      hour: "numeric",
+                      minute: "numeric",
+                      second: "numeric",
+                      month: "numeric",
+                      day: "numeric",
+                    })
                   : undefined
               }
               autoSave={autoSaving}

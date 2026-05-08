@@ -2,8 +2,8 @@ import { ExternalLink } from "lucide-react";
 import { FaDiscord, FaGithub } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
-import qosmoLogo from "@/assets/qosmo_mini.svg";
-import qosmoDarkLogo from "@/assets/qosomo_logo_black_mini.svg";
+import logoDarkPng from "@/assets/logo_dark.png";
+import logoLightPng from "@/assets/logo_light.png";
 import { ForwardedIconComponent } from "@/components/common/genericIconComponent";
 import CardsWrapComponent from "@/components/core/cardsWrapComponent";
 import { Button } from "@/components/ui/button";
@@ -52,7 +52,7 @@ export const EmptyPageCommunity = ({
   return (
     <DotBackgroundDemo>
       <CardsWrapComponent
-        dragMessage={t("mainPage.dropFlowsOrComponents")}
+        dragMessage={t("home.dragFlowsOrComponents")}
         onFileDrop={handleFileDrop}
       >
         <div className="m-0 h-full w-full bg-background p-0">
@@ -60,25 +60,25 @@ export const EmptyPageCommunity = ({
             <div className="z-50 flex flex-col items-center gap-2">
               <div className="z-50 dark:hidden">
                 <img
-                  src={qosmoDarkLogo}
-                  alt={t("mainPage.logoLight")}
+                  src={logoLightPng}
+                  alt="Langflow Logo Light"
                   data-testid="empty_page_logo_light"
-                  className="relative top-0 h-20 pointer-events-none select-none"
+                  className="relative top-8 h-40 pointer-events-none select-none"
                 />
               </div>
               <div className="z-50 hidden dark:block">
                 <img
-                  src={qosmoLogo}
-                  alt={t("mainPage.logoDark")}
+                  src={logoDarkPng}
+                  alt="Langflow Logo Dark"
                   data-testid="empty_page_logo_dark"
-                  className="relative top-0 h-20 pointer-events-none select-none"
+                  className="relative top-8 h-40 pointer-events-none select-none"
                 />
               </div>
               <span
                 data-testid="mainpage_title"
                 className="z-50 text-center font-chivo text-2xl font-medium text-foreground"
               >
-                {t("mainPage.welcomeTitle")}
+                {t("page.welcomeTitle")}
               </span>
 
               <span
@@ -86,8 +86,8 @@ export const EmptyPageCommunity = ({
                 className="z-50 text-center text-base text-secondary-foreground"
               >
                 {folders?.length > 1
-                  ? t("mainPage.emptyFolder")
-                  : t("mainPage.welcomeDescription")}
+                  ? t("page.emptyFolder")
+                  : t("page.welcomeDescription")}
               </span>
             </div>
 
@@ -114,7 +114,7 @@ export const EmptyPageCommunity = ({
                     </div>
                     <div>
                       <span className="text-base text-secondary-foreground">
-                        {t("mainPage.githubDescription")}
+                        {t("page.githubDescription")}
                       </span>
                     </div>
                   </div>
@@ -144,7 +144,7 @@ export const EmptyPageCommunity = ({
                     </div>
                     <div>
                       <span className="text-base text-secondary-foreground">
-                        {t("mainPage.discordDescription")}
+                        {t("page.discordDescription")}
                       </span>
                     </div>
                   </div>
@@ -164,7 +164,7 @@ export const EmptyPageCommunity = ({
                   aria-hidden="true"
                   className="h-4 w-4"
                 />
-                <span>{t("mainPage.createFirstFlow")}</span>
+                <span>{t("page.createFirstFlow")}</span>
               </Button>
             </div>
           </div>
@@ -173,7 +173,7 @@ export const EmptyPageCommunity = ({
           data-testid="empty_page_drag_and_drop_text"
           className="absolute bottom-5 left-0 right-0 mt-4 cursor-default text-center text-xxs text-muted-foreground"
         >
-          {t("mainPage.dragAndDropText")}
+          {t("page.dragAndDropText")}
         </p>
       </CardsWrapComponent>
     </DotBackgroundDemo>

@@ -1,13 +1,7 @@
 import { cloneDeep } from "lodash";
 import { useContext, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import {
-  EDIT_PASSWORD_ALERT_LIST,
-  EDIT_PASSWORD_ERROR_ALERT,
-  SAVE_ERROR_ALERT,
-  SAVE_SUCCESS_ALERT,
-} from "@/constants/alerts_constants";
+import { useTranslation } from "react-i18next";
 import { usePostAddApiKey } from "@/controllers/API/queries/api-keys";
 import {
   useResetPassword,
@@ -31,32 +25,13 @@ import PasswordFormComponent from "./components/PasswordForm";
 import ProfilePictureFormComponent from "./components/ProfilePictureForm";
 
 export const GeneralPage = () => {
-  const { t } = useTranslation();
   const { scrollId } = useParams();
-  const getErrorDetail = (error: unknown) => {
-    if (!error || typeof error !== "object" || !("response" in error)) {
-      return undefined;
-    }
-
-    return (
-      error as {
-        response?: {
-          data?: {
-            detail?: string;
-          };
-        };
-      }
-    ).response?.data?.detail;
-  };
-  const getErrorList = (error: unknown) => {
-    const detail = getErrorDetail(error);
-    return detail ? [detail] : undefined;
-  };
 
   const [inputState, setInputState] = useState<patchUserInputStateType>(
     CONTROL_PATCH_USER_STATE,
   );
 
+  const { t } = useTranslation();
   const setSuccessData = useAlertStore((state) => state.setSuccessData);
   const setErrorData = useAlertStore((state) => state.setErrorData);
   const { userData, setUserData } = useContext(AuthContext);
@@ -74,8 +49,8 @@ export const GeneralPage = () => {
   const handlePatchPassword = () => {
     if (password !== cnfPassword) {
       setErrorData({
-        title: EDIT_PASSWORD_ERROR_ALERT,
-        list: [EDIT_PASSWORD_ALERT_LIST],
+        title: t("errors.changePassword"),
+        list: [t("errors.passwordMismatch")],
       });
       return;
     }
@@ -87,12 +62,12 @@ export const GeneralPage = () => {
           onSuccess: () => {
             handleInput({ target: { name: "password", value: "" } });
             handleInput({ target: { name: "cnfPassword", value: "" } });
-            setSuccessData({ title: SAVE_SUCCESS_ALERT });
+            setSuccessData({ title: t("success.changesSaved") });
           },
           onError: (error) => {
             setErrorData({
-              title: SAVE_ERROR_ALERT,
-              list: getErrorList(error),
+              title: t("errors.saveChanges"),
+              list: [(error as any)?.response?.data?.detail],
             });
           },
         },
@@ -111,12 +86,12 @@ export const GeneralPage = () => {
             const newUserData = cloneDeep(userData);
             newUserData!.profile_image = profile_picture;
             setUserData(newUserData);
-            setSuccessData({ title: SAVE_SUCCESS_ALERT });
+            setSuccessData({ title: t("success.changesSaved") });
           },
           onError: (error) => {
             setErrorData({
-              title: SAVE_ERROR_ALERT,
-              list: getErrorList(error),
+              title: t("errors.saveChanges"),
+              list: [(error as any)?.response?.data?.detail],
             });
           },
         },
@@ -128,7 +103,7 @@ export const GeneralPage = () => {
 
   const { mutate } = usePostAddApiKey({
     onSuccess: () => {
-      setSuccessData({ title: t("generalPage.apiKeySaved") });
+      setSuccessData({ title: t("auth.saveApiKeySuccess") });
       setHasApiKey(true);
       setValidApiKey(true);
       setLoadingApiKey(false);
@@ -136,8 +111,8 @@ export const GeneralPage = () => {
     },
     onError: (error) => {
       setErrorData({
-        title: t("generalPage.apiKeySaveError"),
-        list: getErrorList(error),
+        title: t("errors.saveApiKey"),
+        list: [(error as any)?.response?.data?.detail],
       });
       setHasApiKey(false);
       setValidApiKey(false);

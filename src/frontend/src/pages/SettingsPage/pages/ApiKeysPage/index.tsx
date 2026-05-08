@@ -2,12 +2,6 @@ import type { SelectionChangedEvent } from "ag-grid-community";
 import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  DEL_KEY_ERROR_ALERT,
-  DEL_KEY_ERROR_ALERT_PLURAL,
-  DEL_KEY_SUCCESS_ALERT,
-  DEL_KEY_SUCCESS_ALERT_PLURAL,
-} from "@/constants/alerts_constants";
-import {
   type IApiKeysDataArray,
   useDeleteApiKey,
   useGetApiKeysQuery,
@@ -33,9 +27,8 @@ export default function ApiKeysPage() {
     if (data !== undefined) {
       const updatedKeysList = data["api_keys"].map((apikey) => ({
         ...apikey,
-        name:
-          apikey.name && apikey.name !== "" ? apikey.name : t("apiKeys.untitled"),
-        last_used_at: apikey.last_used_at ?? t("saveChanges.never"),
+        name: apikey.name && apikey.name !== "" ? apikey.name : "Untitled",
+        last_used_at: apikey.last_used_at ?? "Never",
       }));
       setKeysList(updatedKeysList);
       setUserId(data["user_id"]);
@@ -64,16 +57,16 @@ export default function ApiKeysPage() {
             setSuccessData({
               title:
                 selectedRows.length === 1
-                  ? DEL_KEY_SUCCESS_ALERT
-                  : DEL_KEY_SUCCESS_ALERT_PLURAL,
+                  ? t("success.keyDeleted")
+                  : t("success.keysDeleted"),
             });
           },
           onError: (error) => {
             setErrorData({
               title:
                 selectedRows.length === 1
-                  ? DEL_KEY_ERROR_ALERT
-                  : DEL_KEY_ERROR_ALERT_PLURAL,
+                  ? t("errors.deleteKey")
+                  : t("errors.deleteKeys"),
               list: [error?.response?.data?.detail],
             });
           },
@@ -96,7 +89,7 @@ export default function ApiKeysPage() {
         <TableComponent
           key={"apiKeys"}
           onDelete={handleDeleteApi}
-          overlayNoRowsTemplate={t("globalVariablesPage.noData")}
+          overlayNoRowsTemplate={t("settings.noDataAvailable")}
           onSelectionChanged={(event: SelectionChangedEvent) => {
             setSelectedRows(event.api.getSelectedRows().map((row) => row.id));
           }}

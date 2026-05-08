@@ -1,4 +1,5 @@
 import { memo, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { ForwardedIconComponent } from "@/components/common/genericIconComponent";
 import {
   Disclosure,
@@ -7,7 +8,6 @@ import {
 } from "@/components/ui/disclosure";
 import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import type { APIClassType } from "@/types/api";
-import { translateComponentText } from "@/utils/componentTranslations";
 import SidebarItemsList from "./sidebarItemsList";
 
 export const CategoryDisclosure = memo(function CategoryDisclosure({
@@ -30,6 +30,7 @@ export const CategoryDisclosure = memo(function CategoryDisclosure({
   ) => void;
   sensitiveSort: (a: any, b: any) => number;
 }) {
+  const { t } = useTranslation();
   const handleKeyDownInput = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === "Enter" || e.key === " ") {
@@ -45,7 +46,6 @@ export const CategoryDisclosure = memo(function CategoryDisclosure({
   );
 
   const isOpen = openCategories.includes(item.name);
-  const translatedDisplayName = translateComponentText(item.display_name);
   const handleOpenChange = useCallback(
     (isOpen: boolean) => {
       setOpenCategories((prev) =>
@@ -60,7 +60,7 @@ export const CategoryDisclosure = memo(function CategoryDisclosure({
         <DisclosureTrigger className="group/collapsible">
           <SidebarMenuButton asChild>
             <div
-              data-testid={`disclosure-${item.display_name.toLocaleLowerCase()}`}
+              data-testid={`disclosure-${t(item.display_name, { defaultValue: item.display_name }).toLocaleLowerCase()}`}
               role="button"
               tabIndex={0}
               onKeyDown={handleKeyDownInput}
@@ -71,7 +71,7 @@ export const CategoryDisclosure = memo(function CategoryDisclosure({
                 className="h-4 w-4 group-aria-expanded/collapsible:text-accent-pink-foreground"
               />
               <span className="flex-1 group-aria-expanded/collapsible:font-semibold">
-                {translatedDisplayName}
+                {t(item.display_name, { defaultValue: item.display_name })}
               </span>
               <ForwardedIconComponent
                 name="ChevronRight"

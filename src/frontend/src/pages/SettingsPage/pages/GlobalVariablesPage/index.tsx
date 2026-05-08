@@ -29,16 +29,10 @@ export default function GlobalVariablesPage() {
   const [openModal, setOpenModal] = useState(false);
   const initialData = useRef<GlobalVariable | undefined>(undefined);
   const BadgeRenderer = (props) => {
-    const badgeLabel =
-      props.value === "Credential"
-        ? t("globalVariable.credential")
-        : props.value === "Generic"
-          ? t("globalVariable.generic")
-          : props.value;
     return props.value !== "" ? (
       <div>
         <Badge variant="outline" size="md" className="font-normal">
-          {badgeLabel}
+          {props.value}
         </Badge>
       </div>
     ) : (
@@ -48,19 +42,7 @@ export default function GlobalVariablesPage() {
 
   const DropdownEditor = ({ options, value, onValueChange }) => {
     return (
-      <Dropdown
-        id="global-variable-dropdown"
-        editNode={false}
-        handleOnNewValue={() => {}}
-        disabled={false}
-        nodeId=""
-        nodeClass={{} as any}
-        handleNodeClass={() => {}}
-        name="type"
-        options={options}
-        value={value}
-        onSelect={onValueChange}
-      >
+      <Dropdown options={options} value={value} onSelect={onValueChange}>
         <div className="-mt-1.5 w-full"></div>
       </Dropdown>
     );
@@ -68,12 +50,12 @@ export default function GlobalVariablesPage() {
   // Column Definitions: Defines the columns to be displayed.
   const colDefs: ColDef[] = [
     {
-      headerName: t("globalVariablesPage.variableName"),
+      headerName: t("globalVars.columnVariableName"),
       field: "name",
       flex: 2,
     }, //This column will be twice as wide as the others
     {
-      headerName: t("globalVariablesPage.type"),
+      headerName: t("globalVars.columnType"),
       field: "type",
       cellRenderer: BadgeRenderer,
       cellEditor: DropdownEditor,
@@ -94,7 +76,7 @@ export default function GlobalVariablesPage() {
       },
     },
     {
-      headerName: t("globalVariable.applyToFields"),
+      headerName: t("globalVars.columnApplyToFields"),
       field: "default_fields",
       valueFormatter: (params) => {
         return params.value?.join(", ") ?? "";
@@ -122,7 +104,8 @@ export default function GlobalVariablesPage() {
     return globalVariables.filter((variable) => {
       // Check if this is a provider credential variable
       const isProviderCredential =
-        variable.type === "Credential" && providerVariableNames.has(variable.name);
+        variable.type === "Credential" &&
+        providerVariableNames.has(variable.name);
 
       if (isProviderCredential) {
         // If validation failed (is_valid === false), filter it out
@@ -149,14 +132,12 @@ export default function GlobalVariablesPage() {
     if (invalidProviderVars.length > 0) {
       const errorMessages = invalidProviderVars.map(
         (variable) =>
-          `${variable.name}: ${
-            variable.validation_error || t("globalVariable.invalidApiKey")
-          }`,
+          `${variable.name}: ${variable.validation_error || "Invalid API key"}`,
       );
       setErrorData({
-        title: t("globalVariablesPage.invalidCredentialsTitle"),
+        title: t("globalVars.invalidCredentialsTitle"),
         list: [
-          t("globalVariablesPage.invalidCredentialsHidden", {
+          t("globalVars.invalidCredentialsHidden", {
             count: invalidProviderVars.length,
           }),
           ...errorMessages,
@@ -173,8 +154,8 @@ export default function GlobalVariablesPage() {
         {
           onError: () => {
             setErrorData({
-              title: t("globalVariablesPage.errorDeletingVariable"),
-              list: [t("globalVariablesPage.variableIdNotFound", { name: row })],
+              title: t("globalVars.errorDeletingVariable"),
+              list: [t("globalVars.errorIdNotFound", { name: row })],
             });
           },
         },
@@ -195,21 +176,21 @@ export default function GlobalVariablesPage() {
             className="flex items-center text-lg font-semibold tracking-tight"
             data-testid="settings_menu_header"
           >
-            {t("settings.globalVariables")}
+            {t("globalVars.pageTitle")}
             <ForwardedIconComponent
               name="Globe"
               className="ml-2 h-5 w-5 text-primary"
             />
           </h2>
           <p className="text-sm text-muted-foreground">
-            {t("globalVariablesPage.description")}
+            {t("globalVars.pageDescription")}
           </p>
         </div>
         <div className="flex flex-shrink-0 items-center gap-2">
           <GlobalVariableModal asChild>
             <Button data-testid="api-key-button-store" variant="primary">
               <IconComponent name="Plus" className="w-4" />
-              {t("globalVariablesPage.addNew")}
+              {t("globalVars.addNew")}
             </Button>
           </GlobalVariableModal>
         </div>
@@ -218,7 +199,7 @@ export default function GlobalVariablesPage() {
       <div className="flex h-full w-full flex-col justify-between">
         <TableComponent
           key={"globalVariables"}
-          overlayNoRowsTemplate={t("globalVariablesPage.noData")}
+          overlayNoRowsTemplate={t("globalVars.noDataAvailable")}
           onSelectionChanged={(event: SelectionChangedEvent) => {
             setSelectedRows(event.api.getSelectedRows().map((row) => row.name));
           }}

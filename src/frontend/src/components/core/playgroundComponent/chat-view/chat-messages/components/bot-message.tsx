@@ -1,9 +1,9 @@
 import { memo, useState } from "react";
-import { useTranslation } from "react-i18next";
-import LangflowLogo from "@/components/common/QosmoLogo";
+import LangflowLogo from "@/assets/LangflowLogo.svg?react";
 import IconComponent, {
   ForwardedIconComponent,
 } from "@/components/common/genericIconComponent";
+import MessageMetadata from "@/components/common/messageMetadataComponent";
 import { ContentBlockDisplay } from "@/components/core/chatComponents/ContentBlockDisplay";
 import { useUpdateMessage } from "@/controllers/API/queries/messages";
 import { CustomMarkdownField } from "@/customization/components/custom-markdown-field";
@@ -25,7 +25,6 @@ import { EditMessageButton } from "./message-options";
 
 export const BotMessage = memo(
   ({ chat, lastMessage, updateChat, playgroundPage }: chatMessagePropsType) => {
-    const { t } = useTranslation();
     const setErrorData = useAlertStore((state) => state.setErrorData);
     const [editMessage, setEditMessage] = useState(false);
     const isBuilding = useFlowStore((state) => state.isBuilding);
@@ -66,7 +65,7 @@ export const BotMessage = memo(
           },
           onError: () => {
             setErrorData({
-              title: t("playground.messagesUpdateError"),
+              title: "Error updating messages.",
             });
           },
         },
@@ -97,7 +96,7 @@ export const BotMessage = memo(
         {
           onError: () => {
             setErrorData({
-              title: t("playground.messagesUpdateError"),
+              title: "Error updating messages.",
             });
           },
         },
@@ -106,7 +105,7 @@ export const BotMessage = memo(
 
     const editedFlag = chat.edit ? (
       <div className="mt-2 text-xs text-muted-foreground text-right">
-        ({t("messageOptions.edited")})
+        (Edited)
       </div>
     ) : null;
 
@@ -153,26 +152,30 @@ export const BotMessage = memo(
               )}
 
               <div className="flex w-full flex-col min-w-0">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-0.5">
+                <span className="text-sm font-medium text-foreground mb-1">
+                  {chat.sender_name ?? "AI"}
+                </span>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   {!thinkingActive && displayTime > 0 && (
                     <ForwardedIconComponent
                       name="Check"
-                      className="h-4 w-4 text-accent-emerald-foreground"
+                      className="h-4 w-4 text-emerald-400"
                     />
                   )}
-                  <span>
+                  <span className="w-full flex justify-between">
                     {thinkingActive && displayTime > 0 ? (
-                      <span>
-                        {t("playground.runningWithTime", {
-                          time: formatSeconds(displayTime),
-                        })}
-                      </span>
+                      <span>Running... {formatSeconds(displayTime)}</span>
                     ) : !thinkingActive && displayTime > 0 ? (
-                      <span className="text-muted-foreground">
-                        {t("playground.finishedIn", {
-                          time: formatSeconds(displayTime),
-                        })}
-                      </span>
+                      <>
+                        <span className="text-muted-foreground">
+                          Finished in
+                        </span>
+                        <MessageMetadata
+                          duration={displayTime}
+                          usage={chat.properties?.usage}
+                          timestamp={chat.timestamp}
+                        />
+                      </>
                     ) : null}
                   </span>
                 </div>
@@ -188,7 +191,7 @@ export const BotMessage = memo(
                       lastMessage,
                     )}
                     state={getContentBlockState(chat, isBuilding, lastMessage)}
-                    chatId={chat.id ?? `placeholder-${chat.timestamp}`}
+                    chatId={chat.id}
                     hideHeader={true}
                   />
                 )}
@@ -242,7 +245,7 @@ export const BotMessage = memo(
             </div>
 
             {!editMessage && (
-              <div className="invisible absolute -top-4 right-0 group-hover:visible">
+              <div className="invisible absolute bottom-full right-0 group-hover:visible">
                 <EditMessageButton
                   onCopy={() => navigator.clipboard.writeText(chatMessage)}
                   onEdit={() => setEditMessage(true)}

@@ -45,7 +45,7 @@ export function VoiceAssistant({
   const [isRecording, setIsRecording] = useState(false);
   const [_status, setStatus] = useState("");
   const [_message, setMessage] = useState("");
-  const [showSettingsModal, setShowSettingsModalState] = useState(false);
+  const [showSettingsModal, _setShowSettingsModal] = useState(false);
   const [addKey, setAddKey] = useState(false);
   const [barHeights, setBarHeights] = useState<number[]>(Array(30).fill(20));
   const [preferredLanguage, setPreferredLanguage] = useState(
@@ -99,7 +99,7 @@ export function VoiceAssistant({
     return (
       variables?.find((variable) => variable === "OPENAI_API_KEY")?.length! > 0
     );
-  }, [variables, addKey]);
+  }, [variables, open, addKey]);
 
   const openaiApiKey = useMemo(() => {
     return variables?.find((variable) => variable === "OPENAI_API_KEY");
@@ -253,7 +253,7 @@ export function VoiceAssistant({
         {
           onSuccess: () => {
             setSuccessData({
-              title: t("voiceAssistant.apiKeySaved"),
+              title: t("auth.saveApiKeySuccess"),
             });
             setAddKey(!addKey);
             setIsEditingOpenAIKey(false);
@@ -271,12 +271,12 @@ export function VoiceAssistant({
         default_fields: ["voice_mode"],
       },
       {
-          onSuccess: () => {
-            setSuccessData({
-              title: t("voiceAssistant.apiKeySaved"),
-            });
-            setAddKey(!addKey);
-          },
+        onSuccess: () => {
+          setSuccessData({
+            title: t("auth.saveApiKeySuccess"),
+          });
+          setAddKey(!addKey);
+        },
       },
     );
   };
@@ -311,7 +311,6 @@ export function VoiceAssistant({
     openaiApiKey: string,
     elevenLabsApiKey: string,
   ) => {
-    setShowSettingsModalState(open);
     const saveApiKey = openaiApiKey && openaiApiKey !== "OPENAI_API_KEY";
     const saveElevenLabsApiKey =
       elevenLabsApiKey && elevenLabsApiKey !== "ELEVENLABS_API_KEY";
@@ -395,11 +394,7 @@ export function VoiceAssistant({
           )}
         >
           <ShadTooltip
-            content={
-              isRecording
-                ? t("voiceAssistant.mute")
-                : t("voiceAssistant.unmute")
-            }
+            content={isRecording ? "Mute" : "Unmute"}
             delayDuration={500}
           >
             <Button unstyled onClick={handleToggleRecording}>

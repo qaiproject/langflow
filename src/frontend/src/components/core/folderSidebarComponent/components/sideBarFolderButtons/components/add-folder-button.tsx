@@ -14,7 +14,7 @@ export const AddFolderButton = ({
 }) => {
   const { t } = useTranslation();
   return (
-    <ShadTooltip content={t("sidebar.createNewProject")} styleClasses="z-50">
+    <ShadTooltip content={t("folder.createNewProject")} styleClasses="z-50">
       <Button
         variant="ghost"
         size="icon"

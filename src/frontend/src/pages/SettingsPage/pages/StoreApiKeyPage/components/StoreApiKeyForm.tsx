@@ -13,21 +13,8 @@ import {
 
 type StoreApiKeyFormComponentProps = {
   apikey: string;
-  handleInput: (event: {
-    target: {
-      name: string;
-      value: string;
-    };
-  }) => void;
-  handleSaveKey: (
-    apikey: string,
-    handleInput: (event: {
-      target: {
-        name: string;
-        value: string;
-      };
-    }) => void,
-  ) => void;
+  handleInput: (event: any) => void;
+  handleSaveKey: (apikey: string, handleInput: any) => void;
   loadingApiKey: boolean;
   validApiKey: boolean;
   hasApiKey: boolean;
@@ -51,11 +38,13 @@ const StoreApiKeyFormComponent = ({
       >
         <Card x-chunk="dashboard-04-chunk-2" id="api">
           <CardHeader>
-            <CardTitle>{t("storeApiKey.title")}</CardTitle>
+            <CardTitle>Store API Key</CardTitle>
             <CardDescription>
-              {hasApiKey && !validApiKey ? `${t("storeApiKey.invalidPrefix")} ` : ""}
-              {!hasApiKey ? `${t("storeApiKey.noKeyPrefix")} ` : ""}
-              {t("storeApiKey.insertKeySuffix")}
+              {(hasApiKey && !validApiKey
+                ? t("store.invalidApiKey")
+                : !hasApiKey
+                  ? t("store.noApiKey")
+                  : "") + t("store.insertApiKey")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -70,16 +59,16 @@ const StoreApiKeyFormComponent = ({
                     value={apikey}
                     isForm
                     password={true}
-                    placeholder={t("storeApiKey.placeholder")}
+                    placeholder="Insert your API Key"
                     className="w-full"
                   />
                   <Form.Message match="valueMissing" className="field-invalid">
-                    {t("storeApiKey.enterApiKey")}
+                    Please enter your API Key
                   </Form.Message>
                 </Form.Field>
               </div>
               <span className="pr-1 text-xs text-muted-foreground">
-                {t("storeApiKey.createApiKeyPrefix")}{" "}
+                {t("store.createApiKey")}{" "}
                 <a
                   className="text-high-indigo underline"
                   href="https://langflow.store/"
@@ -98,7 +87,7 @@ const StoreApiKeyFormComponent = ({
                 type="submit"
                 data-testid="api-key-save-button-store"
               >
-                {t("common.save")}
+                Save
               </Button>
             </Form.Submit>
           </CardFooter>

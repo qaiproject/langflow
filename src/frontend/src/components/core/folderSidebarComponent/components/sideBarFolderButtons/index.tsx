@@ -1,6 +1,5 @@
 import { useIsFetching, useIsMutating } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { useLocation, useParams } from "react-router-dom";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import {
@@ -14,7 +13,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { UPLOAD_ERROR_ALERT } from "@/constants/alerts_constants";
+import { useTranslation } from "react-i18next";
 import { useUpdateUser } from "@/controllers/API/queries/auth";
 import {
   usePatchFolders,
@@ -61,7 +60,6 @@ const SideBarFoldersButtonsComponent = ({
   handleDeleteFolder,
   handleFilesClick,
 }: SideBarFoldersButtonsComponentProps) => {
-  const { t } = useTranslation();
   const location = useLocation();
   const pathname = location.pathname;
   const folders = useFolderStore((state) => state.folders);
@@ -82,6 +80,7 @@ const SideBarFoldersButtonsComponent = ({
     return currentFolder.includes(itemId);
   };
 
+  const { t } = useTranslation();
   const setErrorData = useAlertStore((state) => state.setErrorData);
   const setSuccessData = useAlertStore((state) => state.setSuccessData);
   const isMobile = useIsMobile({ maxWidth: 1024 });
@@ -142,12 +141,12 @@ const SideBarFoldersButtonsComponent = ({
             uploadFlow({ files })
               .then(() => {
                 setSuccessData({
-                  title: t("sidebar.uploadedSuccessfully"),
+                  title: t("sidebar.uploadSuccess"),
                 });
               })
               .catch((error) => {
                 setErrorData({
-                  title: UPLOAD_ERROR_ALERT,
+                  title: t("errors.upload"),
                   list: [
                     error instanceof Error ? error.message : String(error),
                   ],
@@ -162,7 +161,7 @@ const SideBarFoldersButtonsComponent = ({
                 {
                   onSuccess: () => {
                     setSuccessData({
-                      title: t("sidebar.projectUploadedSuccessfully"),
+                      title: t("sidebar.projectUploadSuccess"),
                     });
                   },
                   onError: (err) => {
@@ -179,7 +178,7 @@ const SideBarFoldersButtonsComponent = ({
         })
         .catch((error) => {
           setErrorData({
-            title: UPLOAD_ERROR_ALERT,
+            title: t("errors.upload"),
             list: [error instanceof Error ? error.message : String(error)],
           });
         });
@@ -197,7 +196,7 @@ const SideBarFoldersButtonsComponent = ({
         },
         onError: (e) => {
           setErrorData({
-            title: t("sidebar.downloadProjectError"),
+            title: t("sidebar.downloadError"),
           });
         },
       },
@@ -208,7 +207,7 @@ const SideBarFoldersButtonsComponent = ({
     mutateAddFolder(
       {
         data: {
-          name: t("sidebar.newProject"),
+          name: "New Project",
           parent_id: null,
           description: "",
         },
@@ -373,16 +372,6 @@ const SideBarFoldersButtonsComponent = ({
     _navigate("/assets/files");
   };
 
-  const getDisplayFolderName = (name: string) => {
-    if (name === "Starter Project") {
-      return t("sidebar.starterProject");
-    }
-    if (name === "New Project") {
-      return t("sidebar.newProject");
-    }
-    return name;
-  };
-
   const handleKnowledgeNavigation = () => {
     _navigate("/assets/knowledge-bases");
   };
@@ -407,7 +396,7 @@ const SideBarFoldersButtonsComponent = ({
               {!loading ? (
                 folders.length === 0 ? (
                   <div className="px-2 py-5 text-center text-sm text-muted-foreground">
-                    {t("sidebar.startCreatingProjectOrFlow")}
+                    {t("sidebar.emptyMessage")}
                   </div>
                 ) : (
                   folders.map((item, index) => {
@@ -459,7 +448,7 @@ const SideBarFoldersButtonsComponent = ({
                                   />
                                 ) : (
                                   <span className="block w-0 grow truncate text-sm opacity-100">
-                                    {getDisplayFolderName(item.name)}
+                                    {item.name}
                                   </span>
                                 )}
                               </div>

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import PaginatorComponent from "@/components/common/paginatorComponent";
 import CardsWrapComponent from "@/components/core/cardsWrapComponent";
 import { IS_MAC } from "@/constants/constants";
@@ -14,13 +14,15 @@ import {
 import { useCustomNavigate } from "@/customization/hooks/use-custom-navigate";
 import useFlowsManagerStore from "@/stores/flowsManagerStore";
 import { useFolderStore } from "@/stores/foldersStore";
-import { FlowType } from "@/types/flow";
 import HeaderComponent from "../../components/header";
 import ListComponent from "../../components/list";
 import ListSkeleton from "../../components/listSkeleton";
 import ModalsComponent from "../../components/modalsComponent";
 import useFileDrop from "../../hooks/use-on-file-drop";
+import type { FlowTabType } from "../../types";
+import DeploymentsPage from "../deploymentsPage/deployments-page";
 import EmptyFolder from "../emptyFolder";
+import { isFolderEmpty } from "./utils/isFolderEmpty";
 
 const HomePage = ({ type }: { type: "flows" | "components" | "mcp" }) => {
   const { t } = useTranslation();
@@ -30,14 +32,17 @@ const HomePage = ({ type }: { type: "flows" | "components" | "mcp" }) => {
   });
   const [newProjectModal, setNewProjectModal] = useState(false);
   const { folderId } = useParams();
+  const location = useLocation();
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(12);
   const [search, setSearch] = useState("");
   const [isEmptyFolder, setIsEmptyFolder] = useState(true);
   const navigate = useCustomNavigate();
 
-  const [flowType, setFlowType] = useState<"flows" | "components" | "mcp">(
-    type,
+  const [flowType, setFlowType] = useState<FlowTabType>(
+    (location.state as Record<string, unknown>)?.flowType === "deployments"
+      ? "deployments"
+      : type,
   );
   const myCollectionId = useFolderStore((state) => state.myCollectionId);
   const folders = useFolderStore((state) => state.folders);
@@ -45,12 +50,6 @@ const HomePage = ({ type }: { type: "flows" | "components" | "mcp" }) => {
     folders.find((folder) => folder.id === folderId)?.name ??
     folders[0]?.name ??
     "";
-  const displayFolderName =
-    folderName === "Starter Project"
-      ? t("sidebar.starterProject")
-      : folderName === "New Project"
-        ? t("sidebar.newProject")
-        : folderName;
   const flows = useFlowsManagerStore((state) => state.flows);
 
   useEffect(() => {
@@ -103,14 +102,15 @@ const HomePage = ({ type }: { type: "flows" | "components" | "mcp" }) => {
   }, []);
 
   useEffect(() => {
-    const isEmpty =
-      flows?.find(
-        (flow) =>
-          flow.folder_id === (folderId ?? myCollectionId) &&
-          (ENABLE_MCP ? flow.is_component === false : true),
-      ) === undefined;
-    setIsEmptyFolder(isEmpty);
-  }, [flows, folderId, myCollectionId]);
+    setIsEmptyFolder(
+      isFolderEmpty({
+        flows,
+        folderId: folderId ?? myCollectionId ?? "",
+        folderTotal: folderData?.flows?.total,
+        enableMcp: ENABLE_MCP,
+      }),
+    );
+  }, [flows, folderId, myCollectionId, folderData]);
 
   const handleFileDrop = useFileDrop(isEmptyFolder ? undefined : flowType);
 
@@ -258,8 +258,8 @@ const HomePage = ({ type }: { type: "flows" | "components" | "mcp" }) => {
       onFileDrop={flowType === "mcp" ? undefined : handleFileDrop}
       dragMessage={
         isEmptyFolder
-          ? t("mainPage.dropFlowsOrComponents")
-          : t("mainPage.dropTypeHere", { type: t(`mainPage.${flowType}`) })
+          ? t("home.dragFlowsOrComponents")
+          : t("home.dragFlowType", { flowType })
       }
     >
       <div
@@ -271,7 +271,7 @@ const HomePage = ({ type }: { type: "flows" | "components" | "mcp" }) => {
           <div className="flex flex-1 flex-col justify-start p-4">
             <div className="flex h-full flex-col justify-start">
               <HeaderComponent
-                folderName={displayFolderName}
+                folderName={folderName}
                 flowType={flowType}
                 setFlowType={setFlowType}
                 view={view}
@@ -299,6 +299,8 @@ const HomePage = ({ type }: { type: "flows" | "components" | "mcp" }) => {
                     )
                   ) : flowType === "mcp" ? (
                     <CustomMcpServerTab folderName={folderName} />
+                  ) : flowType === "deployments" ? (
+                    <DeploymentsPage />
                   ) : (flowType === "flows" || flowType === "components") &&
                     data &&
                     data.pagination.total > 0 ? (
@@ -333,9 +335,7 @@ const HomePage = ({ type }: { type: "flows" | "components" | "mcp" }) => {
                     )
                   ) : (
                     <div className="pt-24 text-center text-sm text-secondary-foreground">
-                      {t("mainPage.notSupported", {
-                        type: t(`mainPage.${flowType}`),
-                      })}
+                      {t("home.flowTypeNotSupported", { flowType })}
                     </div>
                   )}
                 </div>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
+import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import ShadTooltip from "@/components/common/shadTooltipComponent";
 import { useUpdateSessionName } from "@/controllers/API/queries/messages/use-rename-session";
 import { useVoiceStore } from "@/stores/voiceStore";
@@ -21,6 +21,9 @@ export interface SessionSelectorProps {
   handleRename?: (oldSessionId: string, newSessionId: string) => Promise<void>;
   menuOpen?: boolean;
   onMenuOpenChange?: (open: boolean) => void;
+  isSelected?: boolean;
+  onToggleSelect?: () => void;
+  showCheckbox?: boolean;
 }
 
 export function SessionSelector({
@@ -36,8 +39,10 @@ export function SessionSelector({
   handleRename,
   menuOpen,
   onMenuOpenChange,
+  isSelected = false,
+  onToggleSelect,
+  showCheckbox = false,
 }: SessionSelectorProps) {
-  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const { mutate: updateSessionName } = useUpdateSessionName();
   const setNewSessionCloseVoiceAssistant = useVoiceStore(
@@ -107,11 +112,30 @@ export function SessionSelector({
       }}
       className={cn(
         "file-component-accordion-div group cursor-pointer rounded-md text-left text-mmd hover:bg-accent",
-        isVisible ? "bg-accent font-semibold" : "font-normal",
+        isVisible && !isSelected ? "bg-accent font-semibold" : "font-normal",
+        isSelected && "bg-accent",
       )}
     >
       <div className="flex h-8 items-center justify-between overflow-hidden w-full">
-        <div className="flex w/full min-w-0 items-center px-2">
+        <div className="flex w-full min-w-0 items-center gap-2 px-2">
+          {showCheckbox && onToggleSelect && (
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleSelect();
+              }}
+              className="cursor-pointer flex items-center justify-center w-4 h-4 flex-shrink-0"
+              data-testid={`session-${session}-checkbox`}
+            >
+              <ForwardedIconComponent
+                name={isSelected ? "SquareCheck" : "Square"}
+                className={cn(
+                  "h-4 w-4",
+                  isSelected ? "text-status-red" : "text-muted-foreground",
+                )}
+              />
+            </div>
+          )}
           {isEditing ? (
             <div
               onClick={(e) => e.stopPropagation()}
@@ -128,15 +152,10 @@ export function SessionSelector({
               />
             </div>
           ) : (
-            <ShadTooltip
-              styleClasses="z-50"
-              content={
-                isDefaultSession ? t("playground.defaultSession") : session
-              }
-            >
+            <ShadTooltip styleClasses="z-50" content={session}>
               <div className="relative w-full overflow-hidden">
                 <span className="w-full truncate bg-transparent text-mmd">
-                  {isDefaultSession ? t("playground.defaultSession") : session}
+                  {isDefaultSession ? "Default Session" : session}
                 </span>
               </div>
             </ShadTooltip>
@@ -155,7 +174,7 @@ export function SessionSelector({
           sideOffset={4}
           contentClassName="z-[100] [&>div.p-1]:!h-auto [&>div.p-1]:!min-h-0"
           isVisible={true}
-          tooltipContent={t("playground.moreOptions")}
+          tooltipContent="More options"
           tooltipSide="left"
           open={menuOpen}
           onOpenChange={onMenuOpenChange}

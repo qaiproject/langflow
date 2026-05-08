@@ -51,7 +51,7 @@ const AlertDropdown = forwardRef<HTMLDivElement, AlertDropdownType>(
           className="noflow nowheel nopan nodelete nodrag z-50 flex h-[500px] w-[500px] flex-col"
         >
           <div className="text-md flex flex-row justify-between pl-3 font-medium text-foreground">
-            {t("notifications.title")}
+            Notifications
             <div className="flex gap-3 pr-3">
               <button
                 className="text-muted-foreground hover:text-status-red"
@@ -83,7 +83,7 @@ const AlertDropdown = forwardRef<HTMLDivElement, AlertDropdownType>(
               ))
             ) : (
               <div className="flex h-full w-full items-center justify-center pb-16 text-ring">
-                {t("notifications.empty")}
+                {t("nav.notifications")}
               </div>
             )}
           </div>

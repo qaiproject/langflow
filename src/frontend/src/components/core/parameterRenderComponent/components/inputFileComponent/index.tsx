@@ -9,10 +9,6 @@ import FileManagerModal from "@/modals/fileManagerModal";
 import FilesRendererComponent from "@/modals/fileManagerModal/components/filesRendererComponent";
 import useFileSizeValidator from "@/shared/hooks/use-file-size-validator";
 import { cn } from "@/utils/utils";
-import {
-  CONSOLE_ERROR_MSG,
-  INVALID_FILE_ALERT,
-} from "../../../../../constants/alerts_constants";
 import useAlertStore from "../../../../../stores/alertStore";
 import useFlowsManagerStore from "../../../../../stores/flowsManagerStore";
 import IconComponent, {
@@ -84,7 +80,7 @@ export default function InputFileComponent({
         }
         if (!checkFileType(file.name)) {
           setErrorData({
-            title: INVALID_FILE_ALERT,
+            title: t("errors.invalidFile"),
             list: [fileTypes?.join(", ") || ""],
           });
           return;
@@ -102,7 +98,7 @@ export default function InputFileComponent({
                     { file, id: currentFlowId },
                     {
                       onError: (error) => {
-                        console.error(CONSOLE_ERROR_MSG);
+                        console.error(t("errors.uploadFile"));
                         setErrorData({
                           title: t("filesPage.errorUploadingFile"),
                           list: [error.response?.data?.detail],

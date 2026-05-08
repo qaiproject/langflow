@@ -1,11 +1,9 @@
 import { memo, useEffect, useMemo, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { StickToBottom } from "use-stick-to-bottom";
-import LangflowLogo from "@/components/common/QosmoLogo";
+import LangflowLogo from "@/assets/LangflowLogo.svg?react";
 import { SafariScrollFix } from "@/components/common/safari-scroll-fix";
 import { TextEffectPerChar } from "@/components/ui/textAnimation";
 import CustomChatInput from "@/customization/components/custom-chat-input";
-import { ENABLE_IMAGE_ON_PLAYGROUND } from "@/customization/feature-flags";
 import useCustomUseFileHandler from "@/customization/hooks/use-custom-use-file-handler";
 import { track } from "@/customization/utils/analytics";
 import { useGetFlowId } from "@/modals/IOModal/hooks/useGetFlowId";
@@ -42,7 +40,6 @@ export default function ChatView({
   playgroundPage,
   sidebarOpen,
 }: chatViewProps): JSX.Element {
-  const { t } = useTranslation();
   const inputs = useFlowStore((state) => state.inputs);
   const realFlowId = useFlowsManagerStore((state) => state.currentFlowId);
   const currentFlowId = useGetFlowId();
@@ -87,12 +84,13 @@ export default function ChatView({
             files = [];
           }
         }
+
         return {
           isSend: message.sender === "User",
           message: message.text,
           sender_name: message.sender_name,
           files: files,
-          id: message.id ?? `placeholder-${message.timestamp}`,
+          id: message.id || "",
           timestamp: message.timestamp,
           session: message.session_id,
           edit: message.edit,
@@ -136,7 +134,10 @@ export default function ChatView({
       });
   }
 
-  const { files, setFiles, handleFiles } = useCustomUseFileHandler(realFlowId);
+  const { files, setFiles, handleFiles } = useCustomUseFileHandler(
+    realFlowId,
+    !!playgroundPage,
+  );
   const [isDragging, setIsDragging] = useState(false);
 
   const { dragOver, dragEnter, dragLeave } = useDragAndDrop(
@@ -145,10 +146,6 @@ export default function ChatView({
   );
 
   const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    if (!ENABLE_IMAGE_ON_PLAYGROUND && playgroundPage) {
-      e.stopPropagation();
-      return;
-    }
     e.preventDefault();
     e.stopPropagation();
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
@@ -197,19 +194,19 @@ export default function ChatView({
               <div className="flex flex-grow w-full flex-col items-center justify-center">
                 <div className="flex flex-col items-center justify-center gap-4 p-8">
                   <LangflowLogo
-                    title={t("auth.langflowLogo")}
+                    title="Langflow logo"
                     className="h-10 w-10 scale-[1.5]"
                   />
                   <div className="flex flex-col items-center justify-center">
                     <h3 className="mt-2 pb-2 text-2xl font-semibold text-primary">
-                      {t("playground.newChatTitle")}
+                      New chat
                     </h3>
                     <p
                       className="text-lg text-muted-foreground"
                       data-testid="new-chat-text"
                     >
                       <TextEffectPerChar>
-                        {t("playground.newChatDescription")}
+                        Test your flow with a chat prompt
                       </TextEffectPerChar>
                     </p>
                   </div>

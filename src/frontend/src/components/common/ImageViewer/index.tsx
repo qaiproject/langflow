@@ -11,6 +11,7 @@ export default function ImageViewer({ image }: { image: string }) {
   const viewerRef = useRef(null);
   const [_errorDownloading, _setErrordownloading] = useState(false);
   const setErrorList = useAlertStore((state) => state.setErrorData);
+  const [_initialMsg, _setInicialMsg] = useState("Please build your flow");
 
   useEffect(() => {
     try {
@@ -75,7 +76,7 @@ export default function ImageViewer({ image }: { image: string }) {
         saveAs(blob, "image.jpg");
       })
       .catch((error) => {
-        setErrorList({ title: t("imageViewer.downloadError") });
+        setErrorList({ title: "There was an error downloading your image" });
         console.error("Error downloading image:", error);
       });
   }
@@ -84,13 +85,11 @@ export default function ImageViewer({ image }: { image: string }) {
     <div className="align-center flex h-full w-full flex-col justify-center gap-5 rounded-md border border-border bg-muted">
       <div className="align-center flex justify-center gap-2">
         <ForwardedIconComponent name="Image" />
-        {t("imageViewer.outputTitle")}
+        {t("output.imgTitle")}
       </div>
       <div className="align-center flex justify-center">
         <div className="langflow-chat-desc align-center flex justify-center">
-          <div className="langflow-chat-desc-span">
-            {t("imageViewer.emptyDescription")}
-          </div>
+          <div className="langflow-chat-desc-span">{t("output.imgError")}</div>
         </div>
       </div>
     </div>

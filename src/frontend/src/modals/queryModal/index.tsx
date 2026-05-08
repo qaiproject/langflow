@@ -1,12 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Textarea } from "../../components/ui/textarea";
-import {
-  EDIT_TEXT_PLACEHOLDER,
-  TEXT_DIALOG_TITLE,
-} from "../../constants/constants";
+
 import type { queryModalPropsType } from "../../types/components";
 import { handleKeyDown } from "../../utils/reactflowUtils";
-import { translateComponentText } from "../../utils/componentTranslations";
 import { classNames } from "../../utils/utils";
 import BaseModal from "../baseModal";
 
@@ -19,6 +16,7 @@ export default function QueryModal({
   children,
   disabled,
 }: queryModalPropsType): JSX.Element {
+  const { t } = useTranslation();
   const [modalOpen, setModalOpen] = useState(false);
   const [inputValue, setInputValue] = useState(value);
 
@@ -41,7 +39,7 @@ export default function QueryModal({
         <div className="flex w-full items-start gap-3">
           <div className="flex">
             <span data-testid="modal-title">
-              {translateComponentText(title) ?? TEXT_DIALOG_TITLE}
+              {title ?? t("dialog.editText")}
             </span>
           </div>
         </div>
@@ -55,9 +53,7 @@ export default function QueryModal({
             onChange={(event) => {
               setInputValue(event.target.value);
             }}
-            placeholder={
-              translateComponentText(placeholder) ?? EDIT_TEXT_PLACEHOLDER
-            }
+            placeholder={placeholder ?? t("input.editTextPlaceholder")}
             onKeyDown={(e) => {
               handleKeyDown(e, value, "");
             }}
@@ -66,9 +62,7 @@ export default function QueryModal({
           />
         </div>
         <div className="flex flex-col gap-2">
-          <p className="text-sm text-muted-foreground">
-            {translateComponentText(description)}
-          </p>
+          <p className="text-sm text-muted-foreground">{description}</p>
         </div>
       </BaseModal.Content>
       <BaseModal.Footer

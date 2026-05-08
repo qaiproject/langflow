@@ -1,6 +1,6 @@
 import { Background, Panel } from "@xyflow/react";
-import { memo } from "react";
-import { useTranslation } from "react-i18next";
+import { cloneDeep } from "lodash";
+import { memo, useCallback, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import CanvasControlButton from "@/components/core/canvasControlsComponent/CanvasControlButton";
@@ -8,11 +8,12 @@ import CanvasControls from "@/components/core/canvasControlsComponent/CanvasCont
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { ENABLE_NEW_SIDEBAR } from "@/customization/feature-flags";
+import useSaveFlow from "@/hooks/flows/use-save-flow";
 import useFlowStore from "@/stores/flowStore";
 import { AllNodeType } from "@/types/flow";
 import { cn } from "@/utils/utils";
 import { useSearchContext } from "../flowSidebarComponent";
-import { getTranslatedNavItems } from "../flowSidebarComponent/components/sidebarSegmentedNav";
+import { NAV_ITEMS } from "../flowSidebarComponent/components/sidebarSegmentedNav";
 
 export const MemoizedBackground = memo(() => (
   <Background size={2} gap={20} className="" />
@@ -23,6 +24,7 @@ interface MemoizedCanvasControlsProps {
   shadowBoxWidth: number;
   shadowBoxHeight: number;
   selectedNode: AllNodeType | null;
+  isAgentWorking?: boolean;
 }
 
 export const MemoizedCanvasControls = memo(
@@ -31,34 +33,72 @@ export const MemoizedCanvasControls = memo(
     shadowBoxWidth,
     shadowBoxHeight,
     selectedNode,
+    isAgentWorking,
   }: MemoizedCanvasControlsProps) => {
-    const { t } = useTranslation();
-    const isLocked = useFlowStore(
-      useShallow((state) => state.currentFlow?.locked),
-    );
+    const currentFlow = useFlowStore(useShallow((state) => state.currentFlow));
+    const setCurrentFlow = useFlowStore((state) => state.setCurrentFlow);
+    const saveFlow = useSaveFlow();
+    const isLocked = currentFlow?.locked ?? false;
+    const effectiveLocked = isLocked || isAgentWorking;
+    const [isSaving, setIsSaving] = useState(false);
+
+    const handleToggleLock = useCallback(async () => {
+      if (isAgentWorking || isSaving || !currentFlow) return;
+      const newFlow = cloneDeep(currentFlow);
+      newFlow.locked = !isLocked;
+      setIsSaving(true);
+      try {
+        await saveFlow(newFlow);
+        setCurrentFlow(newFlow);
+      } finally {
+        setIsSaving(false);
+      }
+    }, [
+      currentFlow,
+      isLocked,
+      isAgentWorking,
+      isSaving,
+      saveFlow,
+      setCurrentFlow,
+    ]);
 
     return (
-      <CanvasControls selectedNode={selectedNode}>
+      <CanvasControls
+        selectedNode={selectedNode}
+        effectiveLocked={effectiveLocked}
+      >
         <Button
           unstyled
-          unselectable="on"
           size="icon"
           data-testid="lock-status"
-          className="flex items-center justify-center px-2 rounded-none gap-1 cursor-default"
-          title={t("flow.lockStatus", {
-            status: isLocked ? t("flow.locked") : t("flow.unlocked"),
-          })}
+          disabled={isAgentWorking || isSaving}
+          className={cn(
+            "flex items-center justify-center px-2 rounded-none gap-1",
+            isAgentWorking || isSaving
+              ? "cursor-default opacity-70"
+              : "cursor-pointer",
+          )}
+          title={
+            isAgentWorking
+              ? "Agent Working"
+              : isSaving
+                ? "Saving..."
+                : isLocked
+                  ? "Unlock flow"
+                  : "Lock flow"
+          }
+          onClick={handleToggleLock}
         >
           <ForwardedIconComponent
-            name={isLocked ? "Lock" : "Unlock"}
+            name={effectiveLocked ? "Lock" : "Unlock"}
             className={cn(
               "!h-[18px] !w-[18px] text-muted-foreground",
-              isLocked && "text-destructive",
+              effectiveLocked && "text-destructive",
             )}
           />
-          {isLocked && (
+          {effectiveLocked && (
             <span className="text-xs text-destructive">
-              {t("flow.flowLocked")}
+              {isAgentWorking ? "Agent Working" : "Flow Locked"}
             </span>
           )}
         </Button>
@@ -68,10 +108,8 @@ export const MemoizedCanvasControls = memo(
 );
 
 export const MemoizedSidebarTrigger = memo(() => {
-  const { t } = useTranslation();
   const { open, toggleSidebar, setActiveSection } = useSidebar();
   const { focusSearch, isSearchFocused } = useSearchContext();
-  const translatedNavItems = getTranslatedNavItems(t);
   if (ENABLE_NEW_SIDEBAR) {
     return (
       <Panel
@@ -81,7 +119,7 @@ export const MemoizedSidebarTrigger = memo(() => {
         )}
         position="top-left"
       >
-        {translatedNavItems.map((item) => (
+        {NAV_ITEMS.map((item) => (
           <CanvasControlButton
             data-testid={`sidebar-trigger-${item.id}`}
             iconName={item.icon}
@@ -115,7 +153,7 @@ export const MemoizedSidebarTrigger = memo(() => {
     >
       <SidebarTrigger className="h-fit w-fit px-3 py-1.5">
         <ForwardedIconComponent name="PanelRightClose" className="h-4 w-4" />
-        <span className="text-foreground">{t("sidebar.components")}</span>
+        <span className="text-foreground">Components</span>
       </SidebarTrigger>
     </Panel>
   );

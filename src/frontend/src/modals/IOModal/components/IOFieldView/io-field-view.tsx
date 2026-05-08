@@ -10,7 +10,6 @@ import DataOutputComponent from "../../../../components/core/dataOutputComponent
 import InputListComponent from "../../../../components/core/parameterRenderComponent/components/inputListComponent";
 import PdfViewer from "../../../../components/core/pdfViewer";
 import { Textarea } from "../../../../components/ui/textarea";
-import { PDFViewConstant } from "../../../../constants/constants";
 import {
   InputOutput,
   IOInputTypes,
@@ -179,7 +178,7 @@ export default function IOFieldView({
             return <TextOutputView left={left} value={textOutputValue} />;
           case IOOutputTypes.PDF:
             return left ? (
-              <div>{PDFViewConstant}</div>
+              <div>{t("output.pdfView")}</div>
             ) : (
               <PdfViewer pdf={flowPoolNode?.params ?? ""} />
             );

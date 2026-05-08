@@ -32,12 +32,12 @@ function CsvOutputComponent({
       <div className="align-center flex h-full w-full flex-col items-center justify-center gap-5">
         <div className="align-center flex w-full justify-center gap-2">
           <ForwardedIconComponent name="Table" />
-          {t("chatComponent.csvOutput")}
+          {t("output.csvTitle")}
         </div>
         <div className="align-center flex w-full justify-center">
           <div className="langflow-chat-desc align-center flex justify-center px-6 py-8">
             <div className="langflow-chat-desc-span">
-              {t("chatComponent.csvError")}
+              {t("output.csvError")}
             </div>
           </div>
         </div>
@@ -85,12 +85,12 @@ function CsvOutputComponent({
         <div className="align-center flex h-full w-full flex-col items-center justify-center gap-5">
           <div className="align-center flex w-full justify-center gap-2">
             <ForwardedIconComponent name="Table" />
-            {t("chatComponent.csvOutput")}
+            {t("output.csvTitle")}
           </div>
           <div className="align-center flex w-full justify-center">
             <div className="langflow-chat-desc align-center flex justify-center px-6 py-8">
               <div className="langflow-chat-desc-span">
-                {t("chatComponent.noData")}
+                {t("output.csvNoData")}
               </div>
             </div>
           </div>
@@ -100,12 +100,12 @@ function CsvOutputComponent({
         <div className="align-center flex h-full w-full flex-col items-center justify-center gap-5">
           <div className="align-center flex w-full justify-center gap-2">
             <ForwardedIconComponent name="Table" />
-            {t("chatComponent.csvOutput")}
+            {t("output.csvTitle")}
           </div>
           <div className="align-center flex w-full justify-center">
             <div className="langflow-chat-desc align-center flex justify-center px-6 py-8">
               <div className="langflow-chat-desc-span">
-                {t("chatComponent.csvError")}
+                {t("output.csvError")}
               </div>
             </div>
           </div>
@@ -123,7 +123,7 @@ function CsvOutputComponent({
             columnDefs={colDefs}
             defaultColDef={defaultColDef}
             scrollbarWidth={8}
-            overlayNoRowsTemplate={t("chatComponent.noData")}
+            overlayNoRowsTemplate="No data available"
           />
         </div>
       )}

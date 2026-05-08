@@ -30,7 +30,7 @@ export const CategoryGroup = memo(function CategoryGroup({
     <SidebarGroup className="p-3 pr-2">
       {ENABLE_NEW_SIDEBAR && (
         <SidebarGroupLabel className="cursor-default flex items-center justify-between w-full">
-          <span>{t("flowSidebar.components")}</span>
+          <span>{t("sidebar.components")}</span>
           <SearchConfigTrigger
             showConfig={showConfig}
             setShowConfig={setShowConfig}

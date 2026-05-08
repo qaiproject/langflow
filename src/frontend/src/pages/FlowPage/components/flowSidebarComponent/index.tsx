@@ -1,5 +1,6 @@
 import Fuse from "fuse.js";
 import { cloneDeep, debounce } from "lodash";
+import { useTranslation } from "react-i18next";
 import {
   createContext,
   memo,
@@ -11,7 +12,6 @@ import {
   useState,
 } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
-import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import { Button } from "@/components/ui/button";
@@ -817,7 +817,7 @@ export function FlowSidebarComponent({ isLoading }: FlowSidebarComponentProps) {
                                 className="h-4 w-4"
                               />
                             </span>
-                            {t("sidebar.discoverMoreComponents")}
+                            {t("sidebar.discoverMore")}
                           </Button>
                         )}
                       </>
@@ -835,7 +835,7 @@ export function FlowSidebarComponent({ isLoading }: FlowSidebarComponentProps) {
               (ENABLE_NEW_SIDEBAR &&
                 activeSection === "mcp" &&
                 !hasMcpServers) ? null : (
-                <SidebarFooter className="border-t group-data-[collapsible=icon]:hidden p-1 gap-1">
+                <SidebarFooter className="border-t group-data-[collapsible=icon]:hidden p-1 gap-1 empty:hidden empty:border-0">
                   <SidebarMenuButtons
                     customComponent={customComponent}
                     addComponent={addComponent}

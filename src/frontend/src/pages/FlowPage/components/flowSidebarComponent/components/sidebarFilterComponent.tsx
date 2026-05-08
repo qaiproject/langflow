@@ -35,7 +35,7 @@ export function SidebarFilterComponent({
       <ShadTooltip
         side="right"
         styleClasses="max-w-full"
-        content={t("flowSidebar.removeFilter")}
+        content={t("sidebar.removeFilter")}
       >
         <Button
           unstyled

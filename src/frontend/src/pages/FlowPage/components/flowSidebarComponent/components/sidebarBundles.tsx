@@ -45,7 +45,7 @@ export const MemoizedSidebarGroup = memo(
     return (
       <SidebarGroup className="p-3 pr-2">
         <SidebarGroupLabel className="cursor-default w-full flex items-center justify-between">
-          <span>{t("flowSidebar.bundles")}</span>
+          <span>{t("sidebar.bundles")}</span>
           {showSearchConfigTrigger && ENABLE_NEW_SIDEBAR && (
             <SearchConfigTrigger
               showConfig={showConfig}

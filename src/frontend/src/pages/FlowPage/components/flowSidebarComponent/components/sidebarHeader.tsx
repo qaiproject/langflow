@@ -1,6 +1,5 @@
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
-
 import { ForwardedIconComponent } from "@/components/common/genericIconComponent";
 import ShadTooltip from "@/components/common/shadTooltipComponent";
 import { Button } from "@/components/ui/button";
@@ -47,7 +46,10 @@ export const SidebarHeaderComponent = memo(function SidebarHeaderComponent({
             </h3>
             <DisclosureTrigger>
               <div>
-                <ShadTooltip content={t("sidebar.componentSettings")} styleClasses="z-50">
+                <ShadTooltip
+                  content={t("sidebar.componentSettings")}
+                  styleClasses="z-50"
+                >
                   <Button
                     variant={showConfig ? "ghostActive" : "ghost"}
                     size="iconMd"

@@ -28,7 +28,7 @@ export default function SettingsPage(): JSX.Element {
 
   if (showGeneralSettings) {
     sidebarNavItems.push({
-      title: t("settings.general"),
+      title: t("settings.nav.general"),
       href: "/settings/general",
       icon: (
         <ForwardedIconComponent
@@ -41,7 +41,7 @@ export default function SettingsPage(): JSX.Element {
 
   sidebarNavItems.push(
     {
-      title: t("settings.mcpServers"),
+      title: t("settings.nav.mcpServers"),
       href: "/settings/mcp-servers",
       icon: (
         <ForwardedIconComponent
@@ -51,7 +51,17 @@ export default function SettingsPage(): JSX.Element {
       ),
     },
     {
-      title: t("settings.globalVariables"),
+      title: "Langflow MCP Client",
+      href: "/settings/mcp-client",
+      icon: (
+        <ForwardedIconComponent
+          name="Terminal"
+          className="w-4 flex-shrink-0 justify-start stroke-[1.5]"
+        />
+      ),
+    },
+    {
+      title: t("settings.nav.globalVariables"),
       href: "/settings/global-variables",
       icon: (
         <ForwardedIconComponent
@@ -61,7 +71,7 @@ export default function SettingsPage(): JSX.Element {
       ),
     },
     {
-      title: t("settings.modelProviders"),
+      title: t("settings.nav.modelProviders"),
       href: "/settings/model-providers",
       icon: (
         <ForwardedIconComponent
@@ -72,7 +82,7 @@ export default function SettingsPage(): JSX.Element {
     },
 
     {
-      title: t("settings.shortcuts"),
+      title: t("settings.nav.shortcuts"),
       href: "/settings/shortcuts",
       icon: (
         <ForwardedIconComponent
@@ -82,7 +92,7 @@ export default function SettingsPage(): JSX.Element {
       ),
     },
     {
-      title: t("settings.messages"),
+      title: t("settings.nav.messages"),
       href: "/settings/messages",
       icon: (
         <ForwardedIconComponent

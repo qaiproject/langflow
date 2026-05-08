@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import ShadTooltip from "@/components/common/shadTooltipComponent";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -12,11 +13,14 @@ import { ENABLE_MCP } from "@/customization/feature-flags";
 import DeleteConfirmationModal from "@/modals/deleteConfirmationModal";
 import useAlertStore from "@/stores/alertStore";
 import useFlowsManagerStore from "@/stores/flowsManagerStore";
+import { useUtilityStore } from "@/stores/utilityStore";
 import { cn } from "@/utils/utils";
 
+import type { FlowTabType } from "../../types";
+
 interface HeaderComponentProps {
-  flowType: "flows" | "components" | "mcp";
-  setFlowType: (flowType: "flows" | "components" | "mcp") => void;
+  flowType: FlowTabType;
+  setFlowType: (flowType: FlowTabType) => void;
   view: "list" | "grid";
   setView: (view: "list" | "grid") => void;
   setNewProjectModal: (newProjectModal: boolean) => void;
@@ -75,12 +79,20 @@ const HeaderComponent = ({
     setDebouncedSearch(e.target.value);
   };
 
-  // Determine which tabs to show based on feature flag
-  const tabTypes = isMCPEnabled ? ["mcp", "flows"] : ["components", "flows"];
+  const isDeploymentsEnabled = useUtilityStore(
+    (s) => s.featureFlags.wxo_deployments === true,
+  );
+
+  // Determine which tabs to show based on feature flags
+  const tabTypes = [
+    ...(isDeploymentsEnabled ? ["deployments"] : []),
+    ...(isMCPEnabled ? ["mcp"] : ["components"]),
+    "flows",
+  ];
 
   const handleDownload = () => {
     downloadFlows({ ids: selectedFlows });
-    setSuccessData({ title: t("mainPage.flowsDownloaded") });
+    setSuccessData({ title: t("mainPage.flowsDownloadedSuccess") });
   };
 
   const flows = useFlowsManagerStore((state) => state.flows);
@@ -91,7 +103,7 @@ const HeaderComponent = ({
       { flow_ids: selectedFlows },
       {
         onSuccess: () => {
-          setSuccessData({ title: t("mainPage.flowsDeleted") });
+          setSuccessData({ title: t("mainPage.flowsDeletedSuccess") });
           if (flows) {
             setFlows(flows.filter((flow) => !selectedFlows.includes(flow.id)));
           }
@@ -132,35 +144,45 @@ const HeaderComponent = ({
                 id={`${type}-btn`}
                 data-testid={`${type}-btn`}
                 onClick={() => {
-                  setFlowType(type as "flows" | "components" | "mcp");
+                  setFlowType(type as FlowTabType);
                 }}
                 className={`border-b ${
                   flowType === type
                     ? "border-b-2 border-foreground text-foreground"
                     : "border-border text-muted-foreground hover:text-foreground"
                 } text-nowrap px-2 pb-2 pt-1 text-mmd`}
+              >
+                <div
+                  className={cn(
+                    "flex items-center gap-1.5",
+                    flowType === type && "-mb-px",
+                  )}
                 >
-                  <div className={flowType === type ? "-mb-px" : ""}>
-                    {type === "mcp"
-                      ? t("mainPage.mcpServer")
-                      : t(`mainPage.${type}`)}
-                  </div>
+                  {type === "mcp"
+                    ? t("mainPage.mcpServer")
+                    : type.charAt(0).toUpperCase() + type.slice(1)}
+                  {type === "deployments" && (
+                    <Badge
+                      variant="purpleStatic"
+                      size="xq"
+                      className="h-auto shrink-0 rounded px-1 py-px text-[11px] leading-none text-accent-purple-foreground"
+                    >
+                      Beta
+                    </Badge>
+                  )}
+                </div>
               </Button>
             ))}
           </div>
           {/* Search and filters */}
-          {flowType !== "mcp" && (
+          {flowType !== "mcp" && flowType !== "deployments" && (
             <div className="flex justify-between">
               <div className="flex w-full xl:w-5/12">
                 <Input
                   icon="Search"
                   data-testid="search-store-input"
                   type="text"
-                  placeholder={t(
-                    `mainPage.search${
-                      flowType === "flows" ? "Flows" : "Components"
-                    }`,
-                  )}
+                  placeholder={t("mainPage.searchPlaceholder", { flowType })}
                   className="mr-2 !text-mmd"
                   inputClassName="!text-mmd"
                   value={debouncedSearch}
@@ -219,12 +241,12 @@ const HeaderComponent = ({
                   <DeleteConfirmationModal
                     asChild
                     onConfirm={handleDelete}
-                    description={t(
-                      selectedFlows.length > 1
-                        ? "mainPage.flowsLabel"
-                        : "mainPage.flowLabel",
-                    )}
-                    note={t("mainPage.deleteNote", { count: selectedFlows.length })}
+                    description={"flow" + (selectedFlows.length > 1 ? "s" : "")}
+                    note={
+                      "and " +
+                      (selectedFlows.length > 1 ? "their" : "its") +
+                      " message history"
+                    }
                   >
                     <Button
                       variant="destructive"
@@ -235,7 +257,7 @@ const HeaderComponent = ({
                       tabIndex={hasSelection ? 0 : -1}
                     >
                       <ForwardedIconComponent name="Trash2" />
-                      {t("common.delete")}
+                      {t("mainPage.delete")}
                     </Button>
                   </DeleteConfirmationModal>
                 </div>

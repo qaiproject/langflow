@@ -14,21 +14,6 @@ import StoreApiKeyFormComponent from "./components/StoreApiKeyForm";
 const StoreApiKeyPage = () => {
   const { t } = useTranslation();
   const { scrollId } = useParams();
-  const getErrorDetail = (error: unknown) => {
-    if (!error || typeof error !== "object" || !("response" in error)) {
-      return undefined;
-    }
-
-    return (
-      error as {
-        response?: {
-          data?: {
-            detail?: string;
-          };
-        };
-      }
-    ).response?.data?.detail;
-  };
   const [inputState, setInputState] = useState(CONTROL_PATCH_USER_STATE);
   const { storeApiKey } = useContext(AuthContext);
   useScrollToElement(scrollId);
@@ -46,7 +31,7 @@ const StoreApiKeyPage = () => {
 
   const { mutate: addApiKey } = usePostAddApiKey({
     onSuccess: () => {
-      setSuccessData({ title: t("generalPage.apiKeySaved") });
+      setSuccessData({ title: t("storeApiKey.saveSuccess") });
       setHasApiKey(true);
       setValidApiKey(true);
       setLoadingApiKey(false);
@@ -54,8 +39,8 @@ const StoreApiKeyPage = () => {
     },
     onError: (error) => {
       setErrorData({
-        title: t("generalPage.apiKeySaveError"),
-        list: [getErrorDetail(error) ?? t("alerts.error.generic")],
+        title: t("storeApiKey.saveError"),
+        list: [(error as any)?.response?.data?.detail],
       });
       setHasApiKey(false);
       setValidApiKey(false);
@@ -82,14 +67,14 @@ const StoreApiKeyPage = () => {
             className="flex items-center text-lg font-semibold tracking-tight"
             data-testid="settings_menu_header"
           >
-            {t("store.title")}
+            {t("storeApiKey.title")}
             <ForwardedIconComponent
               name="Store"
               className="ml-2 h-5 w-5 text-primary"
             />
           </h2>
           <p className="text-sm text-muted-foreground">
-            {t("store.manageAccess")}
+            {t("storeApiKey.description")}
           </p>
         </div>
       </div>

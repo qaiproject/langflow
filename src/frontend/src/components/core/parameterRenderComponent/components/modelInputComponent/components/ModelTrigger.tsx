@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import { Button } from "@/components/ui/button";
 import { PopoverTrigger } from "@/components/ui/popover";
-import { RECEIVING_INPUT_VALUE } from "@/constants/constants";
 import { cn } from "@/utils/utils";
 import { ModelOption, SelectedModel } from "../types";
 
@@ -25,7 +24,7 @@ const ModelTrigger = ({
   disabled,
   options,
   selectedModel,
-  placeholder,
+  placeholder = "Setup Provider",
   hasEnabledProviders,
   onOpenManageProviders,
   id,
@@ -52,15 +51,16 @@ const ModelTrigger = ({
   if (!hasEnabledProviders && !showEmptyState && options.length === 0) {
     return (
       <Button
-        variant="default"
-        size="sm"
-        className="w-full"
+        variant="outline"
+        size="xs"
+        className="dropdown-component-false-outline w-full justify-start gap-2 py-2 font-normal"
         onClick={onOpenManageProviders}
       >
-        <ForwardedIconComponent name="Brain" className="h-4 w-4" />
-        <div className="text-[13px]">
-          {placeholder ?? t("modelProvider.setupProvider")}
-        </div>
+        <ForwardedIconComponent
+          name="Brain"
+          className="h-4 w-4 flex-shrink-0 text-muted-foreground"
+        />
+        <div className="text-[13px] text-muted-foreground">{placeholder}</div>
       </Button>
     );
   }
@@ -88,10 +88,10 @@ const ModelTrigger = ({
             {renderSelectedIcon()}
             <span className="truncate">
               {disabled ? (
-                RECEIVING_INPUT_VALUE
+                t("component.receivingInput")
               ) : isEmptyStateMode ? (
                 <div className="truncate text-muted-foreground">
-                  {t("modelProvider.noModelsEnabled")}
+                  No models enabled
                 </div>
               ) : (
                 <div
@@ -100,7 +100,7 @@ const ModelTrigger = ({
                     !selectedModel?.name && "text-muted-foreground",
                   )}
                 >
-                  {selectedModel?.name || t("modelProvider.selectModel")}
+                  {selectedModel?.name || "Select a model"}
                 </div>
               )}
             </span>

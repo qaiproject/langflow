@@ -6,18 +6,20 @@ import NodeDialog from "@/CustomNodes/GenericNode/components/NodeDialogComponent
 import { mutateTemplate } from "@/CustomNodes/helpers/mutate-template";
 import LoadingTextComponent from "@/components/common/loadingTextComponent";
 import { usePostTemplateValue } from "@/controllers/API/queries/nodes/use-post-template-value";
-import KnowledgeBaseUploadModal from "@/modals/knowledgeBaseUploadModal/KnowledgeBaseUploadModal";
 import useAlertStore from "@/stores/alertStore";
+import useFlowStore from "@/stores/flowStore";
+import { useTypesStore } from "@/stores/typesStore";
+import { scapedJSONStringfy } from "@/utils/reactflowUtils";
 import {
   convertStringToHTML,
   getStatusColor,
 } from "@/utils/stringManipulation";
-import { translateComponentText } from "@/utils/componentTranslations";
 import type { DropDownComponent } from "../../../types/components";
 import {
   cn,
   filterNullOptions,
   formatName,
+  groupByFamily,
 } from "../../../utils/utils";
 import { default as ForwardedIconComponent } from "../../common/genericIconComponent";
 import ShadTooltip from "../../common/shadTooltipComponent";
@@ -61,14 +63,6 @@ export default function Dropdown({
   ...baseInputProps
 }: BaseInputProps & DropDownComponent): JSX.Element {
   const { t } = useTranslation();
-  const translateOptionLabel = (label: string) => {
-    const translatedOptionLabels: Record<string, string> = {
-      User: t("chatComponent.optionUser"),
-      AI: t("chatComponent.optionAI"),
-    };
-
-    return translatedOptionLabels[label] ?? translateComponentText(label);
-  };
   const validOptions = useMemo(
     () => filterNullOptions(options),
     [options, value],
@@ -77,8 +71,9 @@ export default function Dropdown({
   // Initialize state and refs
   const [open, setOpen] = useState(children ? true : false);
   const [openDialog, setOpenDialog] = useState(false);
-  const [, setWaitingForResponse] = useState(false);
+  const [waitingForResponse, setWaitingForResponse] = useState(false);
   const [customValue, setCustomValue] = useState("");
+  const nodes = useFlowStore((state) => state.nodes);
 
   const [filteredOptions, setFilteredOptions] = useState(() => {
     // Include the current value in filteredOptions if it's a custom value not in validOptions
@@ -92,14 +87,17 @@ export default function Dropdown({
   const [pendingSelect, setPendingSelect] = useState<string | null>(null);
   const refButton = useRef<HTMLButtonElement>(null);
 
-  value = useMemo(() => {
-    // We should only reset the value if it's not in options and not in filteredOptions
-    // and not a recently added custom value
-    if (!options.includes(value) && !filteredOptions.includes(value)) {
+  // Reset the value when options are loaded and the current value is not among them.
+  // This is in a useEffect (not useMemo) to avoid calling setState during render.
+  // When options is empty, it means options are still loading, so we preserve the saved value.
+  useEffect(() => {
+    if (
+      options.length > 0 &&
+      !options.includes(value) &&
+      !filteredOptions.includes(value)
+    ) {
       if (value) onSelect("", undefined, true);
-      return null;
     }
-    return value;
   }, [value, options, filteredOptions]);
 
   // Initialize utilities and constants
@@ -123,7 +121,7 @@ export default function Dropdown({
 
   // Utility functions
   const filterMetadataKeys = (
-    metadata: Record<string, unknown> = {},
+    metadata: Record<string, any> = {},
     excludeKeys: string[] = [
       "api_endpoint",
       "icon",
@@ -183,7 +181,7 @@ export default function Dropdown({
     // Create a new metadata array that directly maps to filtered options
     if (optionsMetaData) {
       // Create a map of option -> metadata for quick lookup
-      const metadataMap: Record<string, unknown> = {};
+      const metadataMap: Record<string, any> = {};
       validOptions.forEach((option, index) => {
         if (optionsMetaData[index]) {
           metadataMap[option] = optionsMetaData[index];
@@ -290,7 +288,7 @@ export default function Dropdown({
 
         // Reset filteredMetadata to match the new filteredOptions
         if (optionsMetaData) {
-          const metadataMap: Record<string, unknown> = {};
+          const metadataMap: Record<string, any> = {};
           validOptions.forEach((option, index) => {
             if (optionsMetaData[index]) {
               metadataMap[option] = optionsMetaData[index];
@@ -307,7 +305,12 @@ export default function Dropdown({
         setFilteredMetadata(optionsMetaData);
       }
     }
-    if (!combobox && value && !validOptions.includes(value)) {
+    if (
+      !combobox &&
+      value &&
+      validOptions.length > 0 &&
+      !validOptions.includes(value)
+    ) {
       onSelect("", undefined, true);
     }
   }, [open, validOptions]);
@@ -335,7 +338,7 @@ export default function Dropdown({
       variant="primary"
       size="xs"
     >
-      <LoadingTextComponent text={t("dropdown.loadingOptions")} />
+      <LoadingTextComponent text="Loading options" />
     </Button>
   );
 
@@ -386,27 +389,27 @@ export default function Dropdown({
             {value && <>{renderSelectedIcon()}</>}
             <span className="truncate">
               {disabled ? (
-                t("dropdown.receivingInput")
+                t("component.receivingInput")
               ) : (
                 <>
                   {
                     options?.includes(value) ? (
-                      translateOptionLabel(value)
+                      value
                     ) : // this logic is used for the agents component, if you update make sure to test the agent component
                     sourceOptions?.fields?.data?.node?.name ===
                       "connect_other_models" ? (
                       <span className="text-muted-foreground">
                         <LoadingTextComponent
-                          text={placeholder || t("dropdown.selectAnOption")}
+                          text={placeholder || t("component.selectOption")}
                         />
                       </span>
                     ) : (
-                      placeholder || t("dropdown.selectAnOption")
+                      placeholder || t("component.selectOption")
                     )
                     // ) : (
                     //   <span className="text-muted-foreground">
                     //     <LoadingTextComponent
-                    //       text={placeholder || SELECT_AN_OPTION}
+                    //       text={placeholder || t("component.selectOption")}
                     //     />
                     //   </span>
                     // )}
@@ -444,7 +447,7 @@ export default function Dropdown({
       <input
         onChange={searchRoleByTerm}
         onKeyDown={handleInputKeyDown}
-        placeholder={t("common.searchOptions")}
+        placeholder="Search options..."
         className="flex h-9 w-full rounded-md bg-transparent py-3 text-[13px] outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
         autoComplete="off"
         data-testid="dropdown_search_input"
@@ -495,7 +498,7 @@ export default function Dropdown({
                       })}
                     >
                       <div className="text-[13px] mr-2 whitespace-nowrap flex-shrink-0">
-                        {translateOptionLabel(option)}
+                        {option}
                       </div>
                       {filteredMetadata?.[index]?.status && (
                         <span
@@ -566,7 +569,7 @@ export default function Dropdown({
             disabled
             className="w-full text-center text-sm text-muted-foreground px-2.5 py-1.5"
           >
-            {t("dropdown.noOptionsFound")}
+            No options found
           </CommandItem>
         )}
       </CommandGroup>
@@ -587,9 +590,7 @@ export default function Dropdown({
           >
             <div className="flex items-center gap-2 pl-1 text-[13px] font-semibold">
               <ForwardedIconComponent name="Plus" className="h-3 w-3 " />
-              {translateComponentText(
-                sourceOptions?.fields?.data?.node?.display_name,
-              )}
+              {sourceOptions?.fields?.data?.node?.display_name}
             </div>
             {sourceOptions?.fields?.data?.node?.icon && (
               <div className="ml-auto">
@@ -614,45 +615,24 @@ export default function Dropdown({
                   name="RefreshCcw"
                   className={cn("h-3 w-3")}
                 />
-                {t("dropdown.refreshList")}
+                Refresh list
               </div>
             </CommandItem>
           )}
-          {dialogInputs?.fields?.data?.node?.display_name ===
-            "Create Knowledge" ||
-          dialogInputs?.fields?.data?.node?.name === "create_knowledge_base" ? (
-            <KnowledgeBaseUploadModal
-              open={openDialog}
-              setOpen={(isOpen) => {
-                setOpenDialog(isOpen);
-                if (!isOpen) setOpen(false);
-              }}
-              onSubmit={(data) => {
-                setOpenDialog(false);
-                setOpen(false);
-                setPendingSelect(data.sourceName);
-                handleRefreshButtonPress();
-              }}
-              hideAdvanced
-            />
-          ) : (
-            dialogInputs && (
-              <NodeDialog
-                open={openDialog}
-                dialogInputs={dialogInputs}
-                onClose={() => {
-                  setOpenDialog(false);
-                  setOpen(false);
-                }}
-                onCreated={(createdValue) => {
-                  setPendingSelect(createdValue);
-                }}
-                nodeId={nodeId!}
-                name={name!}
-                nodeClass={nodeClass!}
-              />
-            )
-          )}
+          <NodeDialog
+            open={openDialog}
+            dialogInputs={dialogInputs}
+            onClose={() => {
+              setOpenDialog(false);
+              setOpen(false);
+            }}
+            onCreated={(createdValue) => {
+              setPendingSelect(createdValue);
+            }}
+            nodeId={nodeId!}
+            name={name!}
+            nodeClass={nodeClass!}
+          />
         </CommandGroup>
       )}
     </CommandList>
@@ -686,7 +666,7 @@ export default function Dropdown({
                     name="RefreshCcw"
                     className={cn("refresh-icon h-3 w-3 text-primary")}
                   />
-                  {t("dropdown.refreshList")}
+                  Refresh list
                 </div>
               </Button>
             </CommandItem>
@@ -700,7 +680,7 @@ export default function Dropdown({
   if (Object.keys(validOptions).length === 0 && !combobox && isLoading) {
     return (
       <div>
-        <span className="text-sm italic">{t("common.loading")}</span>
+        <span className="text-sm italic">Loading...</span>
       </div>
     );
   }

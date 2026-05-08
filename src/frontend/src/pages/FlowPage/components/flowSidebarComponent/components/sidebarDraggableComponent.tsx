@@ -18,7 +18,6 @@ import { useAddComponent } from "@/hooks/use-add-component";
 import { useDarkStore } from "@/stores/darkStore";
 import useFlowsManagerStore from "@/stores/flowsManagerStore";
 import type { APIClassType } from "@/types/api";
-import { translateComponentText } from "@/utils/componentTranslations";
 import {
   createFlowComponent,
   downloadNode,
@@ -66,7 +65,6 @@ export const SidebarDraggableComponent = forwardRef(
     const { deleteFlow } = useDeleteFlow();
     const flows = useFlowsManagerStore((state) => state.flows);
     const addComponent = useAddComponent();
-    const translatedDisplayName = translateComponentText(display_name);
 
     const version = useDarkStore((state) => state.version);
     const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
@@ -173,15 +171,12 @@ export const SidebarDraggableComponent = forwardRef(
                 className="h-[18px] w-[18px] shrink-0"
               />
               <div className="flex flex-1 items-center overflow-hidden">
-                <ShadTooltip
-                  content={translatedDisplayName}
-                  styleClasses="z-50"
-                >
+                <ShadTooltip content={display_name} styleClasses="z-50">
                   <span
                     data-testid="display-name"
                     className="truncate text-sm font-normal"
                   >
-                    {translatedDisplayName}
+                    {display_name}
                   </span>
                 </ShadTooltip>
                 {beta && (
@@ -190,7 +185,7 @@ export const SidebarDraggableComponent = forwardRef(
                     size="xq"
                     className="ml-1.5 shrink-0"
                   >
-                    {t("common.beta")}
+                    Beta
                   </Badge>
                 )}
                 {legacy && (
@@ -199,7 +194,7 @@ export const SidebarDraggableComponent = forwardRef(
                     size="xq"
                     className="ml-1.5 shrink-0"
                   >
-                    {t("nodeBadges.legacy")}
+                    Legacy
                   </Badge>
                 )}
               </div>
@@ -243,7 +238,7 @@ export const SidebarDraggableComponent = forwardRef(
                           name="Download"
                           className="relative top-0.5 mr-2 h-4 w-4"
                         />{" "}
-                        {t("common.download")}{" "}
+                        {t("sidebar.download")}{" "}
                       </div>{" "}
                     </SelectItem>
                     {(!official || onDelete) && (
@@ -256,7 +251,7 @@ export const SidebarDraggableComponent = forwardRef(
                             name="Trash2"
                             className="relative top-0.5 mr-2 h-4 w-4"
                           />{" "}
-                          {t("common.delete")}{" "}
+                          {t("sidebar.delete")}{" "}
                         </div>{" "}
                       </SelectItem>
                     )}

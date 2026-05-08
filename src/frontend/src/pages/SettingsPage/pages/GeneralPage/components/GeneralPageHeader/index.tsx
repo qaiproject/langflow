@@ -11,14 +11,14 @@ const GeneralPageHeaderComponent = () => {
             className="flex items-center text-lg font-semibold tracking-tight"
             data-testid="settings_menu_header"
           >
-            {t("settings.general")}
+            {t("settings.generalTitle")}
             <ForwardedIconComponent
               name="SlidersHorizontal"
               className="ml-2 h-5 w-5 text-primary"
             />
           </h2>
           <p className="text-sm text-muted-foreground">
-            {t("generalPage.description")}
+            {t("settings.generalDescription")}
           </p>
         </div>
       </div>

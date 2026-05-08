@@ -24,14 +24,14 @@ const ApiKeyHeaderComponent = ({
             className="flex items-center text-lg font-semibold tracking-tight"
             data-testid="settings_menu_header"
           >
-            {t("apiKeys.title")}
+            {t("settings.apiKeysTitle")}
             <ForwardedIconComponent
               name="Key"
               className="ml-2 h-5 w-5 text-primary"
             />
           </h2>
           <p className="text-sm text-muted-foreground">
-            {t("apiKeys.description")}
+            {t("settings.apiPageParagraph")}
           </p>
         </div>
         <div className="flex flex-shrink-0 items-center gap-2">
@@ -42,7 +42,7 @@ const ApiKeyHeaderComponent = ({
           >
             <Button data-testid="api-key-button-store" variant="primary">
               <ForwardedIconComponent name="Plus" className="w-4" />
-              {t("globalVariablesPage.addNew")}
+              {t("settings.addNewKey")}
             </Button>
           </SecretKeyModal>
         </div>

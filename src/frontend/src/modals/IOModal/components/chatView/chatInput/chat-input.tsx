@@ -1,20 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import ShortUniqueId from "short-unique-id";
 import { useStickToBottomContext } from "use-stick-to-bottom";
-import { usePostUploadFile } from "@/controllers/API/queries/files/use-post-upload-file";
-import { ENABLE_IMAGE_ON_PLAYGROUND } from "@/customization/feature-flags";
-import useFileSizeValidator from "@/shared/hooks/use-file-size-validator";
-import useAlertStore from "@/stores/alertStore";
+import { useChatFileUpload } from "@/shared/hooks/use-chat-file-upload";
 import useFlowStore from "@/stores/flowStore";
 import { useUtilityStore } from "@/stores/utilityStore";
 import { useVoiceStore } from "@/stores/voiceStore";
-import {
-  ALLOWED_IMAGE_INPUT_EXTENSIONS,
-  FS_ERROR_TEXT,
-  SN_ERROR_TEXT,
-} from "../../../../../constants/constants";
 import useFlowsManagerStore from "../../../../../stores/flowsManagerStore";
 import type {
   ChatInputType,
@@ -33,13 +23,10 @@ export default function ChatInput({
   files,
   setFiles,
   isDragging,
-  playgroundPage = false,
+  playgroundPage,
 }: ChatInputType): JSX.Element {
-  const { t } = useTranslation();
   const currentFlowId = useFlowsManagerStore((state) => state.currentFlowId);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const setErrorData = useAlertStore((state) => state.setErrorData);
-  const { validateFileSize } = useFileSizeValidator();
   const stopBuilding = useFlowStore((state) => state.stopBuilding);
   const isBuilding = useFlowStore((state) => state.isBuilding);
   const chatValue = useUtilityStore((state) => state.chatValueStore);
@@ -65,107 +52,18 @@ export default function ChatInput({
   useFocusOnUnlock(isBuilding, inputRef);
   useAutoResizeTextArea(chatValue, inputRef);
 
-  const { mutate } = usePostUploadFile();
-
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement> | ClipboardEvent,
-  ) => {
-    if (playgroundPage && !ENABLE_IMAGE_ON_PLAYGROUND) {
-      return;
-    }
-
-    let file: File | null = null;
-
-    if ("clipboardData" in event) {
-      const items = event.clipboardData?.items;
-      if (items) {
-        for (let i = 0; i < items.length; i++) {
-          const blob = items[i].getAsFile();
-          if (blob) {
-            file = blob;
-            break;
-          }
-        }
-      }
-    } else {
-      const fileInput = event.target as HTMLInputElement;
-      file = fileInput.files?.[0] ?? null;
-    }
-    if (file) {
-      const fileExtension = file.name.split(".").pop()?.toLowerCase();
-
-      try {
-        validateFileSize(file);
-      } catch (e) {
-        if (e instanceof Error) {
-          setErrorData({
-            title: e.message,
-          });
-        }
-        return;
-      }
-
-      if (
-        !fileExtension ||
-        !ALLOWED_IMAGE_INPUT_EXTENSIONS.includes(fileExtension)
-      ) {
-        setErrorData({
-          title: t("filesPage.errorUploadingFile"),
-          list: [FS_ERROR_TEXT, SN_ERROR_TEXT],
-        });
-        return;
-      }
-
-      const uid = new ShortUniqueId();
-      const id = uid.randomUUID(10);
-
-      const type = file.type.split("/")[0];
-
-      setFiles((prevFiles) => [
-        ...prevFiles,
-        { file, loading: true, error: false, id, type },
-      ]);
-
-      mutate(
-        { file, id: currentFlowId },
-        {
-          onSuccess: (data) => {
-            setFiles((prev) => {
-              const newFiles = [...prev];
-              const updatedIndex = newFiles.findIndex((file) => file.id === id);
-              newFiles[updatedIndex].loading = false;
-              newFiles[updatedIndex].path = data.file_path;
-              return newFiles;
-            });
-          },
-          onError: (error) => {
-            setFiles((prev) => {
-              const newFiles = [...prev];
-              const updatedIndex = newFiles.findIndex((file) => file.id === id);
-              newFiles[updatedIndex].loading = false;
-              newFiles[updatedIndex].error = true;
-              return newFiles;
-            });
-            setErrorData({
-              title: t("filesPage.errorUploadingFile"),
-              list: [error.response?.data?.detail],
-            });
-          },
-        },
-      );
-    }
-
-    if ("target" in event && event.target instanceof HTMLInputElement) {
-      event.target.value = "";
-    }
-  };
+  const { handleFileChange: handleFileUploadChange } = useChatFileUpload({
+    currentFlowId,
+    setFiles,
+    playgroundPage: !!playgroundPage,
+  });
 
   useEffect(() => {
-    document.addEventListener("paste", handleFileChange);
+    document.addEventListener("paste", handleFileUploadChange);
     return () => {
-      document.removeEventListener("paste", handleFileChange);
+      document.removeEventListener("paste", handleFileUploadChange);
     };
-  }, [handleFileChange, currentFlowId, isBuilding]);
+  }, [handleFileUploadChange, currentFlowId, isBuilding]);
 
   const setChatValueStore = useUtilityStore((state) => state.setChatValueStore);
 
@@ -253,7 +151,7 @@ export default function ChatInput({
             isDragging={isDragging}
             handleDeleteFile={handleDeleteFile}
             fileInputRef={fileInputRef}
-            handleFileChange={handleFileChange}
+            handleFileChange={handleFileUploadChange}
             handleButtonClick={handleButtonClick}
             setShowAudioInput={setShowAudioInput}
             currentFlowId={currentFlowId}

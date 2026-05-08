@@ -54,7 +54,7 @@ export const UserMessage = memo(
           },
           onError: () => {
             setErrorData({
-              title: t("playground.messagesUpdateError"),
+              title: "Error updating messages.",
             });
           },
         },
@@ -88,7 +88,7 @@ export const UserMessage = memo(
         {
           onError: () => {
             setErrorData({
-              title: t("playground.messagesUpdateError"),
+              title: "Error updating messages.",
             });
           },
         },
@@ -97,7 +97,7 @@ export const UserMessage = memo(
 
     const editedFlag = chat.edit ? (
       <div className="mt-2 text-xs text-muted-foreground text-right">
-        ({t("messageOptions.edited")})
+        (Edited)
       </div>
     ) : null;
 
@@ -140,6 +140,9 @@ export const UserMessage = memo(
 
             {/* Content */}
             <div className="flex w-[94%] flex-col gap-2">
+              <span className="text-sm font-medium text-foreground">
+                {chat.sender_name ?? "User"}
+              </span>
               <div className="form-modal-chat-text-position flex-grow">
                 <div className="flex w-full flex-col">
                   {editMessage ? (
@@ -157,12 +160,10 @@ export const UserMessage = memo(
                           className={cn(
                             "w-full items-baseline whitespace-pre-wrap break-words text-sm font-normal",
                             isEmpty ? "text-muted-foreground" : "text-primary",
-                        )}
-                        data-testid={`chat-message-${chat.sender_name}-${chatMessage}`}
-                      >
-                          {isEmpty
-                            ? t("playground.emptyInputMessage")
-                            : decodedMessage}
+                          )}
+                          data-testid={`chat-message-${chat.sender_name}-${chatMessage}`}
+                        >
+                          {isEmpty ? t("input.noInputMessage") : decodedMessage}
                           {editedFlag}
                         </div>
                       )}

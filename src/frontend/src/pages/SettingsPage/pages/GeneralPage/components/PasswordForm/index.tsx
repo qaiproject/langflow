@@ -14,21 +14,11 @@ import {
 type PasswordFormComponentProps = {
   password: string;
   cnfPassword: string;
-  handleInput: (event: {
-    target: {
-      name: string;
-      value: string;
-    };
-  }) => void;
+  handleInput: (event: any) => void;
   handlePatchPassword: (
     password: string,
     cnfPassword: string,
-    handleInput: (event: {
-      target: {
-        name: string;
-        value: string;
-      };
-    }) => void,
+    handleInput: any,
   ) => void;
 };
 const PasswordFormComponent = ({
@@ -48,9 +38,9 @@ const PasswordFormComponent = ({
       >
         <Card x-chunk="dashboard-04-chunk-2">
           <CardHeader>
-            <CardTitle>{t("passwordForm.title")}</CardTitle>
+            <CardTitle>{t("settings.passwordTitle")}</CardTitle>
             <CardDescription>
-              {t("passwordForm.description")}
+              {t("settings.passwordDescription")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -64,11 +54,11 @@ const PasswordFormComponent = ({
                   value={password}
                   isForm
                   password={true}
-                  placeholder={t("auth.password")}
+                  placeholder={t("settings.passwordPlaceholder")}
                   className="w-full"
                 />
                 <Form.Message match="valueMissing" className="field-invalid">
-                  {t("auth.enterPassword")}
+                  {t("settings.passwordRequired")}
                 </Form.Message>
               </Form.Field>
               <Form.Field name="cnfPassword" className="w-full">
@@ -82,19 +72,19 @@ const PasswordFormComponent = ({
                   value={cnfPassword}
                   isForm
                   password={true}
-                  placeholder={t("auth.confirmPassword")}
+                  placeholder={t("settings.confirmPasswordPlaceholder")}
                   className="w-full"
                 />
 
                 <Form.Message className="field-invalid" match="valueMissing">
-                  {t("auth.confirmYourPassword")}
+                  {t("settings.confirmPasswordRequired")}
                 </Form.Message>
               </Form.Field>
             </div>
           </CardContent>
           <CardFooter className="border-t px-6 py-4">
             <Form.Submit asChild>
-              <Button type="submit">{t("common.save")}</Button>
+              <Button type="submit">{t("settings.saveButton")}</Button>
             </Form.Submit>
           </CardFooter>
         </Card>

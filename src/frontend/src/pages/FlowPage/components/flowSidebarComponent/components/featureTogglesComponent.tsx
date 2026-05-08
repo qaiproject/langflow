@@ -11,14 +11,14 @@ const FeatureToggles = ({
   const { t } = useTranslation();
   const toggles = [
     {
-      label: "Beta",
+      label: t("sidebar.betaLabel"),
       checked: showBeta,
       onChange: setShowBeta,
       badgeVariant: "purpleStatic" as const,
       testId: "sidebar-beta-switch",
     },
     {
-      label: "Legacy",
+      label: t("sidebar.legacyLabel"),
       checked: showLegacy,
       onChange: setShowLegacy,
       badgeVariant: "secondaryStatic" as const,

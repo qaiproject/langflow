@@ -1,5 +1,4 @@
 import { TweaksComponent } from "@/components/core/codeTabsComponent/components/tweaksComponent";
-import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,6 +16,7 @@ import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/theme-twilight";
 import { cloneDeep } from "lodash";
 import { type ChangeEvent, type ReactNode, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import IconComponent from "../../components/common/genericIconComponent";
 import { useTweaksStore } from "../../stores/tweaksStore";
@@ -114,14 +114,15 @@ export default function ApiModal({
         <BaseModal.Header
           description={
             <span className="pr-2">
-              {t("api.descriptionPrefix")}{" "}
+              {t("modal.api.description")}{" "}
               <CustomLink
                 to="/settings/api-keys"
                 className="text-accent-pink-foreground"
               >
-                {t("api.descriptionLink")}
+                {" "}
+                {t("modal.api.createApiKey")}
               </CustomLink>{" "}
-              {t("api.descriptionSuffix")}
+              {t("modal.api.descriptionSuffix")}
             </span>
           }
         >
@@ -130,7 +131,7 @@ export default function ApiModal({
             className="h-6 w-6 text-foreground"
             aria-hidden="true"
           />
-          <span className="pl-2">{t("api.access")}</span>
+          <span className="pl-2">{t("modal.api.title")}</span>
           {nodes.length > 0 && (
             <div className="border-r-1 absolute right-12 flex items-center text-mmd font-medium leading-[16px]">
               <Button
@@ -139,13 +140,13 @@ export default function ApiModal({
                 className="h-8 select-none px-3"
                 onClick={() => setOpenTweaks(true)}
                 data-testid="tweaks-button"
-                >
-                  <IconComponent
-                    name="SlidersHorizontal"
-                    className="h-3.5 w-3.5"
-                  />
+              >
+                <IconComponent
+                  name="SlidersHorizontal"
+                  className="h-3.5 w-3.5"
+                />
                 <span>
-                  {t("api.inputSchema")} ({Object.keys(tweaks)?.length}){" "}
+                  {t("modal.api.inputSchema")} ({Object.keys(tweaks)?.length}){" "}
                 </span>
               </Button>
               <Separator orientation="vertical" className="ml-2 h-8" />
@@ -169,18 +170,20 @@ export default function ApiModal({
       >
         <BaseModal.Header>
           <IconComponent name="SlidersHorizontal" className="text-f h-6 w-6" />
-          <span className="pl-2">{t("api.inputSchema")}</span>
+          <span className="pl-2">{t("modal.api.inputSchema")}</span>
         </BaseModal.Header>
         <BaseModal.Content overflowHidden className="flex flex-col gap-4">
           {true && (
             <Label>
               <div className="edit-flow-arrangement mt-2">
                 <span className="shrink-0 text-mmd font-medium">
-                  {t("api.endpointName")}
+                  {t("modal.api.endpointName")}
                 </span>
                 {!validEndpointName && (
                   <span className="edit-flow-span">
-                    {t("api.endpointValidation", { max: MAX_LENGTH })}
+                    {t("modal.api.endpointValidation", {
+                      maxLength: MAX_LENGTH,
+                    })}
                   </span>
                 )}
               </div>
@@ -190,7 +193,7 @@ export default function ApiModal({
                 type="text"
                 name="endpoint_name"
                 value={endpointName ?? ""}
-                placeholder={t("api.endpointPlaceholder")}
+                placeholder={t("modal.api.endpointPlaceholder")}
                 maxLength={MAX_LENGTH}
                 minLength={MIN_LENGTH}
                 id="endpoint_name"
@@ -200,10 +203,10 @@ export default function ApiModal({
           <div className="flex flex-1 flex-col gap-2 overflow-hidden">
             <div className="flex flex-col gap-1">
               <span className="shrink-0 text-sm font-medium">
-                {t("api.exposeApi")}
+                {t("modal.api.exposeApi")}
               </span>
               <span className="text-mmd text-muted-foreground">
-                {t("api.exposeApiDescription")}
+                {t("modal.api.exposeApiDescription")}
               </span>
             </div>
             <div className="min-h-0 w-full flex-1 flex-col overflow-y-auto overflow-x-hidden rounded-lg bg-muted custom-scroll">

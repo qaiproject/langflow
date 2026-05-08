@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import IconComponent from "@/components/common/genericIconComponent";
 import ShadTooltip from "@/components/common/shadTooltipComponent";
 import { convertTestName } from "@/components/common/storeCardComponent/utils/convert-test-name";
@@ -9,7 +10,6 @@ import {
 } from "@/components/ui/select-custom";
 import type { FolderType } from "@/pages/MainPage/entities";
 import { cn } from "@/utils/utils";
-import { useTranslation } from "react-i18next";
 import { handleSelectChange } from "../helpers/handle-select-change";
 import { FolderSelectItem } from "./folder-select-item";
 
@@ -27,7 +27,6 @@ export const SelectOptions = ({
   checkPathName: (folderId: string) => boolean;
 }) => {
   const { t } = useTranslation();
-
   return (
     <div>
       <Select
@@ -43,7 +42,7 @@ export const SelectOptions = ({
         value=""
       >
         <ShadTooltip
-          content={t("playground.options")}
+          content={t("folder.options")}
           side="right"
           styleClasses="z-50"
         >
@@ -70,28 +69,21 @@ export const SelectOptions = ({
             data-testid="btn-rename-project"
             className="text-xs"
           >
-            <FolderSelectItem
-              name={t("playground.rename")}
-              iconName="SquarePen"
-            />
+            <FolderSelectItem name={t("folder.rename")} iconName="SquarePen" />
           </SelectItem>
           <SelectItem
             value="download"
             data-testid="btn-download-project"
             className="text-xs"
           >
-            <FolderSelectItem name={t("common.download")} iconName="Download" />
+            <FolderSelectItem name={t("folder.download")} iconName="Download" />
           </SelectItem>
           <SelectItem
             value="delete"
             data-testid="btn-delete-project"
             className="text-xs"
           >
-            <FolderSelectItem
-              name={t("common.delete")}
-              iconName="Trash2"
-              destructive
-            />
+            <FolderSelectItem name={t("folder.delete")} iconName="Trash2" />
           </SelectItem>
         </SelectContent>
       </Select>

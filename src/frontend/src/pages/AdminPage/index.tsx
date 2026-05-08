@@ -1,5 +1,5 @@
-import { cloneDeep } from "lodash";
-import { useContext, useEffect, useRef, useState } from "react";
+import { cloneDeep, debounce } from "lodash";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import PaginatorComponent from "@/components/common/paginatorComponent";
 import {
@@ -23,14 +23,6 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table";
-import {
-  USER_ADD_ERROR_ALERT,
-  USER_ADD_SUCCESS_ALERT,
-  USER_DEL_ERROR_ALERT,
-  USER_DEL_SUCCESS_ALERT,
-  USER_EDIT_ERROR_ALERT,
-  USER_EDIT_SUCCESS_ALERT,
-} from "../../constants/alerts_constants";
 import {
   PAGINATION_PAGE,
   PAGINATION_ROWS_COUNT,
@@ -59,71 +51,62 @@ export default function AdminPage() {
   const { mutate: mutateUpdateUser } = useUpdateUser();
   const { mutate: mutateAddUser } = useAddUser();
 
-  const userList = useRef([]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      getUsers();
-    }, 500);
-  }, []);
-
-  const [filterUserList, setFilterUserList] = useState(userList.current);
+  const [userList, setUserList] = useState<Users[]>([]);
 
   const { mutate: mutateGetUsers, isPending, isIdle } = useGetUsers({});
 
-  function getUsers() {
-    mutateGetUsers(
-      {
-        skip: size * (index - 1),
-        limit: size,
-      },
-      {
-        onSuccess: (users) => {
-          setTotalRowsCount(users["total_count"]);
-          userList.current = users["users"];
-          setFilterUserList(users["users"]);
+  const fetchUsers = useCallback(
+    (skip: number, limit: number, search?: string) => {
+      mutateGetUsers(
+        { skip, limit, search: search || undefined },
+        {
+          onSuccess: (users) => {
+            setTotalRowsCount(users["total_count"]);
+            setUserList(users["users"]);
+          },
+          onError: () => {},
         },
-        onError: () => {},
-      },
-    );
-  }
+      );
+    },
+    [mutateGetUsers],
+  );
+
+  useEffect(() => {
+    setTimeout(() => {
+      fetchUsers(size * (index - 1), size);
+    }, 500);
+  }, []);
 
   function handleChangePagination(pageIndex: number, pageSize: number) {
     setPageSize(pageSize);
     setPageIndex(pageIndex);
-
-    mutateGetUsers(
-      {
-        skip: pageSize * (pageIndex - 1),
-        limit: pageSize,
-      },
-      {
-        onSuccess: (users) => {
-          setTotalRowsCount(users["total_count"]);
-          userList.current = users["users"];
-          setFilterUserList(users["users"]);
-        },
-      },
-    );
+    fetchUsers(pageSize * (pageIndex - 1), pageSize, inputValue);
   }
 
   function resetFilter() {
+    setInputValue("");
     setPageIndex(PAGINATION_PAGE);
     setPageSize(PAGINATION_SIZE);
-    getUsers();
+    fetchUsers(0, PAGINATION_SIZE);
   }
+
+  const debouncedSearch = useCallback(
+    debounce((search: string) => {
+      setPageIndex(PAGINATION_PAGE);
+      fetchUsers(0, size, search);
+    }, 300),
+    [size, fetchUsers],
+  );
+
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
 
   function handleFilterUsers(input: string) {
     setInputValue(input);
-
-    if (input === "") {
-      setFilterUserList(userList.current);
-    } else {
-      const filteredList = userList.current.filter((user: Users) =>
-        user.username.toLowerCase().includes(input.toLowerCase()),
-      );
-      setFilterUserList(filteredList);
-    }
+    debouncedSearch(input);
   }
 
   function handleDeleteUser(user) {
@@ -133,12 +116,12 @@ export default function AdminPage() {
         onSuccess: () => {
           resetFilter();
           setSuccessData({
-            title: USER_DEL_SUCCESS_ALERT,
+            title: t("success.userDeleted"),
           });
         },
         onError: (error) => {
           setErrorData({
-            title: USER_DEL_ERROR_ALERT,
+            title: t("errors.deleteUser"),
             list: [error["response"]["data"]["detail"]],
           });
         },
@@ -153,12 +136,12 @@ export default function AdminPage() {
         onSuccess: () => {
           resetFilter();
           setSuccessData({
-            title: USER_EDIT_SUCCESS_ALERT,
+            title: t("success.userEdited"),
           });
         },
         onError: (error) => {
           setErrorData({
-            title: USER_EDIT_ERROR_ALERT,
+            title: t("errors.editUser"),
             list: [error["response"]["data"]["detail"]],
           });
         },
@@ -176,12 +159,12 @@ export default function AdminPage() {
         onSuccess: () => {
           resetFilter();
           setSuccessData({
-            title: USER_EDIT_SUCCESS_ALERT,
+            title: t("success.userEdited"),
           });
         },
         onError: (error) => {
           setErrorData({
-            title: USER_EDIT_ERROR_ALERT,
+            title: t("errors.editUser"),
             list: [error["response"]["data"]["detail"]],
           });
         },
@@ -199,12 +182,12 @@ export default function AdminPage() {
         onSuccess: () => {
           resetFilter();
           setSuccessData({
-            title: USER_EDIT_SUCCESS_ALERT,
+            title: t("success.userEdited"),
           });
         },
         onError: (error) => {
           setErrorData({
-            title: USER_EDIT_ERROR_ALERT,
+            title: t("errors.editUser"),
             list: [error["response"]["data"]["detail"]],
           });
         },
@@ -227,12 +210,12 @@ export default function AdminPage() {
             onSuccess: () => {
               resetFilter();
               setSuccessData({
-                title: USER_ADD_SUCCESS_ALERT,
+                title: t("success.userAdded"),
               });
             },
             onError: (error) => {
               setErrorData({
-                title: USER_ADD_ERROR_ALERT,
+                title: t("errors.addUser"),
                 list: [error["response"]["data"]["detail"]],
               });
             },
@@ -241,7 +224,7 @@ export default function AdminPage() {
       },
       onError: (error) => {
         setErrorData({
-          title: USER_ADD_ERROR_ALERT,
+          title: t("errors.addUser"),
           list: [error["response"]["data"]["detail"]],
         });
       },
@@ -258,31 +241,30 @@ export default function AdminPage() {
                 <IconComponent name="ChevronLeft" className="w-5" />
               </Button>
               <IconComponent name="Shield" className="w-6" />
-              {t("admin.title")}
+              {t("settings.adminTitle")}
             </span>
           </div>
           <span className="admin-page-description-text">
-            {t("admin.description")}
+            {t("settings.adminDescription")}
           </span>
           <div className="flex w-full justify-between">
             <div className="flex w-96 items-center gap-4">
               <Input
-                placeholder={t("admin.searchUsername")}
+                placeholder={t("admin.searchPlaceholder")}
                 value={inputValue}
                 onChange={(e) => handleFilterUsers(e.target.value)}
               />
               {inputValue.length > 0 ? (
-                <button
-                  type="button"
+                <div
                   className="cursor-pointer"
                   onClick={() => {
                     setInputValue("");
-                    setFilterUserList(userList.current);
+                    setPageIndex(PAGINATION_PAGE);
+                    fetchUsers(0, size);
                   }}
-                  aria-label={t("admin.clearSearch")}
                 >
                   <IconComponent name="X" className="w-6 text-foreground" />
-                </button>
+                </div>
               ) : (
                 <div>
                   <IconComponent
@@ -294,25 +276,25 @@ export default function AdminPage() {
             </div>
             <div>
               <UserManagementModal
-                title={t("admin.newUser")}
-                titleHeader={t("admin.addNewUser")}
-                cancelText={t("common.cancel")}
-                confirmationText={t("common.save")}
+                title={t("admin.newUserTitle")}
+                titleHeader={t("admin.newUserHeader")}
+                cancelText={t("admin.cancelButton")}
+                confirmationText={t("admin.saveButton")}
                 icon={"UserPlus2"}
                 onConfirm={(index, user) => {
                   handleNewUser(user);
                 }}
                 asChild
               >
-                <Button variant="primary">{t("admin.newUser")}</Button>
+                <Button variant="primary">{t("admin.newUserButton")}</Button>
               </UserManagementModal>
             </div>
           </div>
-          {isPending || isIdle ? (
+          {(isPending || isIdle) && userList.length === 0 ? (
             <div className="flex h-full w-full items-center justify-center">
               <CustomLoader remSize={12} />
             </div>
-          ) : userList.current.length === 0 && !isIdle ? (
+          ) : userList.length === 0 && !isPending && !isIdle ? (
             <>
               <div className="m-4 flex items-center justify-between text-sm">
                 {t("admin.noUsersRegistered")}
@@ -333,29 +315,31 @@ export default function AdminPage() {
                     }
                   >
                     <TableRow>
-                      <TableHead className="h-10">{t("admin.table.id")}</TableHead>
                       <TableHead className="h-10">
-                        {t("admin.table.username")}
+                        {t("admin.columnId")}
                       </TableHead>
                       <TableHead className="h-10">
-                        {t("admin.table.active")}
+                        {t("admin.columnUsername")}
                       </TableHead>
                       <TableHead className="h-10">
-                        {t("admin.table.superuser")}
+                        {t("admin.columnActive")}
                       </TableHead>
                       <TableHead className="h-10">
-                        {t("admin.table.createdAt")}
+                        {t("admin.columnSuperuser")}
                       </TableHead>
                       <TableHead className="h-10">
-                        {t("admin.table.updatedAt")}
+                        {t("admin.columnCreatedAt")}
+                      </TableHead>
+                      <TableHead className="h-10">
+                        {t("admin.columnUpdatedAt")}
                       </TableHead>
                       <TableHead className="h-10 w-[100px] text-right"></TableHead>
                     </TableRow>
                   </TableHeader>
-                  {!isPending && (
+                  {
                     <TableBody className="border-b">
-                      {filterUserList.map((user: UserInputType, index) => (
-                        <TableRow key={index}>
+                      {userList.map((user: UserInputType, index) => (
+                        <TableRow key={user.id}>
                           <TableCell className="truncate py-2 font-medium">
                             <ShadTooltip content={user.id}>
                               <span className="cursor-default">{user.id}</span>
@@ -370,7 +354,9 @@ export default function AdminPage() {
                           </TableCell>
                           <TableCell className="relative left-1 truncate py-2 text-align-last-left">
                             {user.id === userData?.id ? (
-                              <ShadTooltip content={t("auth.deactivateOwnAccount")}>
+                              <ShadTooltip
+                                content={t("admin.cannotDeactivateSelf")}
+                              >
                                 <div className="flex w-fit cursor-not-allowed opacity-50">
                                   <CheckBoxDiv checked={user.is_active} />
                                 </div>
@@ -378,11 +364,11 @@ export default function AdminPage() {
                             ) : (
                               <ConfirmationModal
                                 size="x-small"
-                                title={t("common.edit")}
+                                title={t("admin.editTitle")}
                                 titleHeader={`${user.username}`}
-                                modalContentTitle={t("admin.attention")}
-                                cancelText={t("common.cancel")}
-                                confirmationText={t("common.confirm")}
+                                modalContentTitle={t("admin.attentionTitle")}
+                                cancelText={t("admin.cancelButton")}
+                                confirmationText={t("admin.confirmButton")}
                                 icon={"UserCog2"}
                                 data={user}
                                 index={index}
@@ -396,7 +382,7 @@ export default function AdminPage() {
                               >
                                 <ConfirmationModal.Content>
                                   <span>
-                                    {t("admin.editChangesConfirmation")}
+                                    {t("admin.editUserConfirmContent")}
                                   </span>
                                 </ConfirmationModal.Content>
                                 <ConfirmationModal.Trigger>
@@ -410,11 +396,11 @@ export default function AdminPage() {
                           <TableCell className="relative left-1 truncate py-2 text-align-last-left">
                             <ConfirmationModal
                               size="x-small"
-                              title={t("common.edit")}
+                              title={t("admin.editTitle")}
                               titleHeader={`${user.username}`}
-                              modalContentTitle={t("admin.attention")}
-                              cancelText={t("common.cancel")}
-                              confirmationText={t("common.confirm")}
+                              modalContentTitle={t("admin.attentionTitle")}
+                              cancelText={t("admin.cancelButton")}
+                              confirmationText={t("admin.confirmButton")}
                               icon={"UserCog2"}
                               data={user}
                               index={index}
@@ -427,9 +413,7 @@ export default function AdminPage() {
                               }}
                             >
                               <ConfirmationModal.Content>
-                                <span>
-                                  {t("admin.editChangesConfirmation")}
-                                </span>
+                                <span>{t("admin.editUserConfirmContent")}</span>
                               </ConfirmationModal.Content>
                               <ConfirmationModal.Trigger>
                                 <div className="flex w-fit">
@@ -455,10 +439,10 @@ export default function AdminPage() {
                           <TableCell className="flex w-[100px] py-2 text-right">
                             <div className="flex">
                               <UserManagementModal
-                                title={t("common.edit")}
+                                title={t("admin.editTitle")}
                                 titleHeader={`${user.id}`}
-                                cancelText={t("common.cancel")}
-                                confirmationText={t("common.save")}
+                                cancelText={t("admin.cancelButton")}
+                                confirmationText={t("admin.saveButton")}
                                 icon={"UserPlus2"}
                                 data={user}
                                 index={index}
@@ -466,7 +450,10 @@ export default function AdminPage() {
                                   handleEditUser(user.id, editUser);
                                 }}
                               >
-                                <ShadTooltip content={t("admin.editTooltip")} side="top">
+                                <ShadTooltip
+                                  content={t("admin.editTitle")}
+                                  side="top"
+                                >
                                   <IconComponent
                                     name="Pencil"
                                     className="h-4 w-4 cursor-pointer"
@@ -476,11 +463,11 @@ export default function AdminPage() {
 
                               <ConfirmationModal
                                 size="x-small"
-                                title={t("admin.deleteUserTitle")}
+                                title={t("admin.deleteTitle")}
                                 titleHeader={t("admin.deleteUserHeader")}
-                                modalContentTitle={t("admin.attention")}
-                                cancelText={t("common.cancel")}
-                                confirmationText={t("common.delete")}
+                                modalContentTitle={t("admin.attentionTitle")}
+                                cancelText={t("admin.cancelButton")}
+                                confirmationText={t("admin.deleteTitle")}
                                 icon={"UserMinus2"}
                                 data={user}
                                 index={index}
@@ -490,7 +477,7 @@ export default function AdminPage() {
                               >
                                 <ConfirmationModal.Content>
                                   <span>
-                                    {t("admin.deleteUserConfirmation")}
+                                    {t("admin.deleteUserConfirmContent")}
                                   </span>
                                 </ConfirmationModal.Content>
                                 <ConfirmationModal.Trigger>
@@ -505,7 +492,7 @@ export default function AdminPage() {
                         </TableRow>
                       ))}
                     </TableBody>
-                  )}
+                  }
                 </Table>
               </div>
 

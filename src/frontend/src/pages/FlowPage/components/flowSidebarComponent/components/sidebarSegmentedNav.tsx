@@ -1,9 +1,6 @@
-import { useEffect, useState } from "react";
-import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import ShadTooltip from "@/components/common/shadTooltipComponent";
-import { Separator } from "@/components/ui/separator";
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -28,79 +25,40 @@ export const NAV_ITEMS: NavItem[] = [
   {
     id: "search",
     icon: "search",
-    label: "Search",
-    tooltip: "Search",
+    label: "sidebar.nav.search",
+    tooltip: "sidebar.nav.search",
   },
   {
     id: "components",
     icon: "component",
-    label: "Components",
-    tooltip: "Components",
+    label: "sidebar.nav.components",
+    tooltip: "sidebar.nav.components",
   },
   {
     id: "mcp",
     icon: "Mcp",
-    label: "MCP",
-    tooltip: "MCP",
+    label: "sidebar.nav.mcp",
+    tooltip: "sidebar.nav.mcp",
   },
   {
     id: "bundles",
     icon: "blocks",
-    label: "Bundles",
-    tooltip: "Bundles",
-  },
-  {
-    id: "add_note",
-    icon: "sticky-note",
-    label: "Sticky Notes",
-    tooltip: "Add Sticky Notes",
+    label: "sidebar.nav.bundles",
+    tooltip: "sidebar.nav.bundles",
   },
   {
     id: "versions",
     icon: "History",
-    label: "Versions",
-    tooltip: "Version History",
+    label: "sidebar.nav.versions",
+    tooltip: "sidebar.nav.versionHistory",
   },
   {
     id: "traces",
     icon: "Activity",
-    label: "Traces",
-    tooltip: "Traces",
+    label: "sidebar.nav.traces",
+    tooltip: "sidebar.nav.traces",
   },
 ];
-
-export const getTranslatedNavItems = (t: TFunction): NavItem[] =>
-  NAV_ITEMS.map((item) => ({
-    ...item,
-    label:
-      item.id === "search"
-        ? t("flowSidebar.search")
-        : item.id === "components"
-          ? t("flowSidebar.components")
-          : item.id === "mcp"
-            ? t("flowSidebar.mcp")
-            : item.id === "bundles"
-              ? t("flowSidebar.bundles")
-              : item.id === "add_note"
-                ? t("flowSidebar.stickyNotes")
-                : item.id === "versions"
-                  ? t("flowSidebar.versions")
-                  : t("flowSidebar.traces"),
-    tooltip:
-      item.id === "search"
-        ? t("flowSidebar.search")
-        : item.id === "components"
-          ? t("flowSidebar.components")
-          : item.id === "mcp"
-            ? t("flowSidebar.mcp")
-            : item.id === "bundles"
-              ? t("flowSidebar.bundles")
-              : item.id === "add_note"
-                ? t("flowSidebar.addStickyNotes")
-                : item.id === "versions"
-                  ? t("flowSidebar.versionHistory")
-                  : t("flowSidebar.traces"),
-  }));
 
 const SidebarSegmentedNav = () => {
   const { t } = useTranslation();
@@ -110,47 +68,20 @@ const SidebarSegmentedNav = () => {
   const setPlaygroundFullscreen = usePlaygroundStore(
     (state) => state.setIsFullscreen,
   );
-  const [isAddNoteActive, setIsAddNoteActive] = useState(false);
-
-  const navItems = getTranslatedNavItems(t);
-  const handleAddNote = () => {
-    if (activeSection === "traces") {
-      setActiveSection("components");
-    }
-    window.dispatchEvent(new Event("lf:start-add-note"));
-    setIsAddNoteActive(true);
-  };
-
-  useEffect(() => {
-    const onEnd = () => setIsAddNoteActive(false);
-    window.addEventListener("lf:end-add-note", onEnd);
-    return () => window.removeEventListener("lf:end-add-note", onEnd);
-  }, []);
 
   return (
     <div className="flex h-full flex-col border-r border-border bg-background">
       <SidebarMenu className="gap-2 py-1">
-        {navItems.map((item) => (
+        {NAV_ITEMS.map((item) => (
           <div key={item.id}>
-            {item.id === "add_note" && <Separator className="w-full" />}
             <SidebarMenuItem className="px-1 pt-1">
-              <ShadTooltip content={item.tooltip} side="right">
+              <ShadTooltip content={t(item.tooltip)} side="right">
                 <SidebarMenuButton
                   size="md"
-                  onClick={(e) => {
-                    if (item.id === "add_note") {
-                      e.stopPropagation();
-                      handleAddNote();
-                      return;
-                    }
-
+                  onClick={() => {
                     if (item.id === "traces") {
                       setPlaygroundOpen(false);
                       setPlaygroundFullscreen(false);
-                    }
-
-                    if (isAddNoteActive) {
-                      setIsAddNoteActive(false);
                     }
 
                     setSearch?.("");
@@ -170,18 +101,10 @@ const SidebarSegmentedNav = () => {
                       }
                     }
                   }}
-                  isActive={
-                    item.id === "add_note"
-                      ? isAddNoteActive
-                      : activeSection === item.id
-                  }
+                  isActive={activeSection === item.id}
                   className={cn(
                     "flex h-8 w-8 items-center justify-center rounded-md p-0 transition-all duration-200",
-                    (
-                      item.id === "add_note"
-                        ? isAddNoteActive
-                        : activeSection === item.id
-                    )
+                    activeSection === item.id
                       ? "bg-accent text-accent-foreground"
                       : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
                   )}
@@ -191,7 +114,7 @@ const SidebarSegmentedNav = () => {
                     name={item.icon}
                     className="h-5 w-5"
                   />
-                  <span className="sr-only">{item.label}</span>
+                  <span className="sr-only">{t(item.label)}</span>
                 </SidebarMenuButton>
               </ShadTooltip>
             </SidebarMenuItem>

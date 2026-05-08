@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import AlertDropdown from "@/alerts/alertDropDown";
-import QosmoLogo from "@/components/common/QosmoLogo";
-import { AssistantButton } from "@/components/common/assistant";
+import LangflowLogo from "@/assets/LangflowLogo.svg?react";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import ModelProviderCount from "@/components/common/modelProviderCountComponent";
 import ShadTooltip from "@/components/common/shadTooltipComponent";
@@ -11,7 +10,6 @@ import { Separator } from "@/components/ui/separator";
 import CustomAccountMenu from "@/customization/components/custom-AccountMenu";
 import CustomLangflowCounts from "@/customization/components/custom-langflow-counts";
 import { CustomOrgSelector } from "@/customization/components/custom-org-selector";
-import { LANGFLOW_AGENTIC_EXPERIENCE } from "@/customization/feature-flags";
 import { useCustomNavigate } from "@/customization/hooks/use-custom-navigate";
 import useTheme from "@/customization/hooks/use-custom-theme";
 import useAlertStore from "@/stores/alertStore";
@@ -67,7 +65,7 @@ export default function AppHeader(): JSX.Element {
           className="mr-1 flex h-8 w-8 items-center"
           data-testid="icon-ChevronLeft"
         >
-          <QosmoLogo className="h-6 w-6" />
+          <LangflowLogo className="h-5 w-5" />
         </Button>
         <CustomOrgSelector />
       </div>
@@ -83,7 +81,6 @@ export default function AppHeader(): JSX.Element {
         data-testid="header_right_section_wrapper"
       >
         {false && <ModelProviderCount />}
-        {LANGFLOW_AGENTIC_EXPERIENCE && <AssistantButton type="header" />}
         <div className="hidden pr-2 whitespace-nowrap lg:inline-flex lg:items-center">
           <CustomLangflowCounts />
         </div>
@@ -92,7 +89,7 @@ export default function AppHeader(): JSX.Element {
           onClose={() => setActiveState(null)}
         >
           <ShadTooltip
-            content={t("appHeader.notificationsAndErrors")}
+            content={t("header.notifications")}
             side="bottom"
             styleClasses="z-10"
           >
@@ -119,7 +116,7 @@ export default function AppHeader(): JSX.Element {
                     strokeWidth={2}
                   />
                   <span className="hidden whitespace-nowrap">
-                    {t("notifications.title")}
+                    {t("header.notificationsLabel")}
                   </span>
                 </div>
               </Button>

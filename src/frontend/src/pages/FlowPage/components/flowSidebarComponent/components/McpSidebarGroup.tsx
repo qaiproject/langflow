@@ -13,7 +13,6 @@ import AddMcpServerModal from "@/modals/addMcpServerModal";
 import DeleteConfirmationModal from "@/modals/deleteConfirmationModal";
 import useAlertStore from "@/stores/alertStore";
 import type { APIClassType } from "@/types/api";
-import { translateComponentText } from "@/utils/componentTranslations";
 import { removeCountFromString } from "@/utils/utils";
 import { SearchConfigTrigger } from "./searchConfigTrigger";
 import SidebarDraggableComponent from "./sidebarDraggableComponent";
@@ -46,7 +45,7 @@ const McpEmptyState = ({ isLoading }: { isLoading?: boolean }) => {
   return (
     <>
       <div className="flex flex-col h-full w-full items-center justify-center py-8 px-4 text-center min-h-[200px]">
-        <p className="text-muted-foreground mb-4">{t("mcp.noServersAdded")}</p>
+        <p className="text-muted-foreground mb-4">{t("sidebar.mcp.empty")}</p>
         <Button
           variant="outline"
           size="sm"
@@ -54,7 +53,7 @@ const McpEmptyState = ({ isLoading }: { isLoading?: boolean }) => {
           onClick={handleAddMcpServerClick}
           data-testid="add-mcp-server-button-sidebar"
         >
-          <span>{t("mcp.addServer")}</span>
+          <span>{t("sidebar.mcp.add")}</span>
         </Button>
       </div>
       <AddMcpServerModal open={addMcpOpen} setOpen={setAddMcpOpen} />
@@ -115,7 +114,7 @@ const McpSidebarGroup = ({
     <SidebarGroup className={`p-3 pr-2${!hasMcpServers ? " h-full" : ""}`}>
       {hasMcpServers && (
         <SidebarGroupLabel className="cursor-default w-full flex items-center justify-between">
-          <span>{t("settings.mcpServers")}</span>
+          <span>{t("sidebar.mcp.title")}</span>
           {showSearchConfigTrigger && (
             <SearchConfigTrigger
               showConfig={showConfig}
@@ -126,7 +125,7 @@ const McpSidebarGroup = ({
       )}
       <SidebarGroupContent className="h-full">
         <SidebarMenu className={!hasMcpServers ? " h-full" : ""}>
-          {isLoading && <span>{t("common.loading")}</span>}
+          {isLoading && <span>Loading...</span>}
           {isSuccess && !hasMcpServers && (
             <McpEmptyState isLoading={isLoading} />
           )}
@@ -135,12 +134,7 @@ const McpSidebarGroup = ({
             hasMcpServers &&
             mcpComponents.map((mcpComponent, idx) => (
               <ShadTooltip
-                content={
-                  mcpComponent.mcpServerName ??
-                  translateComponentText(
-                    mcpComponent.display_name || mcpComponent.name,
-                  )
-                }
+                content={mcpComponent.display_name || mcpComponent.name}
                 side="right"
                 key={mcpComponent.mcpServerName ?? mcpComponent.display_name}
               >
@@ -182,7 +176,7 @@ const McpSidebarGroup = ({
               setDeleteModalOpen(false);
               setServerToDelete(null);
             }}
-            description={t("mcp.server")}
+            description={"MCP Server"}
           />
         </SidebarMenu>
       </SidebarGroupContent>

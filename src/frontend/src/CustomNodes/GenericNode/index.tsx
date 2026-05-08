@@ -2,11 +2,11 @@ import { useUpdateNodeInternals } from "@xyflow/react";
 import { cloneDeep } from "lodash";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import { usePostValidateComponentCode } from "@/controllers/API/queries/nodes/use-post-validate-component-code";
 import { CustomNodeStatus } from "@/customization/components/custom-NodeStatus";
-import i18n from "@/i18n";
 import UpdateComponentModal from "@/modals/updateComponentModal";
 import { useAlternate } from "@/shared/hooks/use-alternate";
 import type { FlowStoreType } from "@/types/zustand/flow";
@@ -15,13 +15,16 @@ import { ICON_STROKE_WIDTH } from "../../constants/constants";
 import NodeToolbarComponent from "../../pages/FlowPage/components/nodeToolbarComponent";
 import { useChangeOnUnfocus } from "../../shared/hooks/use-change-on-unfocus";
 import useAlertStore from "../../stores/alertStore";
-import useFlowStore from "../../stores/flowStore";
+import useFlowStore, {
+  registerNodeUpdate,
+  completeNodeUpdate,
+} from "../../stores/flowStore";
 import useFlowsManagerStore from "../../stores/flowsManagerStore";
+import { useUtilityStore } from "../../stores/utilityStore";
 import { useShortcutsStore } from "../../stores/shortcuts";
 import { useTypesStore } from "../../stores/typesStore";
 import type { OutputFieldType, VertexBuildTypeAPI } from "../../types/api";
 import type { NodeDataType } from "../../types/flow";
-import { translateComponentText } from "../../utils/componentTranslations";
 import { scapedJSONStringfy } from "../../utils/reactflowUtils";
 import { classNames, cn } from "../../utils/utils";
 import { processNodeAdvancedFields } from "../helpers/process-node-advanced-fields";
@@ -72,6 +75,7 @@ function GenericNode({
   xPos?: number;
   yPos?: number;
 }): JSX.Element {
+  const { t } = useTranslation();
   const [borderColor, setBorderColor] = useState<string>("");
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [showHiddenOutputs, setShowHiddenOutputs] = useState(false);
@@ -96,6 +100,10 @@ function GenericNode({
     (state) => state.removeDismissedNodes,
   );
 
+  const allowCustomComponents = useUtilityStore(
+    (state) => state.allowCustomComponents,
+  );
+
   const dismissedNodesLegacy = useFlowStore(
     (state) => state.dismissedNodesLegacy,
   );
@@ -113,14 +121,6 @@ function GenericNode({
   );
 
   const showNode = data.showNode ?? true;
-  const isChatInputNode =
-    data.type === "ChatInput" || data.node?.display_name === "Chat Input";
-  const translatedDisplayName = isChatInputNode
-    ? i18n.t("chatComponent.title")
-    : translateComponentText(data.node?.display_name);
-  const translatedDescription = isChatInputNode
-    ? i18n.t("chatComponent.description")
-    : translateComponentText(data.node?.description);
 
   const getValidationStatus = useCallback((data) => {
     setValidationStatus(data);
@@ -140,10 +140,12 @@ function GenericNode({
 
   const {
     outdated: isOutdated,
+    blocked: isBlocked,
     breakingChange: hasBreakingChange,
     userEdited: isUserEdited,
   } = componentUpdate ?? {
     outdated: false,
+    blocked: false,
     breakingChange: false,
     userEdited: false,
   };
@@ -161,10 +163,10 @@ function GenericNode({
 
   if (!data.node!.template) {
     setErrorData({
-      title: `Error in component ${translatedDisplayName ?? data.node!.display_name}`,
+      title: t("node.errorNoTemplate", { name: data.node!.display_name }),
       list: [
-        `The component ${translatedDisplayName ?? data.node!.display_name} has no template.`,
-        `Please contact the developer of the component to fix this issue.`,
+        t("node.errorNoTemplateDetail", { name: data.node!.display_name }),
+        t("node.errorNoTemplateContact"),
       ],
     });
     takeSnapshot();
@@ -185,6 +187,7 @@ function GenericNode({
 
       const currentCode = thisNodeTemplate.code.value;
       if (data.node) {
+        registerNodeUpdate(data.id);
         validateComponentCode(
           { code: currentCode, frontend_node: data.node },
           {
@@ -199,17 +202,19 @@ function GenericNode({
                 removeDismissedNodes([data.id]);
                 setLoadingUpdate(false);
               }
+              completeNodeUpdate(data.id);
             },
             onError: (error) => {
               setErrorData({
-                title: "Error updating Component code",
+                title: t("node.errorUpdatingCode"),
                 list: [
-                  "There was an error updating the Component.",
-                  "If the error persists, please report it on our Discord or GitHub.",
+                  t("node.errorUpdatingCodeDetail"),
+                  t("node.errorUpdatingCodeReport"),
                 ],
               });
               console.error(error);
               setLoadingUpdate(false);
+              completeNodeUpdate(data.id);
             },
           },
         );
@@ -362,8 +367,8 @@ function GenericNode({
     editNameDescription && hasChangedNodeDescription;
 
   const hasDescription = useMemo(() => {
-    return translatedDescription && translatedDescription !== "";
-  }, [translatedDescription]);
+    return data.node?.description && data.node?.description !== "";
+  }, [data.node?.description]);
 
   const selectedNodesCount = useMemo(() => {
     return useFlowStore.getState().nodes.filter((node) => node.selected).length;
@@ -372,8 +377,18 @@ function GenericNode({
   const rightClickedNodeId = useFlowStore((state) => state.rightClickedNodeId);
 
   const shouldShowUpdateComponent = useMemo(
-    () => (isOutdated || hasBreakingChange) && !isUserEdited && !dismissAll,
-    [isOutdated, hasBreakingChange, isUserEdited, dismissAll],
+    () =>
+      !allowCustomComponents
+        ? isBlocked || isOutdated || hasBreakingChange
+        : (isOutdated || hasBreakingChange) && !isUserEdited && !dismissAll,
+    [
+      isBlocked,
+      isOutdated,
+      hasBreakingChange,
+      isUserEdited,
+      dismissAll,
+      allowCustomComponents,
+    ],
   );
 
   const shouldShowLegacyComponent = useMemo(
@@ -483,10 +498,14 @@ function GenericNode({
     () => handleUpdateCode(true),
     [handleUpdateCode],
   );
-  const memoizedSetDismissAll = useCallback(
-    () => addDismissedNodes([data.id]),
-    [addDismissedNodes, data.id],
-  );
+  const memoizedSetDismissAll = useCallback(() => {
+    addDismissedNodes([data.id]);
+    setNode(data.id, (old) => {
+      const newNode = cloneDeep(old);
+      (newNode.data as NodeDataType).node!.edited = true;
+      return newNode;
+    });
+  }, [addDismissedNodes, data.id, setNode]);
 
   const memoizedSetDismissAllLegacy = useCallback(
     () => addDismissedNodesLegacy([data.id]),
@@ -515,10 +534,13 @@ function GenericNode({
         {shouldShowUpdateComponent ? (
           <NodeUpdateComponent
             hasBreakingChange={hasBreakingChange}
+            blocked={isBlocked}
             showNode={showNode}
             handleUpdateCode={() => handleUpdateCode()}
             loadingUpdate={loadingUpdate}
             setDismissAll={memoizedSetDismissAll}
+            dismissed={dismissAll}
+            isRequired={!allowCustomComponents}
           />
         ) : shouldShowLegacyComponent ? (
           <NodeLegacyComponent
@@ -554,7 +576,7 @@ function GenericNode({
               />
               <div className="ml-3 flex flex-1 overflow-hidden">
                 <MemoizedNodeName
-                  display_name={translatedDisplayName}
+                  display_name={data.node?.display_name}
                   nodeId={data.id}
                   selected={selected}
                   showNode={showNode}
@@ -599,7 +621,7 @@ function GenericNode({
               data={data}
               frozen={data.node?.frozen}
               showNode={showNode}
-              display_name={translatedDisplayName ?? data.node?.display_name!}
+              display_name={data.node?.display_name!}
               nodeId={data.id}
               selected={selected}
               setBorderColor={setBorderColor}
@@ -614,7 +636,7 @@ function GenericNode({
           {showNode && (hasDescription || editNameDescription) && (
             <div className="px-4 pb-3">
               <MemoizedNodeDescription
-                description={translatedDescription}
+                description={data.node?.description}
                 charLimit={1000}
                 mdClassName={"dark:prose-invert"}
                 nodeId={data.id}

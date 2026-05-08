@@ -21,11 +21,11 @@ const TextAreaWrapper = ({
     noInput: boolean,
   ): string => {
     if (isDragging) {
-      return t("playground.dropHere");
+      return "Drop here";
     } else if (noInput) {
       return CHAT_INPUT_PLACEHOLDER;
     } else {
-      return t("playground.sendMessagePlaceholder");
+      return t("chat.inputPlaceholderSend");
     }
   };
 

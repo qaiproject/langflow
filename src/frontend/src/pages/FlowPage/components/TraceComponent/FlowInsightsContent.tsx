@@ -22,10 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  DEFAULT_TABLE_ALERT_MSG,
-  DEFAULT_TABLE_ALERT_TITLE,
-} from "@/constants/constants";
 import { useGetTracesQuery } from "@/controllers/API/queries/traces";
 import { TraceListItem } from "@/controllers/API/queries/traces/types";
 import useFlowsManagerStore from "@/stores/flowsManagerStore";
@@ -183,8 +179,8 @@ export function FlowInsightsContent({
               name="AlertCircle"
               className="h-5 w-5 text-primary"
             />
-            <AlertTitle>{DEFAULT_TABLE_ALERT_TITLE}</AlertTitle>
-            <AlertDescription>{DEFAULT_TABLE_ALERT_MSG}</AlertDescription>
+            <AlertTitle>{t("table.noDataTitle")}</AlertTitle>
+            <AlertDescription>{t("table.noDataMessage")}</AlertDescription>
           </Alert>
         </div>
       );

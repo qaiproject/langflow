@@ -61,7 +61,7 @@ export const ChatViewWrapper = ({
             )}
           >
             {visibleSession === currentFlowId
-              ? t("playground.defaultSession")
+              ? t("modal.io.defaultSession")
               : `${visibleSession}`}
           </div>
         )}
@@ -75,7 +75,7 @@ export const ChatViewWrapper = ({
           <ShadTooltip
             side="bottom"
             styleClasses="z-50"
-            content={t("playground.newChat")}
+            content={t("modal.io.newChat")}
           >
             <Button
               className="mr-2 h-[32px] w-[32px] hover:bg-secondary-hover"
