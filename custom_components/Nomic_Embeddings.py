@@ -39,13 +39,13 @@ class DirectEmbeddings(Embeddings):
 
 
 class NomicEmbeddingsNode(Component):
-    display_name = "Nomic Embeddings (vLLM)"
-    description = "Direct vLLM embeddings without tiktoken pre-tokenization."
+    display_name = "vLLM Embeddings"
+    description = "Direct vLLM embeddings via /v1/embeddings. Wpisz nazwę modelu ręcznie (np. gte-qwen2-embed, nomic-embed-text)."
     icon = "cpu"
 
     inputs = [
         StrInput(name="base_url", display_name="vLLM API Base", value="http://10.200.0.20:8001/v1"),
-        StrInput(name="model_name", display_name="Model Name", value="nomic-embed-text"),
+        StrInput(name="model_name", display_name="Model Name", value="gte-qwen2-embed"),
         SecretStrInput(name="api_key", display_name="API Key", value="not-needed"),
         IntInput(name="timeout", display_name="Timeout (s)", value=60, advanced=True),
     ]

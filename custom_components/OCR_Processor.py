@@ -31,6 +31,13 @@ class OCRProcessorNode(Component):
             value="Extract ALL text from this document image. Return only the raw text, preserving the structure. Do not add any commentary.",
             advanced=True,
         ),
+        IntInput(
+            name="max_tokens",
+            display_name="Max Tokens",
+            value=2000,
+            info="Maximum tokens in the OCR response per page.",
+            advanced=True,
+        ),
     ]
 
     outputs = [
@@ -110,7 +117,7 @@ class OCRProcessorNode(Component):
             ]
             response = client.chat.completions.create(
                 model=self.model_name,
-                max_tokens=2000,
+                max_tokens=self.max_tokens,
                 messages=[{"role": "user", "content": content}],
             )
             results.append(response.choices[0].message.content)
@@ -131,7 +138,7 @@ class OCRProcessorNode(Component):
             ]
             response = client.messages.create(
                 model=self.model_name,
-                max_tokens=2000,
+                max_tokens=self.max_tokens,
                 messages=[{"role": "user", "content": content}],
             )
             results.append(response.content[0].text)

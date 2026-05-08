@@ -92,6 +92,11 @@ function ApiInterceptor() {
 
         await clearBuildVerticesState(error);
 
+        if (isAuthenticationError && IS_AUTO_LOGIN) {
+          window.location.href = "/oauth2/sign_in";
+          return Promise.reject(error);
+        }
+
         if (!isAuthenticationError) {
           return Promise.reject(error);
         }

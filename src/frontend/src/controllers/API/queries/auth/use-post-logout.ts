@@ -42,8 +42,10 @@ export const useLogout: useMutationFunctionType<undefined, void> = (
       useFlowsManagerStore.getState().resetStore();
       useFolderStore.getState().resetStore();
 
-      // Clear all React Query cache to prevent data leakage between users
       queryClient.clear();
+
+      // Wyloguj z oauth2-proxy (i przez logout chain z Keycloak)
+      window.location.href = "/oauth2/sign_out";
     },
     onError: (error) => {
       console.error(error);

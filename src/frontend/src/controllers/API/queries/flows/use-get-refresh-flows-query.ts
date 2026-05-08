@@ -75,10 +75,17 @@ export const useGetRefreshFlowsQuery: useQueryFunctionType<
 
       return [];
     } catch (e) {
-      if (e instanceof AxiosError && e.status !== 403) {
-        setErrorData({
-          title: "Could not load flows from database",
-        });
+      if (e instanceof AxiosError) {
+        if (e.status === 401 || e.status === 403) {
+          // handled by api interceptor (redirect to /oauth2/sign_in)
+        } else if (!e.response) {
+          // network error (CORS from auth redirect chain) → redirect to login
+          window.location.href = "/oauth2/sign_in";
+        } else {
+          setErrorData({
+            title: "Could not load flows from database",
+          });
+        }
       }
       throw e;
     }

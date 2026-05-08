@@ -1,16 +1,18 @@
 from __future__ import annotations
 
+import secrets
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from langflow.api.utils import DbSession
 from langflow.api.v1.schemas import Token
 from langflow.initial_setup.setup import get_or_create_default_folder
-from langflow.services.database.models.user.crud import get_user_by_id
-from langflow.services.database.models.user.model import UserRead
+from langflow.services.database.models.user.crud import get_user_by_id, get_user_by_username
+from langflow.services.database.models.user.model import User, UserRead
 from langflow.services.deps import get_auth_service, get_settings_service, get_variable_service
 
 router = APIRouter(tags=["Login"])
@@ -93,9 +95,74 @@ async def login_to_get_access_token(
     )
 
 
+async def _get_or_create_proxy_user(email: str, groups_header: str, db: AsyncSession) -> User:
+    from langflow.services.auth.utils import get_password_hash
+
+    is_superuser = "/superadmin" in groups_header.split(",")
+    user = await get_user_by_username(db, email)
+
+    if not user:
+        user = User(
+            username=email,
+            password=get_password_hash(secrets.token_urlsafe(32)),
+            is_active=True,
+            is_superuser=is_superuser,
+        )
+        db.add(user)
+        await db.flush()
+    elif user.is_superuser != is_superuser:
+        user.is_superuser = is_superuser
+        await db.flush()
+
+    return user
+
+
 @router.get("/auto_login", include_in_schema=False)
-async def auto_login(response: Response, db: DbSession):
+async def auto_login(request: Request, response: Response, db: DbSession):
     auth_settings = get_settings_service().auth_settings
+    auth = get_auth_service()
+
+    proxy_email = request.headers.get("X-Auth-Request-Email")
+    if proxy_email:
+        proxy_groups = request.headers.get("X-Auth-Request-Groups", "")
+        user = await _get_or_create_proxy_user(proxy_email, proxy_groups, db)
+        tokens = await auth.create_user_tokens(user_id=user.id, db=db, update_last_login=True)
+        if user.store_api_key is None:
+            user.store_api_key = ""
+        response.set_cookie(
+            "access_token_lf",
+            tokens["access_token"],
+            httponly=auth_settings.ACCESS_HTTPONLY,
+            samesite=auth_settings.ACCESS_SAME_SITE,
+            secure=auth_settings.ACCESS_SECURE,
+            expires=auth_settings.ACCESS_TOKEN_EXPIRE_SECONDS,
+            domain=auth_settings.COOKIE_DOMAIN,
+        )
+        response.set_cookie(
+            "refresh_token_lf",
+            tokens["refresh_token"],
+            httponly=auth_settings.REFRESH_HTTPONLY,
+            samesite=auth_settings.REFRESH_SAME_SITE,
+            secure=auth_settings.REFRESH_SECURE,
+            expires=auth_settings.REFRESH_TOKEN_EXPIRE_SECONDS,
+            domain=auth_settings.COOKIE_DOMAIN,
+        )
+        response.set_cookie(
+            "apikey_tkn_lflw",
+            str(user.store_api_key),
+            httponly=auth_settings.ACCESS_HTTPONLY,
+            samesite=auth_settings.ACCESS_SAME_SITE,
+            secure=auth_settings.ACCESS_SECURE,
+            expires=None,
+            domain=auth_settings.COOKIE_DOMAIN,
+        )
+        await get_variable_service().initialize_user_variables(user.id, db)
+        _ = await get_or_create_default_folder(db, user.id)
+        if get_settings_service().settings.agentic_experience:
+            from langflow.api.utils.mcp.agentic_mcp import initialize_agentic_user_variables
+
+            await initialize_agentic_user_variables(user.id, db)
+        return tokens
 
     if auth_settings.AUTO_LOGIN:
         auth = get_auth_service()

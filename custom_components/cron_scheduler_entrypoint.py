@@ -28,7 +28,7 @@ import requests
 API_URL = os.environ.get("CRON_API_URL", "http://localhost:7860").rstrip("/")
 API_KEY = os.environ.get("CRON_API_KEY", "")
 SCAN_INTERVAL = int(os.environ.get("CRON_SCAN_INTERVAL", "30"))
-CRON_DIR = "/app/langflow/cron_registrations"
+CRON_DIR = os.environ.get("CRON_DIR", "/app/langflow/cron_registrations")
 
 logging.basicConfig(
     level=logging.INFO,

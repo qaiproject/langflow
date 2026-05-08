@@ -4,7 +4,7 @@ Use with Langflow's ConditionalRouter to branch RAG vs direct answer.
 """
 
 from langflow.custom import Component
-from langflow.io import StrInput, FloatInput, IntInput, Output, MessageTextInput
+from langflow.io import StrInput, FloatInput, IntInput, SecretStrInput, Output, MessageTextInput
 from langflow.schema import Message
 
 
@@ -47,7 +47,14 @@ class RAGRouter(Component):
         StrInput(
             name="embed_model",
             display_name="Embeddings Model",
-            value="nomic-embed-text",
+            value="gte-qwen2-embed",
+        ),
+        SecretStrInput(
+            name="embed_api_key",
+            display_name="Embeddings API Key",
+            value="not-needed",
+            info="API key for the embeddings endpoint. Use 'not-needed' for vLLM/local.",
+            advanced=True,
         ),
     ]
 
@@ -77,7 +84,7 @@ class RAGRouter(Component):
             resp = httpx.post(
                 f"{self.embed_base_url}/embeddings",
                 json={"model": self.embed_model, "input": [question]},
-                headers={"Authorization": "Bearer not-needed"},
+                headers={"Authorization": f"Bearer {self.embed_api_key}"},
                 timeout=10,
             )
             resp.raise_for_status()

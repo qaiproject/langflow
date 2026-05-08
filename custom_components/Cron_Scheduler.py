@@ -14,7 +14,7 @@ import json
 import os
 import time
 
-_CRON_DIR = "/app/langflow/cron_registrations"
+_CRON_DIR = os.environ.get("CRON_DIR", "/app/langflow/cron_registrations")
 
 
 class CronSchedulerNode(Component):

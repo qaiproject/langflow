@@ -30,10 +30,31 @@ class DocumentClassifierNode(Component):
         StrInput(name="model_name", display_name="Model Name", value="gpt-4o-mini"),
         SecretStrInput(name="api_key", display_name="API Key", value="not-needed", info="For vLLM/Ollama enter any value."),
         StrInput(
+            name="ollama_base_url",
+            display_name="Ollama Base URL",
+            value="http://host.docker.internal:11434/v1",
+            info="Used when provider is 'ollama' and Base URL is empty.",
+            advanced=True,
+        ),
+        StrInput(
             name="categories",
             display_name="Categories",
             value="faktura, urlop, inny",
             info="Comma-separated list of document categories.",
+        ),
+        IntInput(
+            name="max_tokens",
+            display_name="Max Tokens",
+            value=200,
+            info="Maximum tokens in the LLM response.",
+            advanced=True,
+        ),
+        IntInput(
+            name="max_text_length",
+            display_name="Max Text Length",
+            value=4000,
+            info="Maximum characters from the document passed to the LLM.",
+            advanced=True,
         ),
     ]
 
@@ -62,7 +83,7 @@ class DocumentClassifierNode(Component):
             "Do not add any other text."
         )
 
-        user_prompt = f"Document text:\n\n{text[:4000]}"
+        user_prompt = f"Document text:\n\n{text[:self.max_text_length]}"
 
         if self.provider == "anthropic":
             import anthropic
@@ -70,7 +91,7 @@ class DocumentClassifierNode(Component):
             client = anthropic.Anthropic(api_key=self.api_key)
             response = client.messages.create(
                 model=self.model_name,
-                max_tokens=200,
+                max_tokens=self.max_tokens,
                 system=system_prompt,
                 messages=[{"role": "user", "content": user_prompt}],
             )
@@ -85,12 +106,12 @@ class DocumentClassifierNode(Component):
                     base_url += "/v1"
                 kwargs["base_url"] = base_url
             elif self.provider == "ollama":
-                kwargs["base_url"] = "http://host.docker.internal:11434/v1"
+                kwargs["base_url"] = self.ollama_base_url.strip().rstrip("/")
 
             client = openai.OpenAI(**kwargs)
             response = client.chat.completions.create(
                 model=self.model_name,
-                max_tokens=200,
+                max_tokens=self.max_tokens,
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt},
