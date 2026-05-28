@@ -1,15 +1,14 @@
-import LoadingComponent from "@/components/common/loadingComponent";
-import { cn } from "@/utils/utils";
+// Delegate the full-page loader to the customization slot so the brand
+// (Qosmo sygnet + dark surface) is consistent everywhere: Suspense fallback
+// in App.tsx, authAdminGuard, AppInitPage overlay. Without this redirect
+// Langflow still rendered the upstream <LoadingComponent> (white circular
+// spinner) which flickered against our CustomLoadingPage during initial
+// bundle hydration.
+import { CustomLoadingPage } from "@/customization/components/custom-loading-page";
 
-export function LoadingPage({ overlay = false }: { overlay?: boolean }) {
-  return (
-    <div
-      className={cn(
-        "flex h-screen w-screen items-center justify-center bg-background",
-        overlay && "fixed left-0 top-0 z-[999]",
-      )}
-    >
-      <LoadingComponent remSize={50} />
-    </div>
-  );
+export function LoadingPage(_props: { overlay?: boolean }): JSX.Element {
+  // `overlay` is preserved in the upstream API for call-sites that pass it,
+  // but our CustomLoadingPage is always full-screen (position:fixed inset:0)
+  // so the prop is effectively a no-op here.
+  return <CustomLoadingPage />;
 }

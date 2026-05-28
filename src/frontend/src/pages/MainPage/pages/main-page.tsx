@@ -2,10 +2,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Outlet } from "react-router-dom";
-import SideBarFoldersButtonsComponent from "@/components/core/folderSidebarComponent/components/sideBarFolderButtons";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { useDeleteFolders } from "@/controllers/API/queries/folders";
 import CustomEmptyPageCommunity from "@/customization/components/custom-empty-page";
+import CustomFolderSidebar from "@/customization/components/custom-folder-sidebar";
 import CustomLoader from "@/customization/components/custom-loader";
 import { useCustomNavigate } from "@/customization/hooks/use-custom-navigate";
 import useAlertStore from "@/stores/alertStore";
@@ -62,7 +62,7 @@ export default function CollectionPage(): JSX.Element {
         folders &&
         ((flows?.length !== examples?.length && folders?.length > 0) ||
           folders?.length > 1) && (
-          <SideBarFoldersButtonsComponent
+          <CustomFolderSidebar
             handleChangeFolder={(id: string) => {
               navigate(`all/folder/${id}`);
             }}

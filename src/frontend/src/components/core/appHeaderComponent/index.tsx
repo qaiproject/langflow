@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import AlertDropdown from "@/alerts/alertDropDown";
-import QosmoLogo from "@/components/common/QosmoLogo";
 import { AssistantButton } from "@/components/common/assistant";
+import CustomAppLogo from "@/customization/components/custom-app-logo";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import ModelProviderCount from "@/components/common/modelProviderCountComponent";
 import ShadTooltip from "@/components/common/shadTooltipComponent";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import CustomAccountMenu from "@/customization/components/custom-AccountMenu";
+import CustomAppSwitcher from "@/customization/components/custom-app-switcher";
 import CustomLangflowCounts from "@/customization/components/custom-langflow-counts";
+import CustomThemeToggle from "@/customization/components/custom-theme-toggle";
 import { CustomOrgSelector } from "@/customization/components/custom-org-selector";
 import { LANGFLOW_AGENTIC_EXPERIENCE } from "@/customization/feature-flags";
 import { useCustomNavigate } from "@/customization/hooks/use-custom-navigate";
@@ -64,10 +66,10 @@ export default function AppHeader(): JSX.Element {
         <Button
           unstyled
           onClick={() => navigate("/")}
-          className="mr-1 flex h-8 w-8 items-center"
+          className="mr-1 flex h-8 items-center px-1"
           data-testid="icon-ChevronLeft"
         >
-          <QosmoLogo className="h-6 w-6" />
+          <CustomAppLogo className="h-7 w-auto" />
         </Button>
         <CustomOrgSelector />
       </div>
@@ -131,6 +133,13 @@ export default function AppHeader(): JSX.Element {
           className="my-auto h-7 dark:border-border"
         />
 
+        {/* Qosmo theme toggle (Sun/Moon) + 5-tile platform launcher. */}
+        <CustomThemeToggle />
+        <div className="flex">
+          <CustomAppSwitcher current="flow" />
+        </div>
+        {/* CustomAccountMenu returns <></> in Qosmo build — the user-card is
+            rendered at the bottom of the sidebar instead (see CustomFolderSidebar). */}
         <div className="flex">
           <CustomAccountMenu />
         </div>

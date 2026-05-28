@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,11 +17,69 @@
       src="/node_modules/ace-builds/src-min-noconflict/ace.js"
       type="module"
     ></script>
-    <title>Qosmo AI</title>
+    <title>Qosmo.flow</title>
+    <!-- Shared user preferences (identity + theme/accent/text_size) via
+         qai_user cookie. Loaded BEFORE React bundle so theme is applied
+         to <html> before hydration (no flash). See branding/js/qai-user-prefs.js. -->
+    <script src="/branding/js/qai-user-prefs.js"></script>
+    <script>
+      // Qosmo: bootstrap dark theme as the default for first-time visitors.
+      // Langflow's zustand darkStore reads localStorage("isDark") and falls
+      // back to false (light) when missing, which causes App.tsx's useEffect
+      // to strip the `.dark` class from <body> on mount → white flash. We
+      // seed "true" before React loads so the store initializes in dark.
+      //
+      // We use a versioned migration key (`qai_theme_v1`) so any pre-existing
+      // `isDark=false` left over from earlier broken builds gets reset to
+      // dark exactly once. User clicks of the theme toggle later overwrite
+      // it freely — only the first load after this bootstrap touches it.
+      try {
+        if (window.localStorage.getItem("qai_theme_v1") === null) {
+          window.localStorage.setItem("qai_theme_v1", "1");
+          window.localStorage.setItem("isDark", "true");
+          window.localStorage.setItem("themePreference", "dark");
+        }
+        if (window.localStorage.getItem("isDark") === null) {
+          window.localStorage.setItem("isDark", "true");
+        }
+        var __qaiDark = window.localStorage.getItem("isDark") === "true";
+        var __qaiHtml = document.documentElement;
+        if (__qaiDark) {
+          __qaiHtml.classList.add("dark");
+          __qaiHtml.classList.remove("light");
+          __qaiHtml.setAttribute("data-theme", "dark");
+        } else {
+          __qaiHtml.classList.remove("dark");
+          __qaiHtml.classList.add("light");
+          __qaiHtml.setAttribute("data-theme", "light");
+        }
+      } catch (e) {
+        // localStorage may be blocked — fall through to default <body class="dark">.
+      }
+    </script>
   </head>
   <body id="body" class="dark" style="width: 100%; height: 100%">
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div style="width: 100vw; height: 100vh" id="root"></div>
+    <script>
+      // Sync body class with the same isDark flag the head script honoured,
+      // so the brief moment between body parse and React mount uses the
+      // correct theme. Without this body would always have `class="dark"`
+      // from static markup until App.tsx's useEffect catches up.
+      try {
+        var __qaiBody = document.getElementById("body");
+        var __qaiIsDark = window.localStorage.getItem("isDark") !== "false";
+        if (__qaiBody) {
+          if (__qaiIsDark) {
+            __qaiBody.classList.add("dark");
+            __qaiBody.classList.remove("light");
+          } else {
+            __qaiBody.classList.remove("dark");
+            __qaiBody.classList.add("light");
+          }
+        }
+      } catch (e) {}
+    </script>
     <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>

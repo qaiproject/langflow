@@ -1,0 +1,485 @@
+/* ============================================================================
+ * QOSMO BRANDING -- LANGFLOW OVERRIDES
+ * ----------------------------------------------------------------------------
+ * Langflow uses Tailwind + shadcn convention: classes like `bg-background`
+ * resolve to `background-color: hsl(var(--background))`. To re-skin Langflow
+ * we MUST override the HSL CSS variables, not just class-based selectors.
+ * ============================================================================
+ */
+
+:root {
+  --qai-suffix-color: var(--qai-app-flow);
+  --qai-app-accent:   var(--qai-app-flow);
+}
+
+/* === DARK THEME (default) =========================================== */
+/* UWAGA: --primary w Langflow = WISTERIA (#9F2CF2 / hsl 277 89% 56%) bo to
+ * per-app accent dla Qosmo.flow. Inne apki maja inne primary:
+ *   chat   -> #2C3DF2 (niebieski accent, Qosmo brand main)
+ *   flow   -> #9F2CF2 (wisteria/fiolet) <- TEN PLIK
+ *   tracer -> cyan
+ *   docs   -> emerald
+ *   auth   -> czerwony
+ * Logo .flow suffix, podkreslenia tabow, focus ringi, badges - wszystko
+ * powinno isc na wisterii zeby branding byl spojny z mockupem. */
+:root,
+:root.dark,
+.dark,
+body,
+body.dark,
+[data-theme="dark"] {
+  --foreground:            240 17% 82% !important;
+  --background:            240 29% 6% !important;
+  --muted:                 240 32% 8% !important;
+  --muted-foreground:      240 20% 52% !important;
+  --card:                  240 29% 10% !important;
+  --card-foreground:       240 14% 96% !important;
+  --popover:               240 29% 10% !important;
+  --popover-foreground:    240 14% 96% !important;
+  --border:                240 28% 18% !important;
+  --input:                 240 29% 10% !important;
+  --primary:               277 89% 56% !important;
+  --primary-foreground:    0 0% 100% !important;
+  --primary-hover:         270 80% 42% !important;
+  --secondary:             240 32% 8% !important;
+  --secondary-foreground:  240 14% 96% !important;
+  --secondary-hover:       240 28% 18% !important;
+  --accent:                240 28% 18% !important;
+  --accent-foreground:     240 14% 96% !important;
+  --destructive:           0 72% 51% !important;
+  --destructive-foreground: 0 0% 100% !important;
+  --ring:                  277 89% 56% !important;
+  --placeholder-foreground: 240 20% 52% !important;
+  --canvas:                240 29% 6% !important;
+  --canvas-dot:            240 28% 18% !important;
+  --tooltip:               240 14% 96% !important;
+  --tooltip-foreground:    240 29% 6% !important;
+  --font-sans: 'Quicksand', 'Inter', sans-serif !important;
+  --font-chivo: 'Manrope', sans-serif !important;
+  --font-mono: 'JetBrains Mono', monospace !important;
+}
+
+/* === LIGHT THEME ===================================================== */
+/* --primary tez wisteria w light (Qosmo.flow per-app accent). */
+:root.light,
+.light,
+body.light,
+html.light,
+[data-theme="light"] {
+  --foreground:            240 28% 18% !important;
+  --background:            240 22% 96% !important;
+  --muted:                 240 17% 93% !important;
+  --muted-foreground:      234 18% 55% !important;
+  --card:                  0 0% 100% !important;
+  --card-foreground:       240 29% 6% !important;
+  --popover:               0 0% 100% !important;
+  --popover-foreground:    240 29% 6% !important;
+  --border:                240 18% 82% !important;
+  --input:                 0 0% 100% !important;
+  --primary:               277 89% 56% !important;
+  --primary-foreground:    0 0% 100% !important;
+  --primary-hover:         270 80% 42% !important;
+  --secondary:             240 17% 93% !important;
+  --secondary-foreground:  240 28% 18% !important;
+  --secondary-hover:       240 17% 89% !important;
+  --accent:                240 17% 89% !important;
+  --accent-foreground:     240 29% 6% !important;
+  --destructive:           0 73% 51% !important;
+  --destructive-foreground: 0 0% 100% !important;
+  --ring:                  277 89% 56% !important;
+  --placeholder-foreground: 234 18% 55% !important;
+  --canvas:                240 22% 96% !important;
+  --canvas-dot:            240 18% 82% !important;
+  --tooltip:               240 29% 6% !important;
+  --tooltip-foreground:    240 14% 96% !important;
+}
+
+/* === BASE ===================================================== */
+html, body, #root {
+  background: hsl(var(--background)) !important;
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans);
+}
+
+.react-flow,
+.react-flow__renderer,
+.react-flow__pane,
+.react-flow__background {
+  background: hsl(var(--background)) !important;
+}
+.react-flow__edge-path {
+  stroke: hsl(var(--primary)) !important;
+}
+
+a { color: hsl(var(--primary)); }
+a:hover { color: hsl(var(--primary-hover)); }
+
+/* === SIDEBAR (shadcn data-sidebar attributes) ======================== */
+/* Sidebar bg = --background (240 29% 6%, najciemniejsze). Wczesniej bylo
+ * --muted (240 32% 8%) co przeszkadzalo w widocznosci user-card kafelka
+ * (--card = 240 29% 10%, roznica zaledwie 2pp). Z bg jako baza, kafelki
+ * card-bg maja 4pp roznicy co wybija je z sidebara - tak samo jak w Qosmo.chat. */
+[data-sidebar="sidebar"] {
+  background: hsl(var(--background)) !important;
+  border-right: 1px solid hsl(var(--border)) !important;
+}
+[data-sidebar="group"] {
+  padding: 4px 8px !important;
+}
+[data-sidebar="group"] + [data-sidebar="group"] {
+  margin-top: 8px !important;
+}
+[data-sidebar="group-label"] {
+  padding: 12px 10px 4px !important;
+  font-family: var(--font-chivo, "Manrope"), sans-serif !important;
+  font-size: 10.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  color: hsl(var(--muted-foreground)) !important;
+  background: transparent !important;
+  height: auto !important;
+}
+[data-sidebar="menu"] {
+  gap: 1px !important;
+}
+[data-sidebar="menu-item"] {
+  margin: 0 !important;
+}
+[data-sidebar="menu-button"] {
+  display: flex !important;
+  align-items: center !important;
+  gap: 11px !important;
+  padding: 7px 10px !important;
+  border-radius: 6px !important;
+  color: hsl(var(--foreground)) !important;
+  font-family: var(--font-chivo, "Manrope"), sans-serif !important;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+  letter-spacing: -0.005em !important;
+  background: transparent !important;
+  border: 0 !important;
+  height: auto !important;
+  transition: background 0.15s, color 0.15s;
+}
+[data-sidebar="menu-button"] > svg,
+[data-sidebar="menu-button"] svg {
+  width: 16px !important;
+  height: 16px !important;
+  flex-shrink: 0;
+  color: hsl(var(--muted-foreground));
+  transition: color 0.15s;
+}
+[data-sidebar="menu-button"]:hover {
+  background: hsl(var(--card)) !important;
+  color: hsl(var(--card-foreground)) !important;
+}
+[data-sidebar="menu-button"]:hover svg {
+  color: hsl(var(--card-foreground)) !important;
+}
+[data-sidebar="menu-button"][data-active="true"] {
+  background: color-mix(in srgb, hsl(var(--primary)) 8%, transparent) !important;
+  color: hsl(var(--card-foreground)) !important;
+  box-shadow: inset 2px 0 0 hsl(var(--primary)) !important;
+}
+[data-sidebar="menu-button"][data-active="true"] svg,
+[data-sidebar="menu-button"][data-active="true"] svg * {
+  /* SVG aktywnej ikonki = BIAŁE na niebieskim tle (primary). Wcześniej było
+   * primary co dawało granatowo-na-granatowym i ikonka znikała. */
+  color: hsl(var(--card-foreground)) !important;
+  stroke: hsl(var(--card-foreground)) !important;
+}
+[data-sidebar="menu-action"] {
+  color: hsl(var(--muted-foreground)) !important;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s;
+}
+[data-sidebar="menu-item"]:hover [data-sidebar="menu-action"],
+[data-sidebar="menu-button"][data-active="true"] ~ [data-sidebar="menu-action"] {
+  opacity: 1;
+}
+[data-sidebar="menu-action"]:hover {
+  color: hsl(var(--card-foreground)) !important;
+}
+[data-sidebar="menu-badge"] {
+  font-family: var(--font-mono), "JetBrains Mono", monospace !important;
+  font-size: 9.5px !important;
+  font-weight: 500 !important;
+  padding: 1px 6px !important;
+  background: hsl(var(--muted)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 4px !important;
+  color: hsl(var(--muted-foreground)) !important;
+  letter-spacing: 0.02em !important;
+  height: auto !important;
+  min-width: auto !important;
+}
+[data-sidebar="menu-button"][data-active="true"] + [data-sidebar="menu-badge"],
+[data-sidebar="menu-button"][data-active="true"] [data-sidebar="menu-badge"] {
+  background: transparent !important;
+  border-color: hsl(var(--primary)) !important;
+  color: hsl(var(--primary)) !important;
+}
+[data-sidebar="separator"] {
+  background: hsl(var(--border)) !important;
+  height: 1px !important;
+  margin: 6px 10px !important;
+  opacity: 0.6;
+}
+[data-sidebar="footer"] {
+  padding: 8px !important;
+  border-top: 1px solid hsl(var(--border)) !important;
+}
+[data-sidebar="header"] {
+  padding: 12px !important;
+  border-bottom: 0 !important;
+}
+[data-sidebar="input"] {
+  background: hsl(var(--card)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 10px !important;
+  height: 34px !important;
+  padding: 0 32px !important;
+  color: hsl(var(--foreground)) !important;
+}
+[data-sidebar="input"]:focus {
+  border-color: hsl(var(--primary)) !important;
+  outline: none !important;
+}
+
+/* === REACT FLOW NODES (canvas) ======================================== */
+/* Nody na canvasie używają shadcn Card + bg-background pattern, ale w niektórych
+   miejscach Langflow ma bg-white / bg-zinc-X hardcoded zamiast HSL var. */
+.react-flow__node,
+.react-flow__node-genericNode,
+.react-flow__node-noteNode,
+.generic-node-div,
+[class*="generic-node"],
+.bg-node-background {
+  background: hsl(var(--card)) !important;
+  color: hsl(var(--card-foreground)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+.react-flow__node .bg-white,
+.react-flow__node [class*="bg-zinc-"]:not([class*="bg-zinc-9"]),
+.react-flow__node [class*="bg-gray-"]:not([class*="bg-gray-9"]) {
+  background: hsl(var(--card)) !important;
+  color: hsl(var(--card-foreground)) !important;
+}
+
+/* === NODE RESTYLE (Qosmo mockup vibe) =================================
+ * Cel: zblizyc node'y Langflow do estetyki kart z mockupu Qosmo
+ * (https://qosmo-unified6 -> "qosmo-security" card pattern). NIE
+ * przepisujemy GenericNode JSX - dzialamy CSS-em:
+ *   1. Wieksze zaokraglenia + shadow,
+ *   2. Ikonka headera w accent mini-square,
+ *   3. Title font: Manrope bold,
+ *   4. Pillsa BETA stylizowana jak na mockupie.
+ * ----------------------------------------------------------------------- */
+
+/* 1. Wrapper - mocniejszy shadow + radius zgodny z kafelkami */
+.generic-node-div {
+  border-radius: 14px !important;
+  border-width: 1px !important;
+  box-shadow:
+    0 1px 0 hsl(var(--card)) inset,
+    0 8px 24px -12px rgba(0, 0, 0, 0.45) !important;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.generic-node-div:hover {
+  border-color: hsl(var(--primary) / 0.55) !important;
+  box-shadow:
+    0 1px 0 hsl(var(--card)) inset,
+    0 14px 32px -12px rgba(0, 0, 0, 0.6),
+    0 0 0 1px hsl(var(--primary) / 0.18) !important;
+}
+
+/* 2. Header section - lekkie padding + separacja */
+.react-flow__node [data-testid="div-generic-node"] {
+  padding: 14px 14px 12px !important;
+  gap: 10px !important;
+}
+
+/* 3. Ikonka w accent mini-square. Targetujemy bezposrednio
+ * <NodeIcon> wewnatrz [generic-node-title-arrangement] - jego pierwszy
+ * <div>/<span> dzieckiem to ikonka. Owijamy go wizualnie 32x32 squareem
+ * z accent-faint tlem i akcentem na obwodce (pattern z Qosmo card icon). */
+.react-flow__node [data-testid="generic-node-title-arrangement"] > div:first-child,
+.react-flow__node [data-testid="generic-node-title-arrangement"] > span:first-child {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 9px !important;
+  background: color-mix(in srgb, hsl(var(--primary)) 14%, transparent) !important;
+  border: 1px solid color-mix(in srgb, hsl(var(--primary)) 36%, transparent) !important;
+  color: hsl(var(--primary)) !important;
+  flex-shrink: 0;
+}
+.react-flow__node [data-testid="generic-node-title-arrangement"] > div:first-child svg,
+.react-flow__node [data-testid="generic-node-title-arrangement"] > span:first-child svg {
+  width: 17px !important;
+  height: 17px !important;
+  color: hsl(var(--primary)) !important;
+  stroke: hsl(var(--primary)) !important;
+  background: transparent !important;
+}
+
+/* 4. Title (display_name) - Manrope bold, wieksza letter-spacing.
+ * Langflow renderuje display_name w <MemoizedNodeName> -> wlasciwy element
+ * to inner span/div z klasa zawierajaca "node-name" lub "display-name". */
+.react-flow__node [data-testid="generic-node-title-arrangement"] [class*="node-name"],
+.react-flow__node [data-testid="generic-node-title-arrangement"] [class*="display-name"],
+.react-flow__node [data-testid="generic-node-title-arrangement"] [class*="title"] {
+  font-family: var(--font-chivo, "Manrope"), sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
+  letter-spacing: -0.005em !important;
+  color: hsl(var(--card-foreground)) !important;
+}
+
+/* 5. BETA badge - styl mockupowego pilla (zielona obwodka, mono font) */
+.react-flow__node [class*="beta-badge"],
+.react-flow__node span:where([data-testid*="beta"]) {
+  font-family: var(--font-mono, "JetBrains Mono"), monospace !important;
+  font-size: 9.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  padding: 2px 7px !important;
+  border-radius: 4px !important;
+  background: color-mix(in srgb, var(--qai-c-emerald, #2CF286) 14%, transparent) !important;
+  color: var(--qai-c-emerald, #2CF286) !important;
+  border: 1px solid color-mix(in srgb, var(--qai-c-emerald, #2CF286) 32%, transparent) !important;
+}
+
+/* 6. Section labels (Tekst wejściowy, Język model itd.) - mocniejszy kontrast */
+.react-flow__node label,
+.react-flow__node [class*="label"] {
+  font-family: var(--font-chivo, "Manrope"), sans-serif !important;
+  font-weight: 500 !important;
+  font-size: 11.5px !important;
+  letter-spacing: 0.005em !important;
+  color: hsl(var(--card-foreground)) !important;
+}
+
+/* 7. Inputy/textarea - subtelnie ciemniejsze tlo + lepszy border */
+.react-flow__node input:not([type="checkbox"]):not([type="radio"]),
+.react-flow__node textarea {
+  border-radius: 8px !important;
+  font-family: var(--font-sans, "Quicksand"), sans-serif !important;
+  font-size: 12.5px !important;
+  background-color: color-mix(in srgb, hsl(var(--background)) 80%, hsl(var(--card))) !important;
+}
+.react-flow__node input:focus,
+.react-flow__node textarea:focus {
+  border-color: hsl(var(--primary)) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, hsl(var(--primary)) 25%, transparent) !important;
+}
+
+/* === SIDEBAR ICON STRIP (lewa kolumna z search/components/mcp/...) ===== */
+/* Aktywna ikonka — accent-faint bg + niebieska obramówka, ale samo SVG BIAŁE
+ * (na ciemnoniebieskim tle granatowa ikonka znikała). */
+.sidebar-trigger button[data-state="active"],
+button[aria-pressed="true"],
+.menu-button-active {
+  background: color-mix(in srgb, hsl(var(--primary)) 10%, transparent) !important;
+  color: hsl(var(--primary)) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, hsl(var(--primary)) 60%, transparent) !important;
+}
+.sidebar-trigger button[data-state="active"] svg,
+.sidebar-trigger button[data-state="active"] svg *,
+button[aria-pressed="true"] svg,
+button[aria-pressed="true"] svg *,
+.menu-button-active svg,
+.menu-button-active svg * {
+  color: hsl(var(--card-foreground)) !important;
+  stroke: hsl(var(--card-foreground)) !important;
+}
+
+/* === SIDEBAR HEADER: ukryj separator po wyciszonym getting-started ====
+ * `header-buttons.tsx` renderuje <CustomGetStartedProgress> + <hr> jako para.
+ * Nasz CustomGetStartedProgress zwraca <></>, więc widać sam hr "wiszący"
+ * nad listą projektów. Ukrywamy go dopóki user nie zdecyduje co tam wsadzić. */
+[data-testid="project-sidebar"] [data-sidebar="header"] hr,
+[data-testid="project-sidebar"] [data-sidebar="header"] > div.-mx-4 {
+  display: none !important;
+}
+
+/* === HEADERS/TITLES NIEBIESKIE — popraw kontrast ===================== */
+/* Niebieskie tytuły w okienkach komponentów (np. "Wejście czatu") są
+   często text-primary która jest #2C3DF2 — bardzo dark w dark mode.
+   Brightenup do accent-glow albo użyj text-bright zamiast primary. */
+.node-name,
+.generic-node-name,
+[class*="component-name"],
+[class*="node-title"] {
+  color: hsl(var(--card-foreground)) !important;
+}
+/* Hover/expanded state accent */
+.node-name:hover {
+  color: hsl(var(--primary)) !important;
+}
+
+/* === GENERIC: nigdy nie pozwalaj na bg-white w dark mode dla card-like elements
+ * UWAGA: wcześniej tu był invalid selector `:not(.qai-*)` — `*` w klasie to NIE
+ * wildcard. Przeglądarka wywalała cały blok i mogło psuć cascade. Naprawione:
+ * używamy atrybutu `[class*="qai-"]` zamiast tego. */
+.dark [class*="bg-white"]:not([class*="qai-"]):not([data-no-override]),
+body.dark .bg-white:not([class*="qai-"]):not([data-no-override]) {
+  background: hsl(var(--card)) !important;
+  color: hsl(var(--card-foreground)) !important;
+}
+
+/* === NUCLEAR NODE FIX ================================================
+ * Wcześniejszy override nie złapał bo białe są DZIECI nodów (input box,
+ * section, header bg) a nie wrapper. Forsujemy wszystkie div/input/textarea
+ * wewnątrz .react-flow__node na dark card bg. SVG zostawiamy transparent
+ * (ikony muszą zachować swój fill). Buttons + accent purple headers
+ * pozostają nietknięte. */
+.react-flow__node div,
+.react-flow__node section,
+.react-flow__node header,
+.react-flow__node footer {
+  background-color: hsl(var(--card)) !important;
+  color: hsl(var(--card-foreground)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+.react-flow__node input:not([type="checkbox"]):not([type="radio"]),
+.react-flow__node textarea,
+.react-flow__node select {
+  background-color: hsl(var(--input)) !important;
+  color: hsl(var(--card-foreground)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+.react-flow__node input::placeholder,
+.react-flow__node textarea::placeholder {
+  color: hsl(var(--placeholder-foreground)) !important;
+}
+/* SVG icons w nodach — transparentne tło, kolor sterowany przez fill/stroke. */
+.react-flow__node svg,
+.react-flow__node svg *,
+.react-flow__node svg rect,
+.react-flow__node svg path {
+  background-color: transparent !important;
+}
+/* Tekst paragrafów / labeli wewnątrz nodów. */
+.react-flow__node p,
+.react-flow__node span,
+.react-flow__node label,
+.react-flow__node h1,
+.react-flow__node h2,
+.react-flow__node h3,
+.react-flow__node h4 {
+  background-color: transparent !important;
+  color: hsl(var(--card-foreground)) !important;
+}
+
+/* "Configure your Model Provider" floating hint (na drugim screenie widoczne
+ * — biały bg w dark mode). To overlay tip wewnątrz nodu. */
+[class*="bg-yellow"],
+[class*="bg-amber"] {
+  background-color: color-mix(in srgb, hsl(var(--primary)) 12%, hsl(var(--card))) !important;
+  color: hsl(var(--card-foreground)) !important;
+}

@@ -136,7 +136,7 @@ const HeaderComponent = ({
                 }}
                 className={`border-b ${
                   flowType === type
-                    ? "border-b-2 border-foreground text-foreground"
+                    ? "border-b-2 border-primary text-primary"
                     : "border-border text-muted-foreground hover:text-foreground"
                 } text-nowrap px-2 pb-2 pt-1 text-mmd`}
                 >

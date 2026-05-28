@@ -1,0 +1,232 @@
+/* ============================================================================
+ * QOSMO BRANDING - DESIGN TOKENS (single source of truth)
+ * ----------------------------------------------------------------------------
+ * Used by all 4 apps:
+ *   - Next.js   (Qosmo.chat)
+ *   - Keycloak  (Qosmo.auth)
+ *   - Langflow  (Qosmo.flow)
+ *   - Langfuse  (Qosmo.tracer)
+ *
+ * Every color is exposed TWICE:
+ *   --qai-foo       -> #HEX   (use directly in custom CSS: `color: var(--qai-bg)`)
+ *   --qai-foo-hsl   -> "H S% L%" triplet (for Tailwind/shadcn: `hsl(var(--qai-bg-hsl))`)
+ *                                       (this lets us re-skin Langflow/Langfuse which
+ *                                        use shadcn HSL convention without losing SSOT)
+ *
+ * Theme selectors covered:
+ *   :root, [data-theme="dark"], .dark           (default)
+ *   :root.light, [data-theme="light"], .light
+ * ============================================================================
+ */
+
+/* === FONTS =============================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --font-sans:    'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: 'Manrope',   -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* === PALETTE - DARK (default) =========================================== */
+:root,
+:root.dark,
+.dark,
+[data-theme="dark"] {
+  /* surfaces */
+  --qai-bg:            #0B0B14;     --qai-bg-hsl:            240 29% 6%;
+  --qai-surface:       #0E0E1B;     --qai-surface-hsl:       240 32% 8%;
+  --qai-card:          #121221;     --qai-card-hsl:          240 29% 10%;
+  --qai-border:        #21213B;     --qai-border-hsl:        240 28% 18%;
+
+  /* text */
+  --qai-text-dim:      #6C6C9D;     --qai-text-dim-hsl:      240 20% 52%;
+  --qai-text:          #C9C9D9;     --qai-text-hsl:          240 17% 82%;
+  --qai-text-bright:   #F3F3F6;     --qai-text-bright-hsl:   240 14% 96%;
+
+  /* primary brand accent (Qosmo blue) */
+  --qai-accent:        #2C3DF2;     --qai-accent-hsl:        235 88% 56%;
+  --qai-accent-deep:   #1515C1;     --qai-accent-deep-hsl:   240 80% 42%;
+  --qai-accent-glow:   rgba(44, 61, 242, 0.35);
+  --qai-accent-faint:  rgba(44, 61, 242, 0.08);
+
+  /* inputs / shadows / dots (decorative) */
+  --qai-input-bg:      var(--qai-card);
+  --qai-shadow-color:  rgba(0, 0, 0, 0.45);
+  --qai-dot-color:     rgba(255, 255, 255, 0.025);
+
+  /* status */
+  --qai-success:       #22c55e;     --qai-success-hsl:       142 71% 45%;
+  --qai-warning:       #f59e0b;     --qai-warning-hsl:        38 92% 50%;
+  --qai-danger:        #ef4444;     --qai-danger-hsl:          0 84% 60%;
+  --qai-info:          var(--qai-accent);
+
+  --qai-on-accent:     #FFFFFF;
+
+  /* ---- legacy names (do not remove; older overrides still reference them) */
+  --bg:           var(--qai-bg);
+  --surface:      var(--qai-surface);
+  --card:         var(--qai-card);
+  --border:       var(--qai-border);
+  --text:         var(--qai-text);
+  --text-dim:     var(--qai-text-dim);
+  --text-bright:  var(--qai-text-bright);
+  --accent:       var(--qai-accent);
+  --accent-deep:  var(--qai-accent-deep);
+  --accent-glow:  var(--qai-accent-glow);
+  --accent-faint: var(--qai-accent-faint);
+  --input-bg:     var(--qai-input-bg);
+  --shadow-color: var(--qai-shadow-color);
+  --dot-color:    var(--qai-dot-color);
+  --success:      var(--qai-success);
+  --warning:      var(--qai-warning);
+  --danger:       var(--qai-danger);
+  --info:         var(--qai-info);
+  --on-accent:    var(--qai-on-accent);
+}
+
+/* === PALETTE - LIGHT ==================================================== */
+:root.light,
+.light,
+[data-theme="light"] {
+  --qai-bg:            #F4F4F9;     --qai-bg-hsl:            240 22% 96%;
+  --qai-surface:       #EBEBF2;     --qai-surface-hsl:       240 17% 93%;
+  --qai-card:          #DFDFEB;     --qai-card-hsl:          240 17% 89%;
+  --qai-border:        #C7C7DB;     --qai-border-hsl:        240 18% 82%;
+
+  --qai-text-dim:      #7777A0;     --qai-text-dim-hsl:      234 18% 55%;
+  --qai-text:          #21213B;     --qai-text-hsl:          240 28% 18%;
+  --qai-text-bright:   #0B0B14;     --qai-text-bright-hsl:   240 29% 6%;
+
+  --qai-accent:        #2C3DF2;     --qai-accent-hsl:        235 88% 56%;
+  --qai-accent-deep:   #1515C1;     --qai-accent-deep-hsl:   240 80% 42%;
+  --qai-accent-glow:   rgba(44, 61, 242, 0.28);
+  --qai-accent-faint:  rgba(44, 61, 242, 0.06);
+
+  --qai-input-bg:      #FFFFFF;
+  --qai-shadow-color:  rgba(33, 33, 59, 0.08);
+  --qai-dot-color:     rgba(0, 0, 0, 0.05);
+
+  --qai-success:       #16a34a;     --qai-success-hsl:       142 76% 36%;
+  --qai-warning:       #d97706;     --qai-warning-hsl:        33 95% 44%;
+  --qai-danger:        #dc2626;     --qai-danger-hsl:          0 73% 51%;
+  --qai-info:          var(--qai-accent);
+  --qai-on-accent:     #FFFFFF;
+
+  --bg:           var(--qai-bg);
+  --surface:      var(--qai-surface);
+  --card:         var(--qai-card);
+  --border:       var(--qai-border);
+  --text:         var(--qai-text);
+  --text-dim:     var(--qai-text-dim);
+  --text-bright:  var(--qai-text-bright);
+  --accent:       var(--qai-accent);
+  --accent-deep:  var(--qai-accent-deep);
+  --accent-glow:  var(--qai-accent-glow);
+  --accent-faint: var(--qai-accent-faint);
+  --input-bg:     var(--qai-input-bg);
+  --shadow-color: var(--qai-shadow-color);
+  --dot-color:    var(--qai-dot-color);
+  --success:      var(--qai-success);
+  --warning:      var(--qai-warning);
+  --danger:       var(--qai-danger);
+  --info:         var(--qai-info);
+  --on-accent:    var(--qai-on-accent);
+}
+
+/* === LAYOUT (shared across apps) ======================================== */
+:root {
+  --sidebar-w:    268px;
+  --sidebar-w-collapsed: 64px;
+  --topbar-h:      56px;
+  --context-w:    360px;
+
+  --radius-sm:     6px;
+  --radius:        8px;
+  --radius-lg:    12px;
+  --radius-xl:    16px;
+  --radius-2xl:   20px;
+
+  --space-1:       4px;
+  --space-2:       8px;
+  --space-3:      12px;
+  --space-4:      16px;
+  --space-6:      24px;
+  --space-8:      32px;
+}
+
+/* === QOSMO GEOMETRIC ACCENT PALETTE (8 hues at 45deg on the colour wheel) =
+ * Source of truth: qosmo-unified6 mockup, data-shared.js -> QOSMO_ACCENTS.
+ * These eight hex pairs are the only "brand" colours the design system uses
+ * for accents anywhere across the products (avatars, status, per-app suffix,
+ * per-conversation tint, etc.). Every per-app suffix below MUST map to one
+ * of these.
+ * ======================================================================== */
+:root {
+  --qai-c-indigo:    #2C3DF2;  --qai-c-indigo-deep:   #1515C1;  /* Qosmo brand blue */
+  --qai-c-wisteria:  #9F2CF2;  --qai-c-wisteria-deep: #7515C1;  /* violet  */
+  --qai-c-magenta:   #F22CDD;  --qai-c-magenta-deep:  #C115AB;
+  --qai-c-cynober:   #F2422C;  --qai-c-cynober-deep:  #C12815;  /* orange-red */
+  --qai-c-gold:      #F2C12C;  --qai-c-gold-deep:     #C19515;
+  --qai-c-lime:      #5DF22C;  --qai-c-lime-deep:     #3CC115;
+  --qai-c-emerald:   #2CF286;  --qai-c-emerald-deep:  #15C166;
+  --qai-c-cyan:      #2CD9F2;  --qai-c-cyan-deep:     #15A8C1;
+}
+
+/* === PER-APP BRAND ACCENTS ============================================== *
+ * Direct assignment from qosmo-unified6 / data-shared.js -> QOSMO_APPS.
+ * Each app sets `--qai-suffix-color` to its own --qai-app-XXX value in its
+ * overrides CSS (frontend.css, langflow.css, etc.). This drives:
+ *   - tint of ".chat" / ".flow" / etc. suffix in the wordmark
+ *   - tint of the sygnet (when used as the app's mark)
+ *   - tile gradient + border in the app-switcher dialog (Qosmo Premise)
+ * ======================================================================== */
+:root {
+  --qai-app-chat:         var(--qai-c-indigo);     /* niebieski Qosmo */
+  --qai-app-chat-deep:    var(--qai-c-indigo-deep);
+  --qai-app-flow:         var(--qai-c-wisteria);   /* wisteria / fiolet */
+  --qai-app-flow-deep:    var(--qai-c-wisteria-deep);
+  --qai-app-tracer:       var(--qai-c-cyan);       /* cyjan */
+  --qai-app-tracer-deep:  var(--qai-c-cyan-deep);
+  --qai-app-docs:         var(--qai-c-emerald);    /* szmaragd */
+  --qai-app-docs-deep:    var(--qai-c-emerald-deep);
+  --qai-app-auth:         var(--qai-c-cynober);    /* cynober pomaranczowo-czerwony */
+  --qai-app-auth-deep:    var(--qai-c-cynober-deep);
+}
+
+/* Light-theme overrides for per-app accents.
+ * The base (dark-theme) hues for docs (emerald #2CF286) and tracer (cyan
+ * #2CD9F2) are too high-chroma/low-contrast on white surfaces -- they read
+ * as fluorescent and hurt legibility of the suffix text + tile gradient.
+ * Use their *-deep variants in light mode; chat/flow/auth stay as-is
+ * because their base values already sit at acceptable contrast on white.
+ */
+:root.light,
+.light,
+[data-theme="light"] {
+  --qai-app-tracer: var(--qai-c-cyan-deep);    /* #15A8C1 -- still cyan, less screaming */
+  --qai-app-docs:   var(--qai-c-emerald-deep); /* #15C166 -- still emerald, less neon  */
+}
+
+/* === LOGOS ============================================================== *
+ * Each app picks its wordmark. Sygnet is shared (one file, tinted via
+ * --qai-suffix-color on the parent). Apps that want their wordmark inlined
+ * (for currentColor + per-app suffix tint to work) should import the SVG
+ * as a React component, NOT via <img src>. For Keycloak FTL we inline raw.
+ * ======================================================================== */
+:root {
+  --qai-brand-name:        "Qosmo";
+
+  --qai-logo-chat:   url("/branding/logo/apps/qosmo-chat.svg");
+  --qai-logo-flow:   url("/branding/logo/apps/qosmo-flow.svg");
+  --qai-logo-tracer: url("/branding/logo/apps/qosmo-tracer.svg");
+  --qai-logo-docs:   url("/branding/logo/apps/qosmo-docs.svg");
+  --qai-logo-auth:   url("/branding/logo/apps/qosmo-auth.svg");
+  --qai-sygnet:      url("/branding/logo/apps/sygnet.svg");
+
+  /* legacy fallbacks (kept so older code paths don't break) */
+  --brand-name:      var(--qai-brand-name);
+  --brand-logo:      url("/branding/logo/logo_white.svg");
+  --brand-logo-dark: url("/branding/logo/logo_black.svg");
+  --brand-favicon:   url("/branding/logo/favicon.ico");
+}

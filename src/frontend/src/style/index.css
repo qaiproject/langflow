@@ -1,3 +1,6 @@
+@import "./qosmo-tokens.css";
+@import "./qosmo-components.css";
+@import "./qosmo-overrides.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

@@ -42,6 +42,7 @@ import {
 } from "../../../../constants/alerts_constants";
 import ExportModal from "../../../../modals/exportModal";
 import useAlertStore from "../../../../stores/alertStore";
+import { useDarkStore } from "../../../../stores/darkStore";
 import useFlowStore from "../../../../stores/flowStore";
 import useFlowsManagerStore from "../../../../stores/flowsManagerStore";
 import { useShortcutsStore } from "../../../../stores/shortcuts";
@@ -106,6 +107,13 @@ export default function Page({
   const nodes = useFlowStore((state) => state.nodes);
   const edges = useFlowStore((state) => state.edges);
   const isEmptyFlow = useRef(nodes.length === 0);
+
+  // Qosmo: React Flow ma własny wewnętrzny tryb kolorów (prop `colorMode`),
+  // który dodaje klasę `light` lub `dark` na .react-flow wrapperze. Bez tego
+  // domyślnie ustawia `light` → canvas + node'y mają jasne tło ignorując
+  // naszą globalną klasę `.dark` na <body>. Bindujemy go do useDarkStore
+  // żeby toggle (Moon/Sun) przełączał też tryb React Flow.
+  const dark = useDarkStore((state) => state.dark);
 
   const previewLabel = useVersionPreviewStore((s) => s.previewLabel);
   const isPreviewActive = previewLabel !== null;
@@ -849,6 +857,7 @@ export default function Page({
               fitView={isEmptyFlow.current ? false : true}
               fitViewOptions={fitViewOptions}
               className="theme-attribution"
+              colorMode={dark ? "dark" : "light"}
               tabIndex={isLocked ? -1 : undefined}
               minZoom={MIN_ZOOM}
               maxZoom={MAX_ZOOM}

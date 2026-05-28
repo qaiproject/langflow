@@ -1,0 +1,1568 @@
+/* ============================================================================
+ * QOSMO BRANDING -- UI COMPONENTS (shared across all apps)
+ * ----------------------------------------------------------------------------
+ * Loaded by all 4 apps AFTER tokens.css and BEFORE the per-app overrides:
+ *   Next.js   - <link href="/branding/components.css" />
+ *   Keycloak  - styles=... css/tokens.css css/components.css css/overrides.css
+ *   Langflow  - @import in src/style/index.css (via Dockerfile prepend)
+ *   Langfuse  - injected by nginx sub_filter
+ *
+ * Holds DESIGN-SYSTEM primitives that every Qosmo app should render the same
+ * way: the brand-lockup (SVG "Qosmo" + ".chat"/.flow/etc.), the app-switcher
+ * modal (Premise launcher), the collapsed sidebar floating sygnet+toggle,
+ * the top-bar (icons, breadcrumbs, search), and shared animations.
+ *
+ * Change here -> all 4 apps update on next reload.
+ * Anything app-specific (Tailwind HSL bridges, PatternFly overrides, etc.)
+ * stays in branding/overrides/<app>.css.
+ *
+ * IMPORTANT CONVENTION:
+ *   Use Qosmo design tokens DIRECTLY (--qai-bg, --qai-card, --qai-border,
+ *   --qai-accent, etc.) -- NEVER shadcn proxies (--background, --card,
+ *   --border, --accent).
+ *
+ *   Why: Langflow's qosmo-overrides.css remaps shadcn vars to bare HSL
+ *   triplets like "240 28% 18%" (no hsl() wrapper) so that Tailwind classes
+ *   like `border-border` work as `hsl(var(--border))`. But that bare-HSL
+ *   value is INVALID as a direct CSS color -- using it in `border: 1px solid
+ *   var(--border)` or `color-mix(... var(--border))` invalidates the whole
+ *   declaration and the browser silently drops it. --qai-* tokens are always
+ *   hex/rgb in every app, so they Just Work everywhere.
+ * ============================================================================ */
+
+.qai-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 18px;
+  height: 56px;
+  border-bottom: 1px solid var(--qai-border, #21213B);
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0;
+}
+.qai-topbar-wrap {
+  background: var(--bg);
+  border-bottom: 1px solid var(--qai-border, #21213B) !important;
+}
+.qai-topbar-icon,
+.qai-topbar-icon-wrap > button,
+.qai-topbar-icon-wrap > div[role="button"] {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: transparent !important;
+  border: none !important;
+  color: var(--text-dim) !important;
+  cursor: pointer;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  transition: background-color .15s, color .15s;
+  position: relative;
+  padding: 0 !important;
+}
+.qai-topbar-icon:hover,
+.qai-topbar-icon-wrap > button:hover,
+.qai-topbar-icon-wrap > div[role="button"]:hover {
+  background: var(--surface) !important;
+  color: var(--text-bright) !important;
+}
+.qai-topbar-icon svg,
+.qai-topbar-icon-wrap svg {
+  width: 18px;
+  height: 18px;
+}
+.qai-topbar-icon-badge::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 9px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  box-sizing: content-box;
+}
+.qai-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-heading);
+  font-size: 14px;
+}
+.qai-breadcrumb-link {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color .15s, color .15s;
+}
+.qai-breadcrumb-link:hover {
+  background: var(--surface);
+  color: var(--text-bright);
+}
+.qai-breadcrumb-sep {
+  color: var(--text-dim);
+  opacity: 0.6;
+}
+.qai-breadcrumb-current {
+  color: var(--text-bright);
+  font-weight: 600;
+  font-family: var(--font-heading);
+}
+.qai-collapsed-sygnet {
+  position: fixed;
+  top: 10px;
+  left: 12px;
+  width: 32px;
+  height: 32px;
+  z-index: 60;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  color: var(--text-bright);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  transition: background 0.2s;
+  animation: qai-sygnet-rotate 60s linear infinite;
+}
+.qai-collapsed-sygnet:hover {
+  background: var(--card);
+}
+@keyframes qai-sygnet-rotate {
+  0%, 93.33% { transform: rotate(0deg); }
+  100%       { transform: rotate(360deg); }
+}
+.qai-collapsed-toggle {
+  position: fixed;
+  top: 12px;
+  left: 56px;            /* sygnet ma left=14 + width=32 -> ok 46, +10 odstepu */
+  width: 32px;
+  height: 32px;
+  z-index: 60;
+  background: transparent;
+  border: 1px solid var(--qai-border, #21213B);
+  border-radius: var(--radius);
+  cursor: pointer;
+  padding: 0;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.qai-collapsed-toggle:hover {
+  background: var(--card);
+  color: var(--text-bright);
+  border-color: var(--accent);
+}
+body:has(.qai-collapsed-sygnet) .qai-topbar-wrap {
+  padding-left: 100px;
+}
+.qai-app-switcher-overlay {
+  position: fixed;
+  inset: 0;
+  /* z-index 9999: Langflow ma sticky elementy w sidebar header (Szukaj flow +
+   * ikonki list/grid view) ktore tworza wlasny stacking context i wsuwaja
+   * sie ponad overlay przy z-index < 1000. 9999 pobija standardowe Radix
+   * popovery/dropdowny + sidebary. Boot loader siedzi na 2147483646 i tak
+   * zostaje powyzej, wiec headroom jest. Bezpieczne dla Qosmo.chat i Keycloak. */
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 60px 20px 20px;
+  animation: qai-fade-in 0.18s ease-out;
+}
+@keyframes qai-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.qai-app-switcher {
+  width: min(760px, 100%);
+  /* Modal tlo nieco jasniejsze niz var(--bg) (6%) - bliej --qai-surface (8%)
+   * dla lepszego kontrastu z kafelkami i ciemnym overlayem za modalem. */
+  background: var(--qai-surface, #0E0E1B);
+  border: 1px solid var(--qai-border, #21213B);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 24px 48px var(--shadow-color);
+  overflow: hidden;
+  animation: qai-pop-in 0.22s ease-out;
+}
+@keyframes qai-pop-in {
+  from { opacity: 0; transform: translateY(-6px) scale(0.99); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.qai-app-switcher-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--qai-border, #21213B);
+}
+.qai-app-switcher-header-spacer {
+  flex: 1;
+}
+.qai-app-switcher-close {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+.qai-app-switcher-close:hover {
+  background: var(--card);
+  color: var(--text-bright);
+}
+.qai-app-switcher-grid {
+  padding: 18px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+.qai-app-tile {
+  position: relative;
+  /* Tlo kafelka JASNIEJSZE niz var(--card) - na mockupie Qosmo.chat/Keycloak
+   * kafelki wygladaja bardziej szare, nie prawie-czarne. Miks 65% card + 35%
+   * border daje HSL 240 28% ~13% (var(--card) to 10%, var(--border) to 18%). */
+  background: color-mix(in srgb, var(--qai-card, #121221) 65%, var(--qai-border, #21213B) 35%);
+  /* Border NEUTRALNY (--qai-border) by default. Per-app kolor pokazuje sie
+   * tylko na :hover i .qai-app-tile-active -- tak jak na mockupie Qosmo.chat
+   * i Keycloak gdzie niebedacy-aktywny kafelek ma szary border, a tylko
+   * aktywny (np. AKTUALNA badge) ma kolorowa obwodke per-app. */
+  border: 1px solid var(--qai-border, #21213B);
+  border-radius: 14px;
+  padding: 18px 16px;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.15s, border-color 0.15s, background 0.15s, box-shadow 0.2s;
+  overflow: hidden;
+}
+.qai-app-tile::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* Gradient overlay w prawym gornym rogu - mocniejszy niz wczesniej (0.12)
+   * zeby per-app vibe byl widoczny w default state. Hover podbija do 0.20. */
+  background: radial-gradient(circle at 100% 0%, var(--qai-tile-color) 0%, transparent 60%);
+  opacity: 0.20;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.qai-app-tile:hover {
+  transform: translateY(-2px);
+  /* Hover - pelny kolor obwodki (bez miksu z bordurem) + glow */
+  border-color: var(--qai-tile-color);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.25),
+    0 0 0 1px color-mix(in srgb, var(--qai-tile-color) 30%, transparent);
+}
+.qai-app-tile:hover::before { opacity: 0.32; }
+.qai-app-tile-active {
+  border-color: var(--qai-tile-color);
+  /* Gradient bazowy taki sam jak default tile (qai-card 65% + qai-border 35%),
+   * zakonczenie z silniejszym domieszaniem tile-color zeby aktywny mial wyrazny
+   * per-app tint nie tylko na border. Bez tego active uzywal var(--card) ktore
+   * w Langflow rozwija sie na invalid HSL i gradient nie dzialal. */
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--qai-card, #121221) 65%, var(--qai-border, #21213B) 35%) 0%,
+    color-mix(in srgb, var(--qai-card, #121221) 55%, var(--qai-tile-color) 45%) 100%
+  );
+}
+.qai-app-tile-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--qai-tile-color) 15%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--qai-tile-color);
+}
+.qai-app-tile-name {
+  display: inline-flex;
+  align-items: center;
+  /* Wordmark Qosmo + .suffix juz uzywa --font-heading wewnatrz brand-lockup,
+   * ale wymuszamy tutaj dla pewnosci (Langflow body dziedziczy Quicksand). */
+  font-family: var(--font-heading, "Manrope"), sans-serif;
+}
+.qai-app-tile-desc {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  line-height: 1.4;
+  /* Description pod nazwa apki uzywa Manrope (heading) zamiast Quicksand (sans).
+   * Quicksand renderuje sie ciezko/rounded dla 12px text, Manrope jest cleaner
+   * i pasuje do mockupu Qosmo.chat. */
+  font-family: var(--font-heading, "Manrope"), sans-serif;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+}
+.qai-app-tile-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: var(--qai-tile-color);
+  color: #ffffff;
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+.qai-app-switcher-foot {
+  padding: 12px 20px 16px;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  border-top: 1px solid var(--qai-border, #21213B);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+ * SEARCH INPUT  (qai-search)
+ * Single reusable pill-shaped input with a leading lupe icon and an
+ * optional trailing X (clear) button. Used today by Left_panel
+ * (conversation filter); reusable in any 4-app context that needs a
+ * search field. No location-specific naming.
+ * ════════════════════════════════════════════════════════════════════ */
+.qai-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;                       /* odstep ikona <-> input */
+  width: 100%;
+  height: 34px;
+  padding: 0 14px;                 /* symetryczny padding */
+  background: var(--surface);
+  border: 1px solid var(--qai-border, #21213B);
+  border-radius: 10px;
+  transition: border-color 0.15s;
+}
+.qai-search:focus-within {
+  border-color: var(--accent);
+}
+.qai-search > svg,
+.qai-search > span > svg {
+  /* Inline flex child (nie absolute). Direct child `> svg` lapa Langflow
+   * gdzie SVG to inline JSX, plus `> span > svg` dla Keycloak gdzie JS
+   * opakowuje SVG w <span style="display:inline-flex">. Kolor EXPLICIT
+   * var(--text-dim) (#6C6C9D w dark) + stroke wymuszony bo SVG ma
+   * stroke="currentColor" co inheritowalo z bialego placeholdera. */
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--text-dim) !important;
+  stroke: var(--text-dim) !important;
+  pointer-events: none;
+}
+/* SVG ma stroke="currentColor" w markup - wymusza explicit z !important
+ * zeby pobic globalne text-bright dziedziczenie. */
+.qai-search svg [stroke],
+.qai-search svg path,
+.qai-search svg circle,
+.qai-search svg line {
+  stroke: var(--text-dim) !important;
+}
+/* Wrapper span (Keycloak markup) - daj mu kolor zeby currentColor schodzilo */
+.qai-search > span {
+  display: inline-flex !important;
+  align-items: center;
+  color: var(--text-dim) !important;
+  flex-shrink: 0;
+}
+.qai-search input {
+  background: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  color: var(--text-bright);
+  font-family: var(--font-sans);
+  font-size: 13px;
+}
+.qai-search input::placeholder { color: var(--text-dim); }
+.qai-search-clear {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+  padding: 0;
+  border-radius: 999px;
+  color: var(--text-dim);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+.qai-search-clear:hover {
+  background: var(--card);
+  color: var(--text-bright);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+ * BRAND LOCKUP  (logotyp Qosmo + suffix per-app)
+ * Wzorzec z qosmo-unified6/styles.css (.brand-lockup + .qosmo-logo + .product-tag).
+ *
+ * Renderowane przez <QosmoWordmark> (Next.js) i <QosmoLogo> (Langflow).
+ * Komponenty wstawiaja TYLKO dynamiczne wymiary (height/width/fontSize/margin)
+ * w stylu inline -- caly typograficzny + estetyczny styling jest TUTAJ,
+ * zeby zmiana w jednym miejscu propagowala sie do wszystkich 4 apek.
+ *
+ * Color tokens uzyte:
+ *   --text-bright           --> kolor "Qosmo" (jasny na ciemnym tle, ciemny na jasnym)
+ *   --qai-suffix-color      --> kolor suffixu (.chat / .flow / .auth / .docs / .tracer)
+ *                                ustawiany per-app w branding/overrides/<app>.css
+ *   --accent                --> fallback gdy --qai-suffix-color nie ustawiony
+ * ════════════════════════════════════════════════════════════════════ */
+
+/* Kontener: SVG "Qosmo" + span ".chat" obok siebie, wyrownane do baseline */
+.qai-brand-lockup {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 4px;
+  padding-top: 2px;
+}
+
+/* Wordmark SVG (sam napis "Qosmo") -- height/width ustala komponent
+ * (zalezy od `height` prop). Kolor = --text-bright (theme-adaptive). */
+.qai-wordmark {
+  display: inline-flex;
+  color: var(--text-bright);
+}
+
+/* Suffix ".chat" / ".flow" / etc. -- font + kolor tutaj, rozmiar w komponencie. */
+.qai-product-tag {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  line-height: 1;
+  text-transform: lowercase;
+  color: var(--qai-suffix-color, var(--accent));
+}
+
+/* ════════════════════════════════════════════════════════════════════
+ * TOPBAR ICON ANCHOR (wrapper dla iconki z popoverem)
+ * Pozwala absolute-positioned popoverowi (Notifications / Saved)
+ * zaczepic sie pod swoja iconka.
+ * ════════════════════════════════════════════════════════════════════ */
+.qai-topbar-icon-anchor {
+  position: relative;
+  display: inline-flex;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+ * NOTIFICATIONS DROPDOWN (qai-notif-*)
+ * Wzorzec z qosmo-unified6/styles.css (.notif-dropdown + .notif-item).
+ * Otwierany przyciskiem Bell w topbarze.
+ * ════════════════════════════════════════════════════════════════════ */
+.qai-notif-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 420px;
+  max-width: calc(100vw - 24px);
+  max-height: calc(100vh - var(--topbar-h, 56px) - 32px);
+  background: var(--surface);
+  border: 1px solid var(--qai-border, #21213B);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 24px 64px var(--shadow-color);
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: qai-notif-slide 0.18s ease-out;
+}
+@keyframes qai-notif-slide {
+  from { transform: translateY(-8px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+.qai-notif-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--qai-border, #21213B);
+  flex-shrink: 0;
+}
+.qai-notif-header h3 {
+  flex: 1;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-bright);
+  margin: 0;
+}
+.qai-notif-unread-count {
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.04em;
+}
+
+.qai-notif-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.qai-notif-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--qai-border, #21213B);
+  transition: background 0.15s;
+  cursor: pointer;
+  position: relative;
+}
+.qai-notif-item:last-child { border-bottom: none; }
+.qai-notif-item:hover { background: var(--card); }
+.qai-notif-item.unread::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 18px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.qai-notif-item-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-dim);
+}
+.qai-notif-item.qai-notif-error .qai-notif-item-icon {
+  background: color-mix(in srgb, var(--qai-c-cynober) 15%, transparent);
+  color: var(--qai-c-cynober);
+}
+.qai-notif-item.qai-notif-warning .qai-notif-item-icon {
+  background: color-mix(in srgb, var(--qai-c-gold) 15%, transparent);
+  color: var(--qai-c-gold);
+}
+.qai-notif-item.qai-notif-success .qai-notif-item-icon {
+  background: color-mix(in srgb, var(--qai-c-emerald) 15%, transparent);
+  color: var(--qai-c-emerald);
+}
+.qai-notif-item.qai-notif-info .qai-notif-item-icon {
+  background: var(--accent-faint);
+  color: var(--accent);
+}
+
+.qai-notif-item-body { flex: 1; min-width: 0; }
+.qai-notif-item-title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-bright);
+  margin-bottom: 2px;
+  line-height: 1.35;
+}
+.qai-notif-item-desc {
+  font-family: var(--font-heading);
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+.qai-notif-item-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-dim);
+  letter-spacing: -0.01em;
+}
+.qai-notif-item-tag {
+  background: var(--card);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.qai-notif-empty {
+  padding: 36px 18px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+.qai-notif-empty-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+.qai-notif-empty-title {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-bright);
+}
+.qai-notif-empty-desc {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  line-height: 1.5;
+  max-width: 280px;
+}
+
+.qai-notif-foot {
+  display: flex;
+  border-top: 1px solid var(--qai-border, #21213B);
+  flex-shrink: 0;
+}
+.qai-notif-foot-btn {
+  flex: 1;
+  padding: 12px 14px;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.qai-notif-foot-btn:hover {
+  background: var(--card);
+  color: var(--text-bright);
+}
+.qai-notif-foot-btn:first-child:not(:only-child) {
+  border-right: 1px solid var(--qai-border, #21213B);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+ * SAVED MESSAGES PANEL (qai-saved-*)
+ * Wzorzec z qosmo-unified6/styles.css (.saved-panel + .saved-item +
+ * .saved-empty). Otwierany przyciskiem Bookmark w topbarze.
+ * ════════════════════════════════════════════════════════════════════ */
+.qai-saved-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 380px;
+  max-height: 520px;
+  background: var(--surface);
+  border: 1px solid var(--qai-border, #21213B);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 48px var(--shadow-color), 0 4px 12px rgba(0, 0, 0, 0.18);
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: qai-saved-pop 0.18s cubic-bezier(0.18, 0.89, 0.32, 1.18);
+}
+@keyframes qai-saved-pop {
+  from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.qai-saved-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--qai-border, #21213B);
+  flex-shrink: 0;
+}
+.qai-saved-panel-header h3 {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin: 0;
+}
+.qai-saved-panel-count {
+  font-family: var(--font-heading);
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--accent-faint);
+  color: var(--accent);
+}
+
+.qai-saved-panel-list {
+  overflow-y: auto;
+  padding: 6px;
+}
+.qai-saved-item {
+  padding: 11px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.15s;
+  border: 1px solid transparent;
+}
+.qai-saved-item + .qai-saved-item { margin-top: 2px; }
+.qai-saved-item:hover {
+  background: var(--card);
+  border-color: var(--qai-border, #21213B);
+}
+.qai-saved-item-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.qai-saved-item-icon {
+  color: var(--accent);
+  display: inline-flex;
+  flex-shrink: 0;
+}
+.qai-saved-item-chat {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-bright);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.qai-saved-item-text {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.qai-saved-item-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.qai-saved-item-time {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-dim);
+}
+.qai-saved-item-del {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s, color 0.12s;
+  opacity: 0;
+}
+.qai-saved-item:hover .qai-saved-item-del { opacity: 1; }
+.qai-saved-item-del:hover {
+  background: color-mix(in srgb, var(--qai-c-cynober) 12%, transparent);
+  color: var(--qai-c-cynober);
+}
+
+.qai-saved-empty {
+  padding: 36px 24px 32px;
+  text-align: center;
+}
+.qai-saved-empty-icon {
+  display: inline-flex;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  background: var(--card);
+  border-radius: 50%;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+.qai-saved-empty-title {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: 6px;
+}
+.qai-saved-empty-desc {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  line-height: 1.5;
+  max-width: 260px;
+  margin: 0 auto;
+}
+.qai-saved-empty-desc strong {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+ * GENERIC DROPDOWN MENU (qai-dropdown-menu / qai-dropdown-item)
+ * Used by Chat_options + every kebab/context menu across the apps.
+ * Reuses the Qosmo surface + border palette so it feels consistent
+ * with the topbar popovers (notifications/saved).
+ * ════════════════════════════════════════════════════════════════════ */
+.qai-dropdown-menu {
+  background: var(--surface);
+  border: 1px solid var(--qai-border, #21213B);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 32px var(--shadow-color);
+  padding: 6px;
+  min-width: 180px;
+}
+.qai-dropdown-item,
+.qai-dropdown-item a,
+.qai-dropdown-item a:visited {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px !important;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  /* text-bright (#F3F3F6) zamiast dziedziczonego primary niebieskiego.
+   * Globalna regula `a { color: var(--primary) }` w niektorych apkach (Keycloak,
+   * Langflow) malowala linki w dropdown na mocny niebieski. */
+  color: var(--text-bright) !important;
+  text-decoration: none !important;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.qai-dropdown-item:hover,
+.qai-dropdown-item:focus,
+.qai-dropdown-item[data-highlighted] {
+  background: var(--card);
+  color: var(--text-bright);
+  outline: none;
+}
+.qai-dropdown-item svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--text-dim);
+}
+.qai-dropdown-item:hover svg { color: var(--text-bright); }
+.qai-dropdown-item.qai-dropdown-item-danger {
+  color: var(--qai-c-cynober);
+}
+.qai-dropdown-item.qai-dropdown-item-danger svg {
+  color: var(--qai-c-cynober);
+}
+.qai-dropdown-item.qai-dropdown-item-danger:hover {
+  background: color-mix(in srgb, var(--qai-c-cynober) 12%, transparent);
+  color: var(--qai-c-cynober);
+}
+.qai-dropdown-item.qai-dropdown-item-danger:hover svg {
+  color: var(--qai-c-cynober);
+}
+
+/* Kebab button living at the right edge of a .qai-conv row */
+.qai-conv-options {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-dim);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s, color 0.15s;
+}
+.qai-conv:hover .qai-conv-options,
+.qai-conv-options[data-state="open"],
+.qai-conv-options:focus-visible {
+  opacity: 1;
+}
+.qai-conv-options:hover {
+  background: var(--card);
+  color: var(--text-bright);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+ * MODEL SELECTOR (qai-model-selector)
+ * Used in the composer to pick the active LLM. Same look spec as the
+ * qosmo-unified6 mockup: dark pill, accent dot, label, chevron-dim.
+ * Reusable in any 4-app composer / topbar / sidebar.
+ * ════════════════════════════════════════════════════════════════════ */
+.qai-model-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  padding: 0 12px;
+  background: var(--surface);
+  border: 1px solid var(--qai-border, #21213B);
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-bright);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+  outline: none;
+}
+.qai-model-selector:hover,
+.qai-model-selector[data-state="open"] {
+  background: var(--card);
+  border-color: var(--text-dim);
+}
+.qai-model-selector-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--accent);
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+.qai-model-selector > svg {
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+.qai-model-selector-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+ * INJECTED TOPBAR  (qosmo-topbar.js)
+ * Hides upstream apps' native masthead when our top-bar is injected,
+ * and styles the slot where we MOVE the original user-menu (so its
+ * click handlers keep working) on the sidebar bottom.
+ * ════════════════════════════════════════════════════════════════════ */
+.qai-hidden-by-injection {
+  display: none !important;
+}
+.qai-topbar-active body {
+  background: var(--bg) !important;
+}
+
+/* User-menu slot pinned to sidebar bottom */
+.qai-sidebar-user-slot {
+  margin-top: auto;
+  padding: 12px;
+  border-top: 1px solid var(--qai-border, #21213B);
+  background: var(--surface);
+}
+.qai-sidebar-user-slot > * {
+  width: 100% !important;
+}
+/* Make whatever shadcn/PF dropdown trigger lives inside look like the
+ * Qosmo user card from /chat. */
+.qai-sidebar-user-slot button,
+.qai-sidebar-user-slot [role="button"],
+.qai-sidebar-user-slot .pf-v5-c-dropdown__toggle,
+.qai-sidebar-user-slot .pf-v6-c-menu-toggle {
+  background: var(--card) !important;
+  border: 1px solid var(--qai-border, #21213B) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: 10px 12px !important;
+  color: var(--text-bright) !important;
+  font-family: var(--font-sans) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  width: 100% !important;
+  justify-content: flex-start !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+ * PATTERNFLY v5 + v6 DEEP OVERRIDES (Keycloak admin + account)
+ * --------------------------------------------------------------------
+ * Every important PatternFly component re-skinned in Qosmo paint. Each
+ * selector duplicates v5 and v6 forms so admin (PF v5) and account
+ * (PF v6) get the same look. Falls back to v3/v4 if encountered.
+ * ════════════════════════════════════════════════════════════════════ */
+
+/* ── Page main section (content area background) ───────────────── */
+.pf-v5-c-page__main, .pf-v6-c-page__main,
+.pf-v5-c-page__main-section, .pf-v6-c-page__main-section,
+.pf-c-page__main, .pf-c-page__main-section {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+/* ── Sidebar (page__sidebar) ─────────────────────────────────────── */
+.pf-v5-c-page__sidebar, .pf-v6-c-page__sidebar,
+.pf-c-page__sidebar {
+  background: var(--surface) !important;
+  border-right: 1px solid var(--qai-border, #21213B) !important;
+}
+
+/* Nav items inside sidebar */
+.pf-v5-c-nav__link, .pf-v6-c-nav__link, .pf-c-nav__link {
+  color: var(--text) !important;
+  font-family: var(--font-sans) !important;
+  font-size: 13.5px !important;
+  border-radius: var(--radius-sm) !important;
+  transition: background 0.12s, color 0.12s !important;
+}
+.pf-v5-c-nav__link:hover, .pf-v6-c-nav__link:hover, .pf-c-nav__link:hover {
+  background: var(--card) !important;
+  color: var(--text-bright) !important;
+}
+.pf-v5-c-nav__link.pf-m-current, .pf-v6-c-nav__link.pf-m-current,
+.pf-c-nav__link.pf-m-current,
+.pf-v5-c-nav__item.pf-m-current > .pf-v5-c-nav__link,
+.pf-v6-c-nav__item.pf-m-current > .pf-v6-c-nav__link {
+  background: color-mix(in srgb, var(--accent) 14%, transparent) !important;
+  color: var(--text-bright) !important;
+  border-left: 2px solid var(--accent) !important;
+}
+.pf-v5-c-nav__section-title, .pf-v6-c-nav__section-title {
+  color: var(--text-dim) !important;
+  font-family: var(--font-heading) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+}
+
+/* ── Cards ───────────────────────────────────────────────────────── */
+.pf-v5-c-card, .pf-v6-c-card, .pf-c-card {
+  background: var(--surface) !important;
+  border: 1px solid var(--qai-border, #21213B) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: none !important;
+  color: var(--text) !important;
+}
+.pf-v5-c-card__title, .pf-v6-c-card__title,
+.pf-v5-c-card__header, .pf-v6-c-card__header {
+  color: var(--text-bright) !important;
+  font-family: var(--font-heading) !important;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────── */
+.pf-v5-c-button, .pf-v6-c-button, .pf-c-button {
+  font-family: var(--font-sans) !important;
+  border-radius: var(--radius-sm) !important;
+  transition: background 0.12s, color 0.12s, border-color 0.12s !important;
+}
+.pf-v5-c-button.pf-m-primary, .pf-v6-c-button.pf-m-primary, .pf-c-button.pf-m-primary {
+  background: var(--accent) !important;
+  color: var(--on-accent) !important;
+  border-color: var(--accent) !important;
+}
+.pf-v5-c-button.pf-m-primary:hover, .pf-v6-c-button.pf-m-primary:hover {
+  background: var(--accent-deep) !important;
+  border-color: var(--accent-deep) !important;
+}
+.pf-v5-c-button.pf-m-secondary, .pf-v6-c-button.pf-m-secondary {
+  background: transparent !important;
+  color: var(--text-bright) !important;
+  border: 1px solid var(--qai-border, #21213B) !important;
+}
+.pf-v5-c-button.pf-m-secondary:hover, .pf-v6-c-button.pf-m-secondary:hover {
+  background: var(--card) !important;
+  border-color: var(--text-dim) !important;
+}
+.pf-v5-c-button.pf-m-link, .pf-v6-c-button.pf-m-link {
+  /* Link-style buttons (View guides, Join community, Read blog w Keycloak
+   * welcome screen) - text-dim (#6C6C9D), bez borderu, transparent bg.
+   * Wczesniej color: accent dawal niebieski text + Keycloak admin v2 SPA
+   * dorzucal niebieski border z PF defaultow. */
+  color: var(--text-dim) !important;
+  background: transparent !important;
+  border: 0 !important;
+  text-decoration: none !important;
+}
+.pf-v5-c-button.pf-m-link:hover, .pf-v6-c-button.pf-m-link:hover {
+  color: var(--text-bright) !important;
+  background: transparent !important;
+  border: 0 !important;
+  text-decoration: none !important;
+}
+
+/* ── Tabs ────────────────────────────────────────────────────────── */
+.pf-v5-c-tabs, .pf-v6-c-tabs {
+  background: transparent !important;
+  border-bottom: 1px solid var(--qai-border, #21213B) !important;
+}
+.pf-v5-c-tabs__link, .pf-v6-c-tabs__link, .pf-c-tabs__link,
+.pf-v5-c-tabs__link:link, .pf-v6-c-tabs__link:link,
+.pf-v5-c-tabs__link:visited, .pf-v6-c-tabs__link:visited {
+  /* Nieaktywne taby = text-dim (#6C6C9D). Wzmocnione specyficznoscia
+   * (:link, :visited) bo globalny `a { color: var(--primary) }` wygrywal
+   * z prosta regula na .pf-*-c-tabs__link. */
+  color: var(--text-dim) !important;
+  font-family: var(--font-sans) !important;
+  border: none !important;
+  border-radius: 0 !important;
+  text-decoration: none !important;
+}
+.pf-v5-c-tabs__link:hover, .pf-v6-c-tabs__link:hover {
+  color: var(--text-bright) !important;
+  /* Bez underline na hover - globalny a:hover { text-decoration: underline }
+   * dodawal kreski pod nieaktywnymi tabami przy hover. */
+  text-decoration: none !important;
+}
+.pf-v5-c-tabs__item.pf-m-current > .pf-v5-c-tabs__link,
+.pf-v6-c-tabs__item.pf-m-current > .pf-v6-c-tabs__link {
+  color: var(--text-bright) !important;
+  /* Bez border-bottom -- PF natywnie renderuje podkreslenie przez ::after.
+   * Wczesniej mielismy DWA podkreslenia (border-bottom + native ::after) na
+   * sobie nalozone. Zostawiamy tylko ::after, ustawiamy jego kolor + reset
+   * radiusow na 0 (PF v6 domyslnie ma rounded corners). */
+  border-bottom: 0 !important;
+}
+.pf-v5-c-tabs__item.pf-m-current > .pf-v5-c-tabs__link::after,
+.pf-v6-c-tabs__item.pf-m-current > .pf-v6-c-tabs__link::after {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  border-radius: 0 !important;
+}
+.pf-v5-c-tabs__link::after,
+.pf-v6-c-tabs__link::after {
+  border-radius: 0 !important;
+}
+
+/* ── Tables ──────────────────────────────────────────────────────── */
+.pf-v5-c-table, .pf-v6-c-table, .pf-c-table {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--qai-border, #21213B) !important;
+}
+.pf-v5-c-table thead, .pf-v6-c-table thead {
+  background: var(--card) !important;
+}
+.pf-v5-c-table th, .pf-v6-c-table th {
+  color: var(--text-dim) !important;
+  font-family: var(--font-heading) !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+  font-size: 11.5px !important;
+  border-color: var(--qai-border, #21213B) !important;
+}
+.pf-v5-c-table tbody tr:hover, .pf-v6-c-table tbody tr:hover {
+  background: var(--card) !important;
+}
+.pf-v5-c-table td, .pf-v6-c-table td {
+  border-color: var(--qai-border, #21213B) !important;
+}
+
+/* ── Forms ───────────────────────────────────────────────────────── */
+.pf-v5-c-form__label, .pf-v6-c-form__label,
+.pf-v5-c-form__group-label, .pf-v6-c-form__group-label {
+  color: var(--text-dim) !important;
+  font-family: var(--font-heading) !important;
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+}
+.pf-v5-c-form-control, .pf-v6-c-form-control,
+.pf-v5-c-form-control input, .pf-v6-c-form-control input {
+  background: var(--input-bg) !important;
+  border: 1px solid var(--qai-border, #21213B) !important;
+  color: var(--text-bright) !important;
+  border-radius: var(--radius-sm) !important;
+}
+.pf-v5-c-form-control:focus, .pf-v6-c-form-control:focus-within {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px var(--accent-faint) !important;
+}
+
+/* ── Switch ──────────────────────────────────────────────────────── */
+.pf-v5-c-switch__toggle, .pf-v6-c-switch__toggle {
+  background: var(--card) !important;
+  border-color: var(--qai-border, #21213B) !important;
+}
+.pf-v5-c-switch input:checked + .pf-v5-c-switch__toggle,
+.pf-v6-c-switch input:checked + .pf-v6-c-switch__toggle {
+  background: var(--accent) !important;
+}
+
+/* ── Modal ───────────────────────────────────────────────────────── */
+.pf-v5-c-backdrop, .pf-v6-c-backdrop, .pf-c-backdrop {
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(4px);
+}
+.pf-v5-c-modal-box, .pf-v6-c-modal-box, .pf-c-modal-box {
+  background: var(--surface) !important;
+  border: 1px solid var(--qai-border, #21213B) !important;
+  border-radius: var(--radius-xl) !important;
+  box-shadow: 0 24px 64px var(--shadow-color) !important;
+  color: var(--text) !important;
+}
+.pf-v5-c-modal-box__header, .pf-v6-c-modal-box__header {
+  border-bottom: 1px solid var(--qai-border, #21213B) !important;
+}
+.pf-v5-c-modal-box__title, .pf-v6-c-modal-box__title {
+  color: var(--text-bright) !important;
+  font-family: var(--font-heading) !important;
+}
+.pf-v5-c-modal-box__footer, .pf-v6-c-modal-box__footer {
+  border-top: 1px solid var(--qai-border, #21213B) !important;
+}
+
+/* ── Alerts ──────────────────────────────────────────────────────── */
+.pf-v5-c-alert, .pf-v6-c-alert {
+  background: var(--card) !important;
+  border-radius: var(--radius) !important;
+  border: 1px solid var(--qai-border, #21213B) !important;
+  color: var(--text) !important;
+}
+.pf-v5-c-alert.pf-m-info, .pf-v6-c-alert.pf-m-info {
+  border-left: 3px solid var(--accent) !important;
+}
+.pf-v5-c-alert.pf-m-success, .pf-v6-c-alert.pf-m-success {
+  border-left: 3px solid var(--qai-c-emerald) !important;
+}
+.pf-v5-c-alert.pf-m-warning, .pf-v6-c-alert.pf-m-warning {
+  border-left: 3px solid var(--qai-c-gold) !important;
+}
+.pf-v5-c-alert.pf-m-danger, .pf-v6-c-alert.pf-m-danger {
+  border-left: 3px solid var(--qai-c-cynober) !important;
+}
+.pf-v5-c-alert__title, .pf-v6-c-alert__title {
+  color: var(--text-bright) !important;
+}
+
+/* ── Dropdowns / Menus ───────────────────────────────────────────── */
+.pf-v5-c-dropdown__menu, .pf-v6-c-menu, .pf-c-dropdown__menu {
+  background: var(--surface) !important;
+  border: 1px solid var(--qai-border, #21213B) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: 0 12px 32px var(--shadow-color) !important;
+  padding: 6px !important;
+}
+.pf-v5-c-dropdown__menu-item, .pf-v6-c-menu__list-item,
+.pf-c-dropdown__menu-item {
+  color: var(--text) !important;
+  font-family: var(--font-sans) !important;
+  border-radius: var(--radius-sm) !important;
+  padding: 8px 10px !important;
+}
+.pf-v5-c-dropdown__menu-item:hover, .pf-v6-c-menu__list-item:hover {
+  background: var(--card) !important;
+  color: var(--text-bright) !important;
+}
+
+/* ── Badges / Labels ─────────────────────────────────────────────── */
+.pf-v5-c-badge, .pf-v6-c-label, .pf-c-badge {
+  background: var(--card) !important;
+  color: var(--text-bright) !important;
+  border: 1px solid var(--qai-border, #21213B) !important;
+  border-radius: var(--radius-sm) !important;
+}
+.pf-v5-c-badge.pf-m-read, .pf-v6-c-label.pf-m-blue {
+  background: var(--accent-faint) !important;
+  color: var(--accent) !important;
+  border-color: var(--accent) !important;
+}
+
+/* ── Tooltip ─────────────────────────────────────────────────────── */
+.pf-v5-c-tooltip, .pf-v6-c-tooltip {
+  background: var(--text-bright) !important;
+  color: var(--bg) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+/* ── Code editor (monospace blocks in JSON viewer etc.) ──────────── */
+.pf-v5-c-code-editor, .pf-v6-c-code-editor,
+.pf-v5-c-code-block, .pf-v6-c-code-block {
+  background: var(--bg) !important;
+  border: 1px solid var(--qai-border, #21213B) !important;
+  color: var(--text) !important;
+  font-family: var(--font-mono) !important;
+}
+
+/* ── Page section headers (e.g. "Realm settings", "qai") ────────── */
+.pf-v5-c-content h1, .pf-v6-c-content h1,
+.pf-v5-c-title, .pf-v6-c-title,
+h1.pf-v5-c-page__main-title, h1.pf-v6-c-page__main-title {
+  color: var(--text-bright) !important;
+  font-family: var(--font-heading) !important;
+  font-weight: 700 !important;
+}
+.pf-v5-c-content p, .pf-v6-c-content p {
+  color: var(--text) !important;
+}
+
+/* ── "You are logged in as a temporary admin user" banner ───────── */
+/* (User wants it visible -- we DON'T hide. Just re-style to match Qosmo.) */
+.pf-v5-c-banner, .pf-v6-c-banner {
+  background: var(--card) !important;
+  color: var(--text-bright) !important;
+  border-bottom: 1px solid var(--qai-c-gold) !important;
+}
+
+/* ── Pagination ──────────────────────────────────────────────────── */
+.pf-v5-c-pagination, .pf-v6-c-pagination {
+  background: transparent !important;
+  color: var(--text) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+ * INJECTION HOTFIXES (qosmo-topbar.js + PatternFly co-existence)
+ * ════════════════════════════════════════════════════════════════════ */
+
+/* PF sidebar-body needs to be a flex column so .qai-sidebar-user-slot
+ * margin-top:auto can pin to bottom. */
+.pf-v5-c-page__sidebar-body,
+.pf-v6-c-page__sidebar-body,
+.pf-c-page__sidebar-body {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+/* Hide upstream temp-admin banner. */
+.pf-v5-c-banner,
+.pf-v6-c-banner,
+.pf-c-banner {
+  display: none !important;
+}
+
+/* User-slot pinned to bottom -- override any inline width that PF may have. */
+.qai-sidebar-user-slot {
+  margin-top: auto !important;
+  flex-shrink: 0;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+ * SIDEBAR USER CARD (Keycloak: our own, mockup-compatible)
+ * Replaces upstream PF dropdown which broke on DOM-move (popper alignment).
+ * Plain button + own popover with Account / Logout links.
+ * ════════════════════════════════════════════════════════════════════ */
+.qai-user-card-trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  /* Uzywamy WPROST Qosmo design tokens (--qai-card, --qai-border) zamiast
+   * shadcn proxies (var(--card), var(--border)) - shadcn w Langflow nadpisuje
+   * te HSL-em ktory nie pasuje 1:1 do innych apek. Bezposrednie --qai-* daje
+   * IDENTYCZNY kafelek we wszystkich 4 apkach. Fallback hex z tokens.css. */
+  background: var(--qai-card, #121221);
+  border: 1px solid var(--qai-border, #21213B);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  color: var(--text-bright);
+  font-family: var(--font-sans);
+  transition: background 0.15s, border-color 0.15s;
+  text-align: left;
+}
+.qai-user-card-trigger:hover {
+  background: color-mix(in srgb, var(--card) 70%, var(--accent) 8%);
+  border-color: var(--text-dim);
+}
+.qai-user-card-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  /* UZYWAMY --qai-accent (Qosmo brand blue #2C3DF2), NIE --accent.
+   * Powod: shadcn convention nadpisuje --accent w niektorych apkach
+   * (Langflow) na ciemny granat. --qai-accent omija to i zawsze daje
+   * Qosmo brand main blue. Gradient zgodnie z mockupem Qosmo.chat. */
+  background: linear-gradient(135deg, var(--qai-accent, #2C3DF2), var(--qai-accent-deep, #1515C1));
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.qai-user-card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+.qai-user-card-name {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--text-bright);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.qai-user-card-role {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--qai-c-emerald);
+  margin-top: 1px;
+  letter-spacing: 0.02em;
+}
+.qai-user-card-chevron {
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+/* Hide upstream Keycloak/PF breadcrumb -- we render our own in the top-bar. */
+.pf-v5-c-page__main-breadcrumb,
+.pf-v6-c-page__main-breadcrumb,
+.pf-c-page__main-breadcrumb {
+  display: none !important;
+}
+
+/* Aggressive hide for upstream-injected nodes -- some PF nodes are repainted
+ * by React with inline styles, so we layer multiple defenses. */
+.qai-hidden-by-injection {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  max-height: 0 !important;
+  min-height: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+ * LOADING OVERLAY (Qosmo sygnet during React hydration)
+ * ════════════════════════════════════════════════════════════════════ */
+.qai-loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  transition: opacity 0.32s ease-out;
+  opacity: 1;
+}
+.qai-loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.qai-loading-sygnet {
+  width: 56px;
+  height: 56px;
+  color: var(--text-bright);
+  animation: qai-loading-spin 1.4s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+}
+.qai-loading-sygnet svg { width: 100%; height: 100%; }
+@keyframes qai-loading-spin {
+  0%   { transform: rotate(0deg); opacity: 0.85; }
+  50%  { transform: rotate(180deg); opacity: 1; }
+  100% { transform: rotate(360deg); opacity: 0.85; }
+}
+.qai-loading-label {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--text-dim);
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.qai-loading-dots {
+  display: inline-block;
+  width: 18px;
+  text-align: left;
+  animation: qai-loading-dots 1.4s steps(4) infinite;
+  overflow: hidden;
+}
+@keyframes qai-loading-dots {
+  0%   { content: ""; }
+  25%  { content: "."; }
+  50%  { content: ".."; }
+  75%  { content: "..."; }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+ * SIDEBAR VIEWPORT LOCK
+ * Keep PF sidebar at exactly viewport height so the page doesn't grow
+ * vertically when nav has lots of items -- they scroll inside instead.
+ * The user-card slot stays pinned to the bottom via margin-top:auto.
+ * Topbar is 56px so sidebar's effective height = 100vh - 56px.
+ * ════════════════════════════════════════════════════════════════════ */
+.qai-topbar-active .pf-v5-c-page__sidebar,
+.qai-topbar-active .pf-v6-c-page__sidebar,
+.qai-topbar-active .pf-c-page__sidebar {
+  height: calc(100vh - 56px) !important;
+  max-height: calc(100vh - 56px) !important;
+  overflow: hidden !important;
+}
+
+/* ====================================================================
+ * QOSMO SCROLLBARS (slim, theme-aware) -- applies inside our topbar-active
+ * shell so it covers Keycloak/PF + reuses for Next.js/Langflow/Langfuse.
+ * NOTE: ASCII-only borders (=) to dodge virtiofs Windows truncation on
+ * unicode box-drawing chars. Dont change to box chars without testing.
+ * ==================================================================== */
+.qai-topbar-active *::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.qai-topbar-active *::-webkit-scrollbar-track {
+  background: transparent;
+}
+.qai-topbar-active *::-webkit-scrollbar-thumb {
+  background: var(--qai-border, #21213B);
+  border-radius: 4px;
+}
+.qai-topbar-active *::-webkit-scrollbar-thumb:hover {
+  background: var(--text-dim);
+}
+.qai-topbar-active * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--qai-border, #21213B) transparent;
+}
