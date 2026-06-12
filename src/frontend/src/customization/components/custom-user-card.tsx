@@ -81,7 +81,7 @@ export default function CustomUserCard({
   // so all 4 apps render the SAME identity. Langflow's local SQLite user
   // ("langflow") is only the fallback when the cookie isn't there (no SSO
   // yet, dev mode without Next.js running, etc).
-  // window.QaiUser is injected by branding/js/qai-user-prefs.js (loaded via
+  // window.QaiUser is injected by branding/js/qosmoai-user-prefs.js (loaded via
   // index.html before the bundle).
   const qaiUser =
     typeof window !== "undefined"
@@ -115,7 +115,7 @@ export default function CustomUserCard({
       <button
         ref={triggerRef}
         type="button"
-        className="qai-user-card-trigger"
+        className="qosmoai-user-card-trigger"
         aria-label="Menu użytkownika"
         aria-expanded={open}
         onClick={(e) => {
@@ -125,7 +125,7 @@ export default function CustomUserCard({
         data-testid="user-profile-settings"
         style={triggerStyle}
       >
-        <span className="qai-user-card-avatar" style={avatarStyle}>
+        <span className="qosmoai-user-card-avatar" style={avatarStyle}>
           {profileImage ? (
             // Profile image z backendu (URL lub data:image). Fallback przy
             // błędzie ładowania → onError ukrywa <img> i pokazuje inicjał.
@@ -146,12 +146,12 @@ export default function CustomUserCard({
             initial
           )}
         </span>
-        <span className="qai-user-card-info">
-          <span className="qai-user-card-name">{username}</span>
-          <span className="qai-user-card-role">{roleLabel}</span>
+        <span className="qosmoai-user-card-info">
+          <span className="qosmoai-user-card-name">{username}</span>
+          <span className="qosmoai-user-card-role">{roleLabel}</span>
         </span>
         <svg
-          className="qai-user-card-chevron"
+          className="qosmoai-user-card-chevron"
           width="14"
           height="14"
           viewBox="0 0 24 24"
@@ -169,7 +169,7 @@ export default function CustomUserCard({
       {open && (
         <div
           ref={popoverRef}
-          className="qai-dropdown-menu qai-user-menu-popover"
+          className="qosmoai-dropdown-menu qosmoai-user-menu-popover"
           role="menu"
           style={{
             position: "absolute",
@@ -183,7 +183,7 @@ export default function CustomUserCard({
         >
           <button
             type="button"
-            className="qai-dropdown-item"
+            className="qosmoai-dropdown-item"
             role="menuitem"
             onClick={() => {
               setOpen(false);
@@ -196,7 +196,7 @@ export default function CustomUserCard({
           {isAdmin && !autoLogin && (
             <button
               type="button"
-              className="qai-dropdown-item"
+              className="qosmoai-dropdown-item"
               role="menuitem"
               onClick={() => {
                 setOpen(false);
@@ -209,7 +209,7 @@ export default function CustomUserCard({
 
           <button
             type="button"
-            className="qai-dropdown-item"
+            className="qosmoai-dropdown-item"
             role="menuitem"
             onClick={() => setDark(!dark)}
           >
@@ -222,7 +222,7 @@ export default function CustomUserCard({
           {!autoLogin && (
             <button
               type="button"
-              className="qai-dropdown-item qai-dropdown-item-danger"
+              className="qosmoai-dropdown-item qosmoai-dropdown-item-danger"
               role="menuitem"
               onClick={handleLogout}
             >

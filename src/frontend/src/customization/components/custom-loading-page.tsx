@@ -28,7 +28,7 @@ export function CustomLoadingPage() {
         justifyContent: "center",
         flexDirection: "column",
         gap: 16,
-        background: "var(--qai-bg, #0B0B14)",
+        background: "var(--qosmoai-bg, #0B0B14)",
         color: "var(--text-bright, #F3F3F6)",
       }}
     >
@@ -38,13 +38,13 @@ export function CustomLoadingPage() {
           height: 56,
           display: "inline-flex",
           color: "currentColor",
-          animation: "qai-loading-spin 1.4s linear infinite",
+          animation: "qosmoai-loading-spin 1.4s linear infinite",
         }}
         dangerouslySetInnerHTML={{ __html: SYGNET_HTML }}
       />
       <span
         style={{
-          fontFamily: "'Quicksand', -apple-system, 'Segoe UI', sans-serif",
+          fontFamily: "'Manrope', -apple-system, 'Segoe UI', sans-serif",
           fontSize: 13,
           color: "var(--text-dim, #6C6C9D)",
           letterSpacing: "0.02em",
@@ -54,7 +54,7 @@ export function CustomLoadingPage() {
       </span>
       {/* Inline keyframes so the loader works even if components.css hasn't loaded yet. */}
       <style>{`
-        @keyframes qai-loading-spin {
+        @keyframes qosmoai-loading-spin {
           0%   { transform: rotate(0deg);   opacity: 0.85; }
           50%  { transform: rotate(180deg); opacity: 1; }
           100% { transform: rotate(360deg); opacity: 0.85; }

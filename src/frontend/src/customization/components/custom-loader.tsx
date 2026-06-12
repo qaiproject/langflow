@@ -5,7 +5,7 @@
 // used in Qosmo.chat (Next.js) and Qosmo.auth (Keycloak T3 templates).
 //
 // `remSize` keeps the upstream API (callers expect roughly N rem of size).
-// The qai-loading-spin keyframes live in branding/components.css which is
+// The qosmoai-loading-spin keyframes live in branding/components.css which is
 // injected build-time via the langflow Dockerfile.
 // =============================================================================
 import sygnetRaw from "@/assets/qosmo-sygnet.svg?raw";
@@ -25,13 +25,13 @@ const CustomLoader = ({ remSize = 30 }: CustomLoaderProps) => {
     <span
       role="status"
       aria-label="Wczytywanie"
-      className="qai-loading-sygnet"
+      className="qosmoai-loading-sygnet"
       style={{
         display: "inline-flex",
         width: px,
         height: px,
         color: "var(--text-bright, currentColor)",
-        animation: "qai-loading-spin 1.4s linear infinite",
+        animation: "qosmoai-loading-spin 1.4s linear infinite",
       }}
       dangerouslySetInnerHTML={{ __html: SYGNET_HTML }}
     />

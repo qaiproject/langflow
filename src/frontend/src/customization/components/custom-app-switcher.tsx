@@ -79,7 +79,7 @@ const APPS: QosmoApp[] = [
     id: "chat",
     suffix: ".chat",
     desc: "Czat z modelami i agentami",
-    accent: "var(--qai-app-chat)",
+    accent: "var(--qosmoai-app-chat)",
     iconSvg: I.chat,
     resolveUrl: () =>
       resolveAppUrl("chat", { localhostFallback: "http://localhost:3000", appendPath: "/" }),
@@ -88,7 +88,7 @@ const APPS: QosmoApp[] = [
     id: "flow",
     suffix: ".flow",
     desc: "Studio przepływów agentowych",
-    accent: "var(--qai-app-flow)",
+    accent: "var(--qosmoai-app-flow)",
     iconSvg: I.flow,
     resolveUrl: () =>
       resolveAppUrl("flow", { localhostFallback: "http://localhost:7860" }),
@@ -97,7 +97,7 @@ const APPS: QosmoApp[] = [
     id: "tracer",
     suffix: ".tracer",
     desc: "Obserwowalność LLM",
-    accent: "var(--qai-app-tracer)",
+    accent: "var(--qosmoai-app-tracer)",
     iconSvg: I.tracer,
     resolveUrl: () =>
       resolveAppUrl("tracer", { localhostFallback: "http://localhost:3100" }),
@@ -106,7 +106,7 @@ const APPS: QosmoApp[] = [
     id: "docs",
     suffix: ".docs",
     desc: "Repozytorium plików",
-    accent: "var(--qai-app-docs)",
+    accent: "var(--qosmoai-app-docs)",
     iconSvg: I.docs,
     resolveUrl: () =>
       resolveAppUrl("docs", { localhostFallback: "http://localhost:8333" }),
@@ -115,7 +115,7 @@ const APPS: QosmoApp[] = [
     id: "auth",
     suffix: ".auth",
     desc: "Zarządzanie tożsamością",
-    accent: "var(--qai-app-auth)",
+    accent: "var(--qosmoai-app-auth)",
     iconSvg: I.auth,
     resolveUrl: () =>
       resolveAppUrl("auth", {
@@ -149,7 +149,7 @@ export default function CustomAppSwitcher({
     <>
       <button
         type="button"
-        className="qai-topbar-icon"
+        className="qosmoai-topbar-icon"
         aria-label="Aplikacje Qosmo"
         onClick={() => setOpen(true)}
         dangerouslySetInnerHTML={{ __html: I.grid }}
@@ -157,21 +157,21 @@ export default function CustomAppSwitcher({
 
       {open && createPortal(
         <div
-          className="qai-app-switcher-overlay"
+          className="qosmoai-app-switcher-overlay"
           onClick={() => setOpen(false)}
           role="presentation"
         >
           <div
             ref={dialogRef}
-            className="qai-app-switcher"
+            className="qosmoai-app-switcher"
             role="dialog"
             aria-label="Przelaczanie aplikacji"
             aria-modal="true"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="qai-app-switcher-header">
+            <div className="qosmoai-app-switcher-header">
               <span
-                className="qai-wordmark"
+                className="qosmoai-wordmark"
                 style={{
                   display: "inline-flex",
                   height: 28,
@@ -180,17 +180,17 @@ export default function CustomAppSwitcher({
                 }}
                 dangerouslySetInnerHTML={{ __html: BASE_SVG }}
               />
-              <div className="qai-app-switcher-header-spacer" />
+              <div className="qosmoai-app-switcher-header-spacer" />
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="qai-app-switcher-close"
+                className="qosmoai-app-switcher-close"
                 aria-label="Zamknij"
                 dangerouslySetInnerHTML={{ __html: I.x }}
               />
             </div>
 
-            <div className="qai-app-switcher-grid">
+            <div className="qosmoai-app-switcher-grid">
               {APPS.map((a) => {
                 const active = a.id === current;
                 const url = a.resolveUrl();
@@ -201,25 +201,25 @@ export default function CustomAppSwitcher({
                     href={url}
                     target={isExternal ? "_blank" : undefined}
                     rel={isExternal ? "noopener noreferrer" : undefined}
-                    className={`qai-app-tile ${active ? "qai-app-tile-active" : ""}`}
-                    style={{ ["--qai-tile-color" as never]: a.accent } as React.CSSProperties}
+                    className={`qosmoai-app-tile ${active ? "qosmoai-app-tile-active" : ""}`}
+                    style={{ ["--qosmoai-tile-color" as never]: a.accent } as React.CSSProperties}
                     onClick={() => {
                       if (active) setOpen(false);
                     }}
                   >
                     <div
-                      className="qai-app-tile-icon"
+                      className="qosmoai-app-tile-icon"
                       dangerouslySetInnerHTML={{ __html: a.iconSvg }}
                     />
                     <div
-                      className="qai-app-tile-name"
+                      className="qosmoai-app-tile-name"
                       style={{
-                        ["--qai-suffix-color" as never]: "var(--qai-tile-color)",
+                        ["--qosmoai-suffix-color" as never]: "var(--qosmoai-tile-color)",
                       } as React.CSSProperties}
                     >
-                      <span className="qai-brand-lockup" style={{ gap: 2, padding: 0 }}>
+                      <span className="qosmoai-brand-lockup" style={{ gap: 2, padding: 0 }}>
                         <span
-                          className="qai-wordmark"
+                          className="qosmoai-wordmark"
                           style={{
                             height: 20,
                             width: 20 * (538.89 / 141.73),
@@ -227,19 +227,19 @@ export default function CustomAppSwitcher({
                           }}
                           dangerouslySetInnerHTML={{ __html: BASE_SVG }}
                         />
-                        <span className="qai-product-tag" style={{ fontSize: 11 }}>
+                        <span className="qosmoai-product-tag" style={{ fontSize: 11 }}>
                           {a.suffix}
                         </span>
                       </span>
                     </div>
-                    <div className="qai-app-tile-desc">{a.desc}</div>
-                    {active && <div className="qai-app-tile-badge">aktualna</div>}
+                    <div className="qosmoai-app-tile-desc">{a.desc}</div>
+                    {active && <div className="qosmoai-app-tile-badge">aktualna</div>}
                   </a>
                 );
               })}
             </div>
 
-            <div className="qai-app-switcher-foot">QOSMO PREMISE</div>
+            <div className="qosmoai-app-switcher-foot">QOSMO PREMISE</div>
           </div>
         </div>,
         // Portal target: document.body wyciaga overlay z stacking contextu

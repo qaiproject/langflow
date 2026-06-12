@@ -27,7 +27,7 @@ const MOON_SVG = `
 /**
  * Apply the dark/light class to <html> + <body>. Langflow's index.html ships
  * with `class="dark"` on <body> by default, so we need both elements for the
- * Tailwind `dark:` variants AND our `--qai-*-hsl` overrides to cascade.
+ * Tailwind `dark:` variants AND our `--qosmoai-*-hsl` overrides to cascade.
  */
 function applyThemeClass(dark: boolean) {
   if (typeof document === "undefined") return;
@@ -79,7 +79,7 @@ export default function CustomThemeToggle() {
   return (
     <button
       type="button"
-      className="qai-topbar-icon"
+      className="qosmoai-topbar-icon"
       aria-label={dark ? "Przełącz na jasny motyw" : "Przełącz na ciemny motyw"}
       title={dark ? "Jasny motyw" : "Ciemny motyw"}
       onClick={handleClick}

@@ -8,20 +8,11 @@
  */
 
 :root {
-  --qai-suffix-color: var(--qai-app-flow);
-  --qai-app-accent:   var(--qai-app-flow);
+  --qosmoai-suffix-color: var(--qosmoai-app-flow);
+  --qosmoai-app-accent:   var(--qosmoai-app-flow);
 }
 
 /* === DARK THEME (default) =========================================== */
-/* UWAGA: --primary w Langflow = niebieski Qosmo (zgodnie z księgą znaków) (#9F2CF2 / hsl 235 88% 56%) bo to
- * per-app accent dla Qosmo.flow. Inne apki maja inne primary:
- *   chat   -> #2C3DF2 (niebieski accent, Qosmo brand main)
- *   flow → niebieski (default, wisteria tylko w app-switcher tile + opcja user-prefs)
- *   tracer -> cyan
- *   docs   -> emerald
- *   auth   -> czerwony
- * Logo .flow suffix, podkreslenia tabow, focus ringi, badges - wszystko
- * powinno isc na wisterii zeby branding byl spojny z mockupem. */
 :root,
 :root.dark,
 .dark,
@@ -40,7 +31,7 @@ body.dark,
   --input:                 240 29% 10% !important;
   --primary:               235 88% 56% !important;
   --primary-foreground:    0 0% 100% !important;
-  --primary-hover:         270 80% 42% !important;
+  --primary-hover:         240 80% 42% !important;
   --secondary:             240 32% 8% !important;
   --secondary-foreground:  240 14% 96% !important;
   --secondary-hover:       240 28% 18% !important;
@@ -60,7 +51,6 @@ body.dark,
 }
 
 /* === LIGHT THEME ===================================================== */
-/* --primary tez niebieski w light (Qosmo default, wisteria w app-switcher tile only). */
 :root.light,
 .light,
 body.light,
@@ -78,7 +68,7 @@ html.light,
   --input:                 0 0% 100% !important;
   --primary:               235 88% 56% !important;
   --primary-foreground:    0 0% 100% !important;
-  --primary-hover:         270 80% 42% !important;
+  --primary-hover:         240 80% 42% !important;
   --secondary:             240 17% 93% !important;
   --secondary-foreground:  240 28% 18% !important;
   --secondary-hover:       240 17% 89% !important;
@@ -115,12 +105,8 @@ a { color: hsl(var(--primary)); }
 a:hover { color: hsl(var(--primary-hover)); }
 
 /* === SIDEBAR (shadcn data-sidebar attributes) ======================== */
-/* Sidebar bg = --background (240 29% 6%, najciemniejsze). Wczesniej bylo
- * --muted (240 32% 8%) co przeszkadzalo w widocznosci user-card kafelka
- * (--card = 240 29% 10%, roznica zaledwie 2pp). Z bg jako baza, kafelki
- * card-bg maja 4pp roznicy co wybija je z sidebara - tak samo jak w Qosmo.chat. */
 [data-sidebar="sidebar"] {
-  background: hsl(var(--background)) !important;
+  background: hsl(var(--muted)) !important;
   border-right: 1px solid hsl(var(--border)) !important;
 }
 [data-sidebar="group"] {
@@ -177,18 +163,9 @@ a:hover { color: hsl(var(--primary-hover)); }
 [data-sidebar="menu-button"]:hover svg {
   color: hsl(var(--card-foreground)) !important;
 }
-[data-sidebar="menu-button"][data-active="true"] {
-  background: color-mix(in srgb, hsl(var(--primary)) 8%, transparent) !important;
-  color: hsl(var(--card-foreground)) !important;
-  box-shadow: inset 2px 0 0 hsl(var(--primary)) !important;
-}
-[data-sidebar="menu-button"][data-active="true"] svg,
-[data-sidebar="menu-button"][data-active="true"] svg * {
-  /* SVG aktywnej ikonki = BIAŁE na niebieskim tle (primary). Wcześniej było
-   * primary co dawało granatowo-na-granatowym i ikonka znikała. */
-  color: hsl(var(--card-foreground)) !important;
-  stroke: hsl(var(--card-foreground)) !important;
-}
+/* Active nav-link styling SSOT - .qosmoai-nav-link multi-selektor w components.css
+ * (token --qosmoai-nav-link-bg-active = 12% accent, box-shadow inset 2px line).
+ * Lokalny override usuniety - propagacja przez tokens.css. */
 [data-sidebar="menu-action"] {
   color: hsl(var(--muted-foreground)) !important;
   opacity: 0;
@@ -267,144 +244,13 @@ a:hover { color: hsl(var(--primary-hover)); }
   color: hsl(var(--card-foreground)) !important;
 }
 
-/* === NODE RESTYLE (Qosmo mockup vibe) =================================
- * Cel: zblizyc node'y Langflow do estetyki kart z mockupu Qosmo
- * (https://qosmo-unified6 -> "qosmo-security" card pattern). NIE
- * przepisujemy GenericNode JSX - dzialamy CSS-em:
- *   1. Wieksze zaokraglenia + shadow,
- *   2. Ikonka headera w accent mini-square,
- *   3. Title font: Manrope bold,
- *   4. Pillsa BETA stylizowana jak na mockupie.
- * ----------------------------------------------------------------------- */
-
-/* 1. Wrapper - mocniejszy shadow + radius zgodny z kafelkami */
-.generic-node-div {
-  border-radius: 14px !important;
-  border-width: 1px !important;
-  box-shadow:
-    0 1px 0 hsl(var(--card)) inset,
-    0 8px 24px -12px rgba(0, 0, 0, 0.45) !important;
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-.generic-node-div:hover {
-  border-color: hsl(var(--primary) / 0.55) !important;
-  box-shadow:
-    0 1px 0 hsl(var(--card)) inset,
-    0 14px 32px -12px rgba(0, 0, 0, 0.6),
-    0 0 0 1px hsl(var(--primary) / 0.18) !important;
-}
-
-/* 2. Header section - lekkie padding + separacja */
-.react-flow__node [data-testid="div-generic-node"] {
-  padding: 14px 14px 12px !important;
-  gap: 10px !important;
-}
-
-/* 3. Ikonka w accent mini-square. Targetujemy bezposrednio
- * <NodeIcon> wewnatrz [generic-node-title-arrangement] - jego pierwszy
- * <div>/<span> dzieckiem to ikonka. Owijamy go wizualnie 32x32 squareem
- * z accent-faint tlem i akcentem na obwodce (pattern z Qosmo card icon). */
-.react-flow__node [data-testid="generic-node-title-arrangement"] > div:first-child,
-.react-flow__node [data-testid="generic-node-title-arrangement"] > span:first-child {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 32px !important;
-  height: 32px !important;
-  border-radius: 9px !important;
-  background: color-mix(in srgb, hsl(var(--primary)) 14%, transparent) !important;
-  border: 1px solid color-mix(in srgb, hsl(var(--primary)) 36%, transparent) !important;
-  color: hsl(var(--primary)) !important;
-  flex-shrink: 0;
-}
-.react-flow__node [data-testid="generic-node-title-arrangement"] > div:first-child svg,
-.react-flow__node [data-testid="generic-node-title-arrangement"] > span:first-child svg {
-  width: 17px !important;
-  height: 17px !important;
-  color: hsl(var(--primary)) !important;
-  stroke: hsl(var(--primary)) !important;
-  background: transparent !important;
-}
-
-/* 4. Title (display_name) - Manrope bold, wieksza letter-spacing.
- * Langflow renderuje display_name w <MemoizedNodeName> -> wlasciwy element
- * to inner span/div z klasa zawierajaca "node-name" lub "display-name". */
-.react-flow__node [data-testid="generic-node-title-arrangement"] [class*="node-name"],
-.react-flow__node [data-testid="generic-node-title-arrangement"] [class*="display-name"],
-.react-flow__node [data-testid="generic-node-title-arrangement"] [class*="title"] {
-  font-family: var(--font-chivo, "Manrope"), sans-serif !important;
-  font-weight: 600 !important;
-  font-size: 13.5px !important;
-  letter-spacing: -0.005em !important;
-  color: hsl(var(--card-foreground)) !important;
-}
-
-/* 5. BETA badge - styl mockupowego pilla (zielona obwodka, mono font) */
-.react-flow__node [class*="beta-badge"],
-.react-flow__node span:where([data-testid*="beta"]) {
-  font-family: var(--font-mono, "JetBrains Mono"), monospace !important;
-  font-size: 9.5px !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.06em !important;
-  text-transform: uppercase !important;
-  padding: 2px 7px !important;
-  border-radius: 4px !important;
-  background: color-mix(in srgb, var(--qai-c-emerald, #2CF286) 14%, transparent) !important;
-  color: var(--qai-c-emerald, #2CF286) !important;
-  border: 1px solid color-mix(in srgb, var(--qai-c-emerald, #2CF286) 32%, transparent) !important;
-}
-
-/* 6. Section labels (Tekst wejściowy, Język model itd.) - mocniejszy kontrast */
-.react-flow__node label,
-.react-flow__node [class*="label"] {
-  font-family: var(--font-chivo, "Manrope"), sans-serif !important;
-  font-weight: 500 !important;
-  font-size: 11.5px !important;
-  letter-spacing: 0.005em !important;
-  color: hsl(var(--card-foreground)) !important;
-}
-
-/* 7. Inputy/textarea - subtelnie ciemniejsze tlo + lepszy border */
-.react-flow__node input:not([type="checkbox"]):not([type="radio"]),
-.react-flow__node textarea {
-  border-radius: 8px !important;
-  font-family: var(--font-sans, "Manrope"), sans-serif !important;
-  font-size: 12.5px !important;
-  background-color: color-mix(in srgb, hsl(var(--background)) 80%, hsl(var(--card))) !important;
-}
-.react-flow__node input:focus,
-.react-flow__node textarea:focus {
-  border-color: hsl(var(--primary)) !important;
-  box-shadow: 0 0 0 2px color-mix(in srgb, hsl(var(--primary)) 25%, transparent) !important;
-}
-
 /* === SIDEBAR ICON STRIP (lewa kolumna z search/components/mcp/...) ===== */
-/* Aktywna ikonka — accent-faint bg + niebieska obramówka, ale samo SVG BIAŁE
- * (na ciemnoniebieskim tle granatowa ikonka znikała). */
+/* Aktywna ikonka — accent-faint bg + accent color */
 .sidebar-trigger button[data-state="active"],
 button[aria-pressed="true"],
 .menu-button-active {
   background: color-mix(in srgb, hsl(var(--primary)) 10%, transparent) !important;
   color: hsl(var(--primary)) !important;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, hsl(var(--primary)) 60%, transparent) !important;
-}
-.sidebar-trigger button[data-state="active"] svg,
-.sidebar-trigger button[data-state="active"] svg *,
-button[aria-pressed="true"] svg,
-button[aria-pressed="true"] svg *,
-.menu-button-active svg,
-.menu-button-active svg * {
-  color: hsl(var(--card-foreground)) !important;
-  stroke: hsl(var(--card-foreground)) !important;
-}
-
-/* === SIDEBAR HEADER: ukryj separator po wyciszonym getting-started ====
- * `header-buttons.tsx` renderuje <CustomGetStartedProgress> + <hr> jako para.
- * Nasz CustomGetStartedProgress zwraca <></>, więc widać sam hr "wiszący"
- * nad listą projektów. Ukrywamy go dopóki user nie zdecyduje co tam wsadzić. */
-[data-testid="project-sidebar"] [data-sidebar="header"] hr,
-[data-testid="project-sidebar"] [data-sidebar="header"] > div.-mx-4 {
-  display: none !important;
 }
 
 /* === HEADERS/TITLES NIEBIESKIE — popraw kontrast ===================== */
@@ -422,12 +268,9 @@ button[aria-pressed="true"] svg *,
   color: hsl(var(--primary)) !important;
 }
 
-/* === GENERIC: nigdy nie pozwalaj na bg-white w dark mode dla card-like elements
- * UWAGA: wcześniej tu był invalid selector `:not(.qai-*)` — `*` w klasie to NIE
- * wildcard. Przeglądarka wywalała cały blok i mogło psuć cascade. Naprawione:
- * używamy atrybutu `[class*="qai-"]` zamiast tego. */
-.dark [class*="bg-white"]:not([class*="qai-"]):not([data-no-override]),
-body.dark .bg-white:not([class*="qai-"]):not([data-no-override]) {
+/* === GENERIC: nigdy nie pozwalaj na bg-white w dark mode dla card-like elements */
+.dark [class*="bg-white"]:not(.qosmoai-*):not([data-no-override]),
+body.dark .bg-white:not(.qosmoai-*):not([data-no-override]) {
   background: hsl(var(--card)) !important;
   color: hsl(var(--card-foreground)) !important;
 }

@@ -34,10 +34,10 @@ function UserCardPortal() {
       if (sb) {
         // Look for or create our footer slot inside the sidebar so the
         // user-card is part of the sidebar DOM (vs. fixed-positioned).
-        let footer = sb.querySelector<HTMLElement>("#qai-sidebar-footer");
+        let footer = sb.querySelector<HTMLElement>("#qosmoai-sidebar-footer");
         if (!footer) {
           footer = document.createElement("div");
-          footer.id = "qai-sidebar-footer";
+          footer.id = "qosmoai-sidebar-footer";
           // Footer to slot pod user-card. Bez wlasnego tla (transparent), bo
           // chcemy zeby kafelek user-card wybijal sie na tle sidebara. Padding
           // 10px + 12px daje "pole oddychania" wokol kafelka jak na mockupie
@@ -59,9 +59,9 @@ function UserCardPortal() {
   }, []);
 
   if (!sidebarEl) return null;
-  // Role label spójny we wszystkich 4 aplikacjach Qosmo (chat/flow/tracer/auth)
-  // — to nie "którą apkę używasz" tylko "który tenant Premise".
-  return createPortal(<CustomUserCard fullWidth roleLabel="Qosmo Premise" />, sidebarEl);
+  // User-card pokazuje tylko avatar + username (Iter 11.9: usunięty hardcoded
+  // "Qosmo Premise" subtitle -- user prosił zeby pokazac tylko realne dane).
+  return createPortal(<CustomUserCard fullWidth />, sidebarEl);
 }
 
 export default function CustomFolderSidebar(props: CustomFolderSidebarProps) {
